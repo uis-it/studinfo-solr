@@ -1,0 +1,30 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>parent-pom</artifactId>
+    <groupId>no.uis.service</groupId>
+    <version>1.0.19</version>
+  </parent>
+  <groupId>no.uis.service.component</groupId>
+  <artifactId>studinfo-solr</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <name>studinfo-solr</name>
+  <description>Update Solr with FS studinfo data</description>
+  <url>http://source01.uis.no/maven-site/${project.groupId}/${project.artifactId}/${project.version}</url>
+
+  <inceptionYear>2012</inceptionYear>
+
+  <scm>
+    <connection>scm:git:git://source01.uis.no/soa-component-studinfo-solr.git</connection>
+    <developerConnection>scm:git:git@152.94.3.85:soa-component-studinfo-solr.git</developerConnection>
+    <url>http://source01.uis.no/git/?p=soa-component-studinfo-solr.git</url>
+  </scm>
+  
+  
+  <distributionManagement>
+    <site>
+      <id>source01.uis.no</id>
+      <url>dav:https://source01.uis.no/maven-site/${project.groupId}/${project.artifactId}/${project.version}</url>
+    </site>
+  </distributionManagement>
+</project>
