@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+  <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
+    <property name="converters">
+      <list>
+        <bean class="no.uis.service.studinfo.data.StringToFreeTextConverter"></bean>
+      </list>
+    </property>
+  </bean>
+  
+   <util:list xmlns:util="http://www.springframework.org/schema/util" id="emneList">
+      <bean class="no.uis.service.studinfo.data.EmneFactory">
+         <property name="sprak" value="BOKMÅL"/>
+         <property name="emneid">
+            <bean class="no.uis.service.studinfo.data.Emneid">
+               <property name="institusjonsnr" value="217"/>
+               <property name="emnekode" value="ALU302"/>
+               <property name="versjonskode" value="1"/>
+            </bean>
+         </property>
+         <property name="emnenavn" value="Kunst og håndverk I, emne 1: Kunst, kultur og natur"/>
+         <property name="emnenavnEn" value="Arts and Crafts I, Topic 1; Art, Culture and Nature"/>
+         <property name="studiepoeng" value="10"/>
+         <property name="statusPrivatist" value="N"/>
+         <property name="studieniva" value="LN"/>
+         <property name="nuskode" value="622101"/>
+         <property name="statusOblig" value="N"/>
+         <property name="undervisningssemester" value="Høst"/>
+         <property name="antallUndsemester" value="1"/>
+         <property name="undsemester">
+            <list>
+	            <bean class="no.uis.service.studinfo.data.UndsemesterFactory">
+	               <property name="semester">
+	                 <bean class="no.uis.service.studinfo.data.Semester">
+	                   <property name="nr" value="1"/>
+	                   <property name="value" value="HØST"/>
+	                 </bean>
+	               </property>
+	            </bean>
+            </list>
+         </property>
+         <property name="emnetype" value="VURDERING"/>
+         <property name="url" value="http://www.uis.no/studier/?emneID=ALU302_1&amp;year=2011"/>
+         <property name="periodeEks">
+            <bean class="no.uis.service.studinfo.data.Semesterperiode">
+               <property name="forstegang" value="2006H"/>
+               <property name="sistegang" value="2012H"/>
+            </bean>
+         </property>
+         <property name="periodeUnd">
+            <bean class="no.uis.service.studinfo.data.Semesterperiode">
+               <property name="forstegang" value="2006H"/>
+               <property name="sistegang" value="2011H"/>
+            </bean>
+         </property>
+         <property name="eksamenssemester" value="Høst"/>
+         <property name="inngarIStudieprogram">
+            <list>
+               <value>A-ALLMEN</value>
+               <value>Å-KUNSTHÅN</value>
+               <value>V-KUNSTH1</value>
+            </list>
+         </property>
+         <property name="sted">
+            <list>
+            <bean class="no.uis.service.studinfo.data.Sted">
+               <property name="type" value="fagansvarlig"/>
+               <property name="institusjonsnr" value="217"/>
+               <property name="fakultetsnr" value="6"/>
+               <property name="instituttnr" value="3"/>
+               <property name="gruppenr" value="0"/>
+               <property name="navn"
+                         value="Institutt for grunnskolelærerutdanning, idrett og spesialpedagogikk"/>
+               <property name="avdnavn" value="Det humanistiske fakultet"/>
+            </bean>
+            <bean class="no.uis.service.studinfo.data.Sted">
+               <property name="type" value="adminansvarlig"/>
+               <property name="institusjonsnr" value="217"/>
+               <property name="fakultetsnr" value="6"/>
+               <property name="instituttnr" value="3"/>
+               <property name="gruppenr" value="0"/>
+               <property name="navn"
+                         value="Institutt for grunnskolelærerutdanning, idrett og spesialpedagogikk"/>
+               <property name="avdnavn" value="Det humanistiske fakultet"/>
+            </bean>
+            </list>
+         </property>
+<!--         
+         <property name="fagpersonListe">
+            <bean class="no.uis.service.studinfo.data.FagpersonListe">
+               <property name="personid" value="123456"/>
+               <property name="fnr" value="12345678901"/>
+               <property name="personrolle" value="Studiekoordinator"/>
+               <property name="personnavn">
+                  <bean class="no.uis.service.studinfo.data.Personnavn">
+                     <property name="etternavn" value="Skjæveland"/>
+                     <property name="fornavn" value="Lillian Utne"/>
+                  </bean>
+               </property>
+               <property name="datoFra" value="2011-08-01"/>
+               <property name="datoTil" value="2012-07-31"/>
+               <property name="personid" value="123456"/>
+               <property name="fnr" value="12345678901"/>
+               <property name="personrolle" value="Instituttleder"/>
+               <property name="personnavn">
+                  <bean class="no.uis.service.studinfo.data.Personnavn">
+                     <property name="etternavn" value="Thuen"/>
+                     <property name="fornavn" value="Elin Marie"/>
+                  </bean>
+               </property>
+               <property name="datoFra" value="2011-08-01"/>
+               <property name="personid" value="123456"/>
+               <property name="fnr" value="12345678901"/>
+               <property name="personrolle" value="Emneansvarlig"/>
+               <property name="personnavn">
+                  <bean class="no.uis.service.studinfo.data.Personnavn">
+                     <property name="etternavn" value="Lausund"/>
+                     <property name="fornavn" value="Mildrid"/>
+                  </bean>
+               </property>
+               <property name="datoFra" value="2011-08-01"/>
+               <property name="personid" value="123456"/>
+               <property name="fnr" value="12345678901"/>
+               <property name="personrolle" value="Faglærer"/>
+               <property name="personnavn">
+                  <bean class="no.uis.service.studinfo.data.Personnavn">
+                     <property name="etternavn" value="Dagsland"/>
+                     <property name="fornavn" value="Torunn Paulsen"/>
+                  </bean>
+               </property>
+               <property name="datoFra" value="2006-08-01"/>
+            </bean>
+         </property>
+-->         
+         <property name="eksamensordning">
+          <list>
+            <bean class="no.uis.service.studinfo.data.EksamensordningFactory">
+               <property name="eksamensordningid" value="OY"/>
+               <property name="eksamensordningnavn" value="Oppgave(r) og framlegg"/>
+               <property name="default" value="J"/>
+               <property name="meldStudentweb" value="J"/>
+               <property name="karregel" value="A - F"/>
+               <property name="eksamensdel">
+                <list>
+                  <bean class="no.uis.service.studinfo.data.Eksamensdel">
+                     <property name="eksamensdelnr" value="1"/>
+                     <property name="eksamensdelnavn" value="Gruppeoppgave. Kulturoppdrag"/>
+                     <property name="eksamensform" value="Oppgave"/>
+                     <property name="karaktervekt" value="1/3"/>
+                     <property name="karregel" value="A - F"/>
+                     <property name="datoEksamen">
+                      <bean class="no.uis.service.studinfo.data.FsEksamensdato" factory-method="valueOf">
+                        <constructor-arg value="01.04.2014"/>
+                      </bean>
+                     </property>
+                  </bean>
+                  <bean class="no.uis.service.studinfo.data.Eksamensdel">
+                     <property name="eksamensdelnr" value="2"/>
+                     <property name="eksamensdelnavn" value="Praktisk estetisk framlegg"/>
+                     <property name="eksamensform" value="Prøveforelesning"/>
+                     <property name="karaktervekt" value="2/3"/>
+                     <property name="karregel" value="A - F"/>
+                     <property name="datoEksamen">
+                      <bean class="no.uis.service.studinfo.data.FsEksamensdato" factory-method="valueOf">
+                        <constructor-arg value="01.04.2014"/>
+                      </bean>
+                     </property>
+                  </bean>
+                  </list>
+               </property>
+            </bean>
+         </list>
+         </property>
+         <property name="vurdordning">
+            <list>
+            <bean class="no.uis.service.studinfo.data.Vurdordning">
+               <property name="vurdordningid" value="OY"/>
+               <property name="vurdordningnavn" value="Oppgave(r) og framlegg"/>
+               <property name="default" value="J"/>
+               <property name="meldStudentweb" value="J"/>
+               <property name="vurdkombinasjon">
+                  <bean class="no.uis.service.studinfo.data.VurdkombinasjonFactory">
+                     <property name="niva" value="1"/>
+                     <property name="vurdkombkode" value="OF"/>
+                     <property name="vurdkombnavn" value="Oppgave og framlegg"/>
+                     <property name="forstegang" value="2006H"/>
+                     <property name="karregelkode" value="30"/>
+                     <property name="karregel" value="A - F"/>
+                     <property name="vurdkombtider">
+                      <list>
+                        <bean class="no.uis.service.studinfo.data.Vurdkombtid">
+                           <property name="vurdtidkode" value="12"/>
+                           <property name="vurdtidkodeReell" value="12"/>
+                           <property name="arsinkrement" value="0"/>
+                           <property name="vurdstatuskode" value="ORD"/>
+                           <property name="liketallsaar" value="J"/>
+                           <property name="oddetallsaar" value="J"/>
+                           <property name="forstegang" value=""/>
+                        </bean>
+                        </list>
+                     </property>
+                     <property name="vurdkombinasjon">
+                      <list>
+                        <bean class="no.uis.service.studinfo.data.VurdkombinasjonFactory">
+                           <property name="niva" value="2"/>
+                           <property name="vurdkombkode" value="OF-1"/>
+                           <property name="vurdkombnavn" value="Gruppeoppgave. Kulturoppdrag"/>
+                           <property name="vurdform" value="Oppgave"/>
+                           <property name="vurdkombtype" value="Oppgave"/>
+                           <property name="forstegang" value="2006H"/>
+                           <property name="brok" value="1/3"/>
+                           <property name="karregelkode" value="30"/>
+                           <property name="karregel" value="A - F"/>
+                           <property name="vurdkombtider">
+                              <list>
+                                    <bean class="no.uis.service.studinfo.data.Vurdkombtid">
+                                       <property name="vurdtidkode" value="12"/>
+                                       <property name="vurdtidkodeReell" value="12"/>
+                                       <property name="arsinkrement" value="0"/>
+                                       <property name="vurdstatuskode" value="ORD"/>
+                                       <property name="liketallsaar" value="J"/>
+                                       <property name="oddetallsaar" value="J"/>
+                                       <property name="forstegang" value=""/>
+                                    </bean>
+                                 </list>
+                           </property>
+                        </bean>
+                        <bean class="no.uis.service.studinfo.data.VurdkombinasjonFactory">
+                           <property name="niva" value="2"/>
+                           <property name="vurdkombkode" value="OF-2"/>
+                           <property name="vurdkombnavn" value="Praktisk estetisk framlegg"/>
+                           <property name="vurdform" value="Prøveforelesning"/>
+                           <property name="vurdkombtype" value="Eksamen"/>
+                           <property name="forstegang" value="2006V"/>
+                           <property name="brok" value="2/3"/>
+                           <property name="karregelkode" value="30"/>
+                           <property name="karregel" value="A - F"/>
+                           <property name="vurdkombtider">
+                              <list>
+                                    <bean class="no.uis.service.studinfo.data.Vurdkombtid">
+                                       <property name="vurdtidkode" value="12"/>
+                                       <property name="vurdtidkodeReell" value="12"/>
+                                       <property name="arsinkrement" value="0"/>
+                                       <property name="vurdstatuskode" value="ORD"/>
+                                       <property name="liketallsaar" value="J"/>
+                                       <property name="oddetallsaar" value="J"/>
+                                       <property name="forstegang" value=""/>
+                                    </bean>
+                                 </list>
+                           </property>
+                        </bean>
+                       </list>
+                     </property>
+                  </bean>
+               </property>
+            </bean>
+            </list>
+         </property>
+         <property name="arbeidsformer" value="Studiet vil bestå av en veksling mellom eget skapende arbeid og møte med bildekunst&#xA;   og land art. Skapende arbeid, fagdidaktikk og kunst og formkultur vil i perioder bli integrert&#xA;   slik at det kan fremme en helhetsforståelse for faget. I andre perioder vil disse komponentene&#xA;   bli organisert atskilt. Arbeid på ulike verksted, forelesninger , individuelt arbeid ,&#xA;   gruppearbeid, museums- og galleribesøk og ekskursjoner i nærmiljøet vil være arbeidsformer på&#xA;   studiet."/>
+         
+         <property name="innhold">
+            <bean class="no.uis.service.studinfo.data.FreeTextFactory">
+               <property name="content">
+                  <list>
+                     <value>&lt;p&gt;1. Praktisk estetisk arbeid&lt;/p&gt;</value>
+                     <value>&lt;p&gt;Det praktisk estetiske arbeidet vil være tema - og prosjekt orientert med utgangspunkt i
+    bildekunst de siste 250 år, kunst i lokalmiljøet og landart. Studentene vil få direkte erfaring
+    med ulike to- og tredimensjonale materialer og teknikker. Det kan være leire, gips, papir,
+    pappmasje`, naturmaterialer med mer. Et tema vil være "Naturen som arena" hvor studentene får
+    direkte erfaring med naturen som arena for lek og læring . Kroppslig erfaring i møte med
+    skapende prosesser vil stå sentralt.&lt;/p&gt;</value>
+                     <value>&lt;p&gt;&lt;/p&gt;</value>
+                     <value>&lt;p&gt;2. Kunst og kultur.&lt;/p&gt;</value>
+                     <value>&lt;p&gt;Studiet tar sikte på å gjøre studentene kjent med norsk og europeisk bildekunst fra de siste
+    250 år, landart og eventyrillustrasjoner. Teori om kunst og formkultur vil bli satt inn i en
+    pedagogisk sammenheng - kunst som kilde til innsikt, forståelse, opplevelse, refleksjon og
+    inspirasjon.Temaet vil være med å danne bakgrunn for studieturen som ligger til emnet
+    ALU303.&lt;/p&gt;</value>
+                     <value>&lt;p&gt;&lt;/p&gt;</value>
+                     <value>&lt;p&gt;3. Fagdidaktikk&lt;/p&gt;</value>
+                     <value>&lt;p&gt;Fokus er rettet mot læreren som kulturbærer og kulturbygger. I dette emnet vil didaktikk være
+    en praktisk og teoretisk prosess. En helhetlig prosess som omfatter all undervisning og møtet
+    med praksisfeltet. Studentene vil få forelesninger i kunsthistorie, fagdidaktikk og arbeider med
+    ulike materialer på verksted for deretter å utføre et fagdidaktisk oppdrag i skolen.&lt;/p&gt;</value>
+                     <value>&lt;p&gt;&lt;/p&gt;</value>
+                     <value>&lt;p&gt;Det vil være et kurs i digital bildebehandling som skal være et redskap gjennom hele studiet
+    til å dokumentere skapende prosesser fra ide til ferdig produkt og dokumentering av barns
+    læringsprosesser.&lt;/p&gt;</value>
+                     <value>&lt;p&gt;&lt;/p&gt;</value>
+                     <value>&lt;p&gt;Tema for fagdidaktikk :&lt;/p&gt;</value>
+                     <value>&lt;p&gt;- gjeldende læreplan for grunnskolen&lt;/p&gt;</value>
+                     <value>&lt;p&gt;- barns møte med kunst&lt;/p&gt;</value>
+                     <value>&lt;p&gt;- kunst og kunnskap&lt;/p&gt;</value>
+                     <value>&lt;p&gt;- læreren som kulturbygger og kulturbærer&lt;/p&gt;</value>
+                     <value>&lt;p&gt;- kreativitet/skapende prosesser&lt;/p&gt;</value>
+                     <value>&lt;p&gt;- læreren som tilrettelegger og veileder for barn i skapende prosesser&lt;/p&gt;</value>
+                     <value>&lt;p&gt;- arbeidsmåter og metoder i møte med kunst, kultur, og natur&lt;/p&gt;</value>
+                     <value>&lt;p&gt;- kroppslig erfaring&lt;/p&gt;</value>
+                     <value>&lt;p&gt;- utstilling&lt;/p&gt;</value>
+                     <value>&lt;p&gt;- dokumentasjon av barns læreprosesser, digitale hjelpemidler .&lt;/p&gt;</value>
+                  </list>
+               </property>
+            </bean>
+         </property>
+         <property name="litteratur">
+            <bean class="no.uis.service.studinfo.data.FreeTextFactory">
+               <property name="content">
+                  <list>
+                     <value>&lt;p&gt;Gjeldende læreplan for grunnskolen&lt;/p&gt;</value>
+                     <value>&lt;p&gt;Glambeck, Ingeborg.1994. . Oslo: Skolebokforlaget &lt;/p&gt;</value>
+                     <value>&lt;p&gt;Haabesland, Anny og Vavik, Ragnhild . 2000 . . Bergen: Fagboklaget ( Kap. Kreativitet) &lt;/p&gt;</value>
+                     <value>&lt;p&gt;Koefoed, Holger.2001.  2001.Oslo: Stenersen forlag &lt;/p&gt;</value>
+                     <value>&lt;p&gt;Krausse, Anne-Carola og Burmeister, Ralf. 2005.Oslo:
+    Spektrum&lt;/p&gt;</value>
+                     <value>&lt;p&gt;Nielsen, Liv Merete, 2009, Fagdidaktikk for kunst og håndverk i går, i dag , i morgen. Oslo:
+    Universitets forlaget ( Utvalgt kapittel) &lt;/p&gt;</value>
+                     <value>&lt;p&gt;(Paulsen , Brit. 1999. H.Oslo: Aschehoug) &lt;/p&gt;</value>
+                     <value>&lt;p&gt;Kompendium: " Læreren som kulturbærer/ kulturbygger." Diverse artikler&lt;/p&gt;</value>
+                     <value>&lt;p&gt;&lt;/p&gt;</value>
+                     <value>&lt;p&gt;&lt;/p&gt;</value>
+                  </list>
+               </property>
+            </bean>
+         </property>
+         <property name="laringsutbytte">
+            <bean class="no.uis.service.studinfo.data.FreeTextFactory">
+               <property name="content">
+                  <list>
+                     <value>&lt;p&gt;Etter fullført emne skal studentene kunne: &lt;/p&gt;</value>
+                     <value>&lt;p&gt;- innhente inspirasjon fra kunsthistorien som utgangspunkt for eget skapende arbeid i ulike
+    materialer&lt;/p&gt;</value>
+                     <value>&lt;p&gt;- kunne bruke naturen som arena for skapende arbeid og kroppslig erfaring&lt;/p&gt;</value>
+                     <value>&lt;p&gt;- gjennom praktisk skapende arbeid vise ferdigheter, skaperglede, observasjonsevne og
+    refleksjon over estetiske problemstillinger&lt;/p&gt;</value>
+                     <value>&lt;p&gt;- gjøre rede for viktige epoker i Europas kunsthistorie de siste 250 år og vise kjennskap til
+    ulike kunstnere og kunstneriske uttrykk&lt;/p&gt;</value>
+                     <value>&lt;p&gt;- overføre resultater av praktisk og teoretisk arbeid til oppbyggingen av egen didaktisk
+    kompetanse&lt;/p&gt;</value>
+                     <value>&lt;p&gt;&lt;/p&gt;</value>
+                     <value>&lt;p&gt;&lt;/p&gt;</value>
+                  </list>
+               </property>
+            </bean>
+         </property>
+         <property name="obligUndaktTilleggsinfo"
+                   value="Timeplanlagt praktisk estetisk arbeid og teori som er knyttet opp mot&#xA;   arbeid på veksteder. "/>
+         <property name="studentevaluering" value="Tidligdialog, sluttevaluering og fagutvalg."/>
+         <property name="vurderingTilleggstekst">
+            <bean class="no.uis.service.studinfo.data.FreeTextFactory">
+               <property name="content">
+                  <list>
+                     <value>&lt;p&gt;Gruppeeksamen/kulturoppdrag er en oppgave som knytter sammen teori, praktisk estetisk arbeid
+    og yrkeskompetanse. Skriftlig og visuell dokumentasjon leveres inn til vurdering. Den skriftlige
+    delen inneholder kunsthistorie og fagdidaktikk. Omfang 10 sider + kunsthistorisk bildestoff.&lt;/p&gt;</value>
+                     <value>&lt;p&gt;Kulturoppdraget utføres i grunnskolen og dokumenteres ved hjelp av bilder og tekst. Leveres
+    inn på cd. Oppdraget og fagdidaktikk utgjør 1/3 av samlet karakter.&lt;/p&gt;</value>
+                     <value>&lt;p&gt;&lt;/p&gt;</value>
+                     <value>&lt;p&gt;Praktisk estetisk framlegg. &lt;/p&gt;</value>
+                     <value>&lt;p&gt;Individuelt framlegg og gruppeframlegg av praktisk estetisk arbeid med skriftlig og visuell
+    dokumentasjon.Produkt og prosess knyttet til tema kunst og natur. Den skriftlige delen skal være
+    enkel og bestå av kommentarer til skisser, foto, utprøvinger og eksperiment med
+    materialer/teknikk / estetiske virkemidler fra ide til ferdig produkt. Praktisk estetisk arbeid
+    består av ferdige produkt og prosess innen to- og tredimensjonale materialer. &lt;/p&gt;</value>
+                     <value>&lt;p&gt;&lt;/p&gt;</value>
+                  </list>
+               </property>
+            </bean>
+         </property>
+      </bean>
+   </util:list>
+</beans>
