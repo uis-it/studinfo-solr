@@ -19,6 +19,7 @@
       <spring.version>3.0.6.RELEASE</spring.version>
       <solr.version>4.0.0-BETA</solr.version>
       <jetty.version>6.1.14</jetty.version>
+      <fsimport.pdf.version>1.0.0-SNAPSHOT</fsimport.pdf.version>
     </properties>
     
 		<scm>
@@ -67,6 +68,11 @@
 						<groupId>no.uis.service.component</groupId>
 						<artifactId>fs-import</artifactId>
 						<version>1.2.1-SNAPSHOT</version>
+				</dependency>
+				<dependency>
+				  <groupId>no.uis.service.component</groupId>
+				  <artifactId>studinfo-pdf</artifactId>
+				  <version>${fsimport.pdf.version}</version>
 				</dependency>
 				<dependency>
 						<groupId>log4j</groupId>
@@ -133,30 +139,17 @@
 		      <artifactId>solr-solrj</artifactId>
 		      <version>${solr.version}</version>
 		    </dependency>
-        <!--dependency>
-          <groupId>org.mortbay.jetty</groupId>
-          <artifactId>jetty</artifactId>
-          <version>${jetty.version}</version>
-          <scope>test</scope>
-        </dependency-->
-        <!--dependency>
-          <groupId>org.mortbay.jetty</groupId>
-          <artifactId>jsp-2.1</artifactId>
-          <version>${jetty.version}</version>
-          <scope>test</scope>
-        </dependency-->		    
         <dependency>
           <groupId>org.easymock</groupId>
           <artifactId>easymock</artifactId>
           <version>3.0</version>
           <scope>test</scope>
         </dependency>
-		    <!--dependency>
-		      <groupId>junit</groupId>
-		      <artifactId>junit</artifactId>
-		      <version>4.10</version>
-		      <scope>test</scope>
-		    </dependency-->
+				<dependency>
+				    <groupId>com.google.code.gson</groupId>
+				    <artifactId>gson</artifactId>
+				    <version>2.2.2</version>
+				</dependency>
 		    <dependency>
 		      <groupId>org.apache.solr</groupId>
 		      <artifactId>solr-test-framework</artifactId>

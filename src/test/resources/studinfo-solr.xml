@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	">
+
+  <context:annotation-config/>
+  
+  <bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor" />
+  
+  <bean id="solrUpdater" class="no.uis.service.component.studinfosolr.impl.SolrUpdaterImpl">
+    <!--property name="solrServers">
+      <map>
+        <entry key="EMNE_HOST" >
+          <ref bean="emne_host_solr"/>
+        </entry>
+      </map>
+    </property-->
+    <property name="purgeIndexBeforeUpdate" value="true"/>
+    <property name="solrFieldMapping">
+      <description><![CDATA[
+      key: path/property (takes precedence) over propery name
+      value: Solr field name 
+      ]]>
+      </description>
+      <map>
+        <entry key="absForkunnskaperFritekst" value="absForkunnskaperFritekst_t"/>
+        <entry key="adminansvarlig" value="adminansvarlig_json"/>
+        <entry key="antallForelesningstimer" value="antallForelesningstimer_i"/>
+        <entry key="antallUndsemester" value="antallUndsemester_i"/>
+        <entry key="arbeidsformer" value="arbeidsformer_t"/>
+        <entry key="eksamensordning" value="eksamensordning_json"/>
+        <entry key="emnekode" value="kode_s"/>
+        <entry key="kvalifikOgJobbmuligheter" value="kvalifikOgJobbmuligheter_t"/>
+        <entry key="fagansvarlig" value="fagansvarlig_json"/>
+        <entry key="fagpersonListe" value="fagperson_mjson"/>
+        <entry key="finansieringsprosent" value="finansieringsprosent_i"/>
+        <entry key="grunnstudium" value="grunnstudium_b"/>
+        <entry key="heltidsprosent" value="heltidsprosent_i"/>
+        <entry key="inngarIFag" value="inngarIFag_ms"/>
+        <entry key="inngarIStudieprogram" value="inngarIStudieprogram_ms"/>
+        <entry key="innhold" value="innhold_t"/>
+        <entry key="intro" value="intro_t"/>
+        <entry key="kontaktinformasjon" value="kontaktinformasjon_t"/>
+        <entry key="kortsam" value="kortsam_t"/>
+        <entry key="kulltrinnplan" value="kulltrinnplan_b"/>
+        <entry key="laringsutbytte" value="laringsutbytte_t"/>
+        <entry key="litteratur" value="litteratur_t"/>
+        <entry key="obligund" value="obligund_b"/>
+        <entry key="obligUndaktTilleggsinfo" value="obligUndaktTilleggsinfo_t"/>
+        <entry key="opptak" value="opptak_json"/>
+        <entry key="opptaksinformasjon" value="opptaksinformasjon_t"/>
+        <entry key="opptakskrav" value="opptakskrav_t"/>
+        <entry key="periodeEks" value="periodeEks_json"/>
+        <entry key="periodeUnd" value="periodeUnd_json"/>
+        <entry key="rammeplanTekst" value="rammeplanTekst_t"/>
+        <entry key="sprakListe" value="undsprak_json"/>
+        <entry key="statusOblig" value="statusOblig_b"/>
+        <entry key="statusPrivatist" value="statusPrivatist_b"/>
+        <entry key="studentevaluering" value="studentevaluering_t"/>
+        <entry key="studiepoeng" value="studiepoeng_i"/>
+        <entry key="studieprogramkode" value="kode_s"/>
+        <entry key="undsemester" value="undsemester_json"/>
+        <entry key="utdanningsplan" value="utdanningsplan_json"/>
+        <entry key="utenlandsopphold" value="utenlandsopphold_t"/>
+        <entry key="varighet" value="varighet_json"/>
+        <entry key="vurdordning" value="vurdordning_json"/>
+      </map>
+    </property>
+    <property name="typeAdapters">
+      <description><![CDATA[
+      map of Gson Type converters
+      key: class for which the type adapter is registered
+      value: the TypeAdapter
+      ]]>
+      </description>
+      <map>
+        <entry> 
+          <key>
+            <value type="java.lang.Class">javax.xml.datatype.XMLGregorianCalendar</value>
+          </key>
+          <bean class="no.uis.service.component.studinfosolr.impl.CalendarSerializer"/>
+        </entry>
+        <entry>
+          <key>
+            <value type="java.lang.Class">no.uis.service.studinfo.data.Fagperson</value>
+          </key>
+          <bean class="no.uis.service.component.studinfosolr.impl.FagpersonSerializer"/>
+        </entry>
+      </map>
+    </property>
+  </bean>
+
+  <bean id="solrServerEmneNB" class="no.uis.service.component.studinfosolr.impl.SolrServerFactory">
+    <property name="url" value="${solr.server.emne.nb.url}"/>
+    <property name="username" value="${solr.server.username}"/>
+    <property name="password" value="${solr.server.password}"/>
+  </bean>
+  
+  <bean id="emne_host_solr" class="java.lang.Object"/>  
+  
+</beans>

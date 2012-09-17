@@ -12,7 +12,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class DateTimeSolrTest {
 
-  private static final String VAAR = String.valueOf(new char[] {'V', '\u00c5', 'R'});
   private static SolrServer solrServer;
 
   @BeforeClass

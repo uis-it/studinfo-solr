@@ -22,6 +22,8 @@
         <filter class="solr.LowerCaseFilterFactory"/>
       </analyzer>
     </fieldType>
+    
+    <fieldType name="text_literal" class="solr.StrField"/>
   </types>
 
  <fields>   
@@ -35,6 +37,8 @@
    <dynamicField name="*_t" type="text_general" indexed="true" stored="true"/>
    <dynamicField name="*_i" type="int" indexed="true" stored="true"/>
    <dynamicField name="*_b" type="boolean" indexed="true" stored="true"/>
+   <dynamicField name="*_json" type="text_literal" indexed="false" stored="true"/>
+   <dynamicField name="*_mjson" type="text_literal" indexed="false" stored="true" multiValued="true"/>
  </fields>
 
  <!-- field to use to determine and enforce document uniqueness. -->
