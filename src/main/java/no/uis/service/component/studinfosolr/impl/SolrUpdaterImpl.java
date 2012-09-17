@@ -4,16 +4,20 @@ import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import javax.annotation.PostConstruct;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import no.uis.service.component.studinfosolr.SolrUpdater;
 import no.uis.service.fsimport.StudInfoImport.StudinfoType;
@@ -24,6 +28,7 @@ import no.uis.service.studinfo.data.FsSemester;
 import no.uis.service.studinfo.data.FsStudieinfo;
 import no.uis.service.studinfo.data.KravSammensetting;
 import no.uis.service.studinfo.data.Kurs;
+import no.uis.service.studinfo.data.Kursid;
 import no.uis.service.studinfo.data.Kurskategori;
 import no.uis.service.studinfo.data.Studieprogram;
 import no.uis.service.studinfo.data.Utdanningsplan;
@@ -33,6 +38,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
+import org.apache.solr.schema.DateField;
 import org.springframework.beans.BeanUtils;
 
 import com.corepublish.api.Accessor;
@@ -55,9 +61,11 @@ import com.google.gson.TypeAdapter;
 
 public class SolrUpdaterImpl implements SolrUpdater {
 
-  private static final String CATEGORY_STUDINFO = "studinfo";
+  private static final String CATEGORY_STUDINFO = "STUDINFO";
 
   private static final char ID_TOKEN_SEPARATOR = '_';
+  
+  private static final List<String> SKIPPED_PROPERTIES = Arrays.asList("class", "declaringClass");
   
   private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(SolrUpdaterImpl.class);
 
@@ -171,7 +179,9 @@ public class SolrUpdaterImpl implements SolrUpdater {
     addCategories(doc, infoType);
     for (Entry<String, ?> entry : beanProps.entrySet()) {
       String propName = getSolrFieldName(path, entry.getKey());
-      addFieldToDoc(path, doc, entry.getValue(), propName);
+      if (propName != null) {
+        addFieldToDoc(path, doc, entry.getValue(), propName);
+      }
     }
     updateDocument(infoType, infoLanguage, doc);
   }
@@ -197,6 +207,9 @@ public class SolrUpdaterImpl implements SolrUpdater {
         solrFieldName = propName + "_s";
       }
     }
+    if (solrFieldName.isEmpty()) {
+      solrFieldName = null;
+    }
     return solrFieldName;
   }
 
@@ -206,7 +219,7 @@ public class SolrUpdaterImpl implements SolrUpdater {
     Map<String, Object> map = new HashMap<String, Object>();
     for (PropertyDescriptor pd : pdArray) {
       String name = pd.getName();
-      if (!name.equals("class") && !isIsSetProperty(pd)) {
+      if (!isSkippedProperty(name) && !isIsSetProperty(pd)) {
         Object value = getValue(fsType, pd);
         if (value != null) {
           String newPath = path + "/" + name;
@@ -217,6 +230,10 @@ public class SolrUpdaterImpl implements SolrUpdater {
     return map;
   }
 
+  private boolean isSkippedProperty(String name) {
+    return SKIPPED_PROPERTIES.contains(name);
+  }
+
   private boolean isIsSetProperty(PropertyDescriptor pd) {
     if (pd.getReadMethod().getName().startsWith("isSet")) {
       return true;
@@ -224,58 +241,69 @@ public class SolrUpdaterImpl implements SolrUpdater {
     return false;
   }
 
-  private String createId(StudinfoType infoType, Map<String, ?> beanProps, String path) {
+  private String createId(StudinfoType infoType, Map<String, ?> beanmap, String path) {
     switch(infoType) {
       case STUDIEPROGRAM:
         if (path.equals("/studieprogram")) {
-          return formatTokens(infoType, beanProps.get("studieprogramkode"));
+          return formatTokens(infoType, beanmap.get("studieprogramkode"));
         }
+        break;
       case EMNE:
         if (path.equals("/emne")) {
-          return formatTokens(infoType, beanProps.get("emneid"));
+          return formatTokens(infoType, beanmap.get("emneid"));
         }
+        break;
+      case KURS:
+        if (path.equals("/kurs")) {
+          return formatTokens(infoType, beanmap.get("kurskode"), beanmap.get("tidkode"));
+        }
+        break;
         
     }
     return UUID.randomUUID().toString();
   }
 
   private void pushKursToSolr(Kurs kurs) throws Exception {
-    SolrInputDocument doc = new SolrInputDocument();
+    Map<String, Object> beanmap = getDescriptor(kurs, "/kurs");
+    
+    updateDocuments(StudinfoType.KURS, kurs.getSprak(), beanmap, null, "/kurs");
 
-    String courseId = formatTokens(kurs.getKursid().getKurskode(), kurs.getKursid().getTidkode());
-    doc.addField("id", formatTokens(StudinfoType.KURS, courseId));
-
-    addCategories(doc, StudinfoType.KURS);
-
-    doc.addField("name", kurs.getKursnavn());
-    for (Kurskategori kursKat : kurs.getKurskategoriListe()) {
-      doc.addField("course_category_code", kursKat.getKurskategorikode());
-    }
-
-    doc.addField("course_code_s", kurs.getKursid().getKurskode());
-    doc.addField("course_time_code_s", kurs.getKursid().getTidkode());
-    String date = CalendarSerializer.convertToSolrString(kurs.getDatoFristSoknad());
-    if (date != null) {
-      doc.addField("application_deadline_dt", date);
-    }
-    date = CalendarSerializer.convertToSolrString(kurs.getDatoPubliseresFra());
-    if (date != null) {
-      doc.addField("publish_from_dt", date);
-    }
-    date = CalendarSerializer.convertToSolrString(kurs.getDatoPubliseresTil());
-    if (date != null) {
-      doc.addField("publish_to_dt", date);
-    }
-    doc.addField("course_contact_s", kurs.getEmail());
-
-    CPArticleInfo cpinfo = courseDescriptionCache.get().get(courseId);
-    if (cpinfo != null) {
-      doc.addField("cp_article_id_l", cpinfo.getArticleId());
-      doc.addField("cp_category_id_l", cpinfo.getCategoryId());
-      doc.addField("text", cpinfo.getText());
-    }
-
-    updateDocument(StudinfoType.KURS, kurs.getSprak(), doc);
+//    String courseId = createId(StudinfoType.KURS, beanmap, "/kurs");
+//
+//    SolrInputDocument doc = new SolrInputDocument();
+//    doc.addField("id", formatTokens(StudinfoType.KURS, courseId));
+//
+//    addCategories(doc, StudinfoType.KURS);
+//
+//    doc.addField("name", kurs.getKursnavn());
+//    for (Kurskategori kursKat : kurs.getKurskategoriListe()) {
+//      doc.addField("course_category_code", kursKat.getKurskategorikode());
+//    }
+//
+//    doc.addField("course_code_s", kurs.getKursid().getKurskode());
+//    doc.addField("course_time_code_s", kurs.getKursid().getTidkode());
+//    String date = CalendarSerializer.convertToSolrString(kurs.getDatoFristSoknad());
+//    if (date != null) {
+//      doc.addField("application_deadline_dt", date);
+//    }
+//    date = CalendarSerializer.convertToSolrString(kurs.getDatoPubliseresFra());
+//    if (date != null) {
+//      doc.addField("publish_from_dt", date);
+//    }
+//    date = CalendarSerializer.convertToSolrString(kurs.getDatoPubliseresTil());
+//    if (date != null) {
+//      doc.addField("publish_to_dt", date);
+//    }
+//    doc.addField("course_contact_s", kurs.getEmail());
+//
+//    CPArticleInfo cpinfo = courseDescriptionCache.get().get(courseId);
+//    if (cpinfo != null) {
+//      doc.addField("cp_article_id_l", cpinfo.getArticleId());
+//      doc.addField("cp_category_id_l", cpinfo.getCategoryId());
+//      doc.addField("text", cpinfo.getText());
+//    }
+//
+//    updateDocument(StudinfoType.KURS, kurs.getSprak(), doc);
   }
 
   private void pushEmneToSolr(Emne emne) throws Exception {
@@ -489,7 +517,21 @@ public class SolrUpdaterImpl implements SolrUpdater {
         map.put("emnekode", emneid.getEmnekode());
       }
       
-    } else if (isCollectionOfType(value, Fagperson.class)) {
+    } else if (value instanceof Kursid) {
+      Kursid kursid = (Kursid)value;
+      map.put("kurskode", kursid.getKurskode());
+      map.put("tidkode", kursid.getTidkode());
+    
+    } else if (propName.equals("kurskategoriListe")) {
+      @SuppressWarnings("unchecked")
+      List<Kurskategori> kkList = (List<Kurskategori>)value;
+      List<String> kkkList = new ArrayList<String>(kkList.size());
+      for (Kurskategori kk : kkList) {
+        kkkList.add(kk.getKurskategorikode());
+      }
+      map.put(propName, kkkList);
+      
+    } else if (propName.equals("fagpersonListe")) {
       map.put(propName, createJsonArray(value));
       
     } else if(propName.equals("inngarIStudieprogram")) {
@@ -498,9 +540,17 @@ public class SolrUpdaterImpl implements SolrUpdater {
     } else if(propName.equals("inngarIFag")) {
       map.put(propName, createStringArray(value));
       
+    } else if (path.startsWith("/kurs/dato")) {
+      map.put(propName, xmlCalToSolrDateString((XMLGregorianCalendar)value));
+      
     } else { 
       map.put(propName, gson.toJson(value));
     }
+  }
+
+  private String xmlCalToSolrDateString(XMLGregorianCalendar value) {
+    GregorianCalendar gregorianCalendar = value.toGregorianCalendar(TimeZone.getTimeZone("UTC"), null, null);
+    return DateField.formatExternal(gregorianCalendar.getTime());
   }
 
   private List<String> createStringArray(Object value) {
@@ -521,24 +571,6 @@ public class SolrUpdaterImpl implements SolrUpdater {
     return jsonArray;
   }
 
-  private static boolean isCollectionOfType(Object value, Class<?> type) {
-    Class<?> componentType = value.getClass().getComponentType();
-    if (componentType != null && type.isAssignableFrom(componentType)) {
-      return true;
-    }
-
-    if (value instanceof Collection) {
-      Collection<?> coll = (Collection<?>)value;
-      for (Object obj : coll) {
-        if (!type.isAssignableFrom(obj.getClass())) {
-          return false;
-        }
-      }
-      return true;
-    }
-    return false;
-  }
-  
   private static Object getValue(Object fsType, PropertyDescriptor pd) {
     try {
       if (isPropertySet(fsType, pd)) {

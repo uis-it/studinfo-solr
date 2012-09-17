@@ -60,7 +60,7 @@ public class ProgramsSolrTest extends AbstractSolrTestCase {
     updater.setSolrServers(solrServers);
     updater.pushStudieInfo(fsInfo, 2012, FsSemester.HOST, "BOKMÅL");
     
-    SolrParams params = new SolrQuery("cat:studinfo AND cat:STUDIEPROGRAM");
+    SolrParams params = new SolrQuery("cat:STUDINFO AND cat:STUDIEPROGRAM");
     QueryResponse response = solrServer.query(params);
     int status = response.getStatus();
     assertThat(status, is(equalTo(0)));

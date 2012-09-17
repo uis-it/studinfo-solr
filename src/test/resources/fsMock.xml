@@ -5,12 +5,17 @@
 
   <bean id="emneList" class="no.uis.service.component.studinfosolr.StudinfoFactory">
     <!--property name="source" value="file:src/test/data/emne.xml"/-->
-    <property name="source" value="file:///d:/temp/emne2012høstb.xml"/>
+    <property name="source" value="file:///d:/temp/emne2012høstb-demo-processed.xml"/>
   </bean>
   
   <bean id="programList" class="no.uis.service.component.studinfosolr.StudinfoFactory">
     <!--property name="source" value="file:src/test/data/programmer.xml"/-->
-    <property name="source" value="file:///d:/temp/studieprogram2012høstb.xml"/>
+    <property name="source" value="file:///d:/temp/studieprogram2012høstb-processed.xml"/>
+  </bean>
+
+  <bean id="kursList" class="no.uis.service.component.studinfosolr.StudinfoFactory">
+    <!--property name="source" value="file:src/test/data/programmer.xml"/-->
+    <property name="source" value="file:///d:/temp/kurs2012høstb-processed.xml"/>
   </bean>
 
 </beans>

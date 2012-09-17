@@ -31,23 +31,33 @@
         <entry key="antallForelesningstimer" value="antallForelesningstimer_i"/>
         <entry key="antallUndsemester" value="antallUndsemester_i"/>
         <entry key="arbeidsformer" value="arbeidsformer_t"/>
+        <entry key="datoOpptak" value="datoOpptak_dt"/>
+        <entry key="datoOpptakFra" value="datoOpptakFra_dt"/>
+        <entry key="datoPubliseresFra" value="datoPubliseresFra_dt"/>
+        <entry key="datoPubliseresTil" value="datoPubliseresTil_dt"/>
+        <entry key="datoFra" value="datoFra_dt"/>
+        <entry key="desentralUndervisning" value="desentralUndervisning_b"/>
         <entry key="eksamensordning" value="eksamensordning_json"/>
         <entry key="emnekode" value="kode_s"/>
         <entry key="kvalifikOgJobbmuligheter" value="kvalifikOgJobbmuligheter_t"/>
         <entry key="fagansvarlig" value="fagansvarlig_json"/>
         <entry key="fagpersonListe" value="fagperson_mjson"/>
         <entry key="finansieringsprosent" value="finansieringsprosent_i"/>
+        <entry key="fjernundervisning" value="fjernundervisning_b"/>
         <entry key="grunnstudium" value="grunnstudium_b"/>
         <entry key="heltidsprosent" value="heltidsprosent_i"/>
         <entry key="inngarIFag" value="inngarIFag_ms"/>
         <entry key="inngarIStudieprogram" value="inngarIStudieprogram_ms"/>
         <entry key="innhold" value="innhold_t"/>
         <entry key="intro" value="intro_t"/>
+        <entry key="kanTilbys" value="kanTilbys_b"/>
         <entry key="kontaktinformasjon" value="kontaktinformasjon_t"/>
         <entry key="kortsam" value="kortsam_t"/>
         <entry key="kulltrinnplan" value="kulltrinnplan_b"/>
+        <entry key="kurskategoriListe" value="kurskategori_ms"/>
         <entry key="laringsutbytte" value="laringsutbytte_t"/>
         <entry key="litteratur" value="litteratur_t"/>
+        <entry key="nettbasertUndervisning" value="nettbasertUndervisning_b"/>
         <entry key="obligund" value="obligund_b"/>
         <entry key="obligUndaktTilleggsinfo" value="obligUndaktTilleggsinfo_t"/>
         <entry key="opptak" value="opptak_json"/>
@@ -56,6 +66,7 @@
         <entry key="periodeEks" value="periodeEks_json"/>
         <entry key="periodeUnd" value="periodeUnd_json"/>
         <entry key="rammeplanTekst" value="rammeplanTekst_t"/>
+        <entry key="skalAvholdes" value="skalAvholdes_b"/>
         <entry key="sprakListe" value="undsprak_json"/>
         <entry key="statusOblig" value="statusOblig_b"/>
         <entry key="statusPrivatist" value="statusPrivatist_b"/>
@@ -74,6 +85,7 @@
       map of Gson Type converters
       key: class for which the type adapter is registered
       value: the TypeAdapter
+      
       ]]>
       </description>
       <map>
@@ -81,7 +93,13 @@
           <key>
             <value type="java.lang.Class">javax.xml.datatype.XMLGregorianCalendar</value>
           </key>
-          <bean class="no.uis.service.component.studinfosolr.impl.CalendarSerializer"/>
+          <ref bean="calendarAdapter"/>
+        </entry>
+        <entry> 
+          <key>
+            <value type="java.lang.Class">org.apache.xerces.jaxp.datatype.XMLGregorianCalendarImpl</value>
+          </key>
+          <ref bean="calendarAdapter"/>
         </entry>
         <entry>
           <key>
@@ -93,6 +111,8 @@
     </property>
   </bean>
 
+  <bean id="calendarAdapter" class="no.uis.service.component.studinfosolr.impl.CalendarSerializer"/>
+  
   <bean id="solrServerEmneNB" class="no.uis.service.component.studinfosolr.impl.SolrServerFactory">
     <property name="url" value="${solr.server.emne.nb.url}"/>
     <property name="username" value="${solr.server.username}"/>
