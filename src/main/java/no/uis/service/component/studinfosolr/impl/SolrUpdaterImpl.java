@@ -482,6 +482,9 @@ public class SolrUpdaterImpl implements SolrUpdater {
   }
   
   private void addValue(Map<String, Object> map, String propName, Object value, String path) {
+    if (value == null) {
+      return;
+    }
     if (value instanceof String) {
       map.put(propName, value);
     
@@ -543,7 +546,7 @@ public class SolrUpdaterImpl implements SolrUpdater {
     } else if (path.startsWith("/kurs/dato")) {
       map.put(propName, xmlCalToSolrDateString((XMLGregorianCalendar)value));
       
-    } else { 
+    } else {
       map.put(propName, gson.toJson(value));
     }
   }

@@ -93,13 +93,13 @@
           <key>
             <value type="java.lang.Class">javax.xml.datatype.XMLGregorianCalendar</value>
           </key>
-          <ref bean="calendarAdapter"/>
+          <bean class="no.uis.service.component.studinfosolr.impl.CalendarSerializer"/>
         </entry>
-        <entry> 
+        <entry>
           <key>
-            <value type="java.lang.Class">org.apache.xerces.jaxp.datatype.XMLGregorianCalendarImpl</value>
+            <value type="java.lang.Class">no.uis.service.studinfo.data.YESNOType</value>
           </key>
-          <ref bean="calendarAdapter"/>
+          <bean class="no.uis.service.component.studinfosolr.impl.YESNOTypeSerializer"/>
         </entry>
         <entry>
           <key>
