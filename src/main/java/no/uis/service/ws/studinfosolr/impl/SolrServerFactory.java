@@ -1,4 +1,4 @@
-package no.uis.service.component.studinfosolr.impl;
+package no.uis.service.ws.studinfosolr.impl;
 
 import java.net.URL;
 
@@ -11,23 +11,21 @@ import org.springframework.beans.factory.annotation.Required;
 
 public class SolrServerFactory implements FactoryBean<SolrServer> {
 
-  private String url;
+  private URL url;
   private String username;
   private String password;
   private int timeout = 1000;
   private boolean compression = true;
   
   @Required
-  public void setUrl(String url) {
+  public void setUrl(URL url) {
     this.url = url;
   }
 
-  @Required
   public void setUsername(String username) {
     this.username = username;
   }
 
-  @Required
   public void setPassword(String password) {
     this.password = password;
   }
@@ -41,14 +39,13 @@ public class SolrServerFactory implements FactoryBean<SolrServer> {
   }
   
   @Override
-  public SolrServer getObject() throws Exception {
-    
+  public SolrServer getObject() {
     return createServer();
   }
 
-  private SolrServer createServer() throws Exception {
-    HttpClient httpClient = new PreemptBasicAuthHttpClient(new URL(url), username, password);
-    HttpSolrServer server = new HttpSolrServer(url, httpClient, new XMLResponseParser());
+  private SolrServer createServer() {
+    HttpClient httpClient = (username == null ? null : new PreemptBasicAuthHttpClient(url, username, password));
+    HttpSolrServer server = new HttpSolrServer(url.toExternalForm(), httpClient, new XMLResponseParser());
     
     server.setSoTimeout(timeout);
     server.setAllowCompression(compression);

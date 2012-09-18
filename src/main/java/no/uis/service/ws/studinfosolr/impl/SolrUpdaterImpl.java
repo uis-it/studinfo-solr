@@ -1,4 +1,4 @@
-package no.uis.service.component.studinfosolr.impl;
+package no.uis.service.ws.studinfosolr.impl;
 
 import java.beans.PropertyDescriptor;
 import java.io.IOException;
@@ -19,7 +19,6 @@ import java.util.UUID;
 import javax.annotation.PostConstruct;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import no.uis.service.component.studinfosolr.SolrUpdater;
 import no.uis.service.fsimport.StudInfoImport.StudinfoType;
 import no.uis.service.studinfo.data.Emne;
 import no.uis.service.studinfo.data.Emneid;
@@ -33,6 +32,7 @@ import no.uis.service.studinfo.data.Kurskategori;
 import no.uis.service.studinfo.data.Studieprogram;
 import no.uis.service.studinfo.data.Utdanningsplan;
 import no.uis.service.studinfo.data.YESNOType;
+import no.uis.service.ws.studinfosolr.SolrUpdater;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.solr.client.solrj.SolrServer;

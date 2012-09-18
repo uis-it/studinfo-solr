@@ -1,4 +1,4 @@
-package no.uis.service.component.studinfosolr.impl;
+package no.uis.service.ws.studinfosolr.impl;
 
 import java.net.URL;
 

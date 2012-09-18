@@ -1,4 +1,4 @@
-package no.uis.service.component.studinfosolr;
+package no.uis.service.ws.studinfosolr;
 
 import static org.junit.Assert.*;
 

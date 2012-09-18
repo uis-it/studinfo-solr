@@ -1,23 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:jaxws="http://cxf.apache.org/jaxws"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	 http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
 	 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
 	">
 
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="ignoreResourceNotFound" value="true"/>
+    <property name="locations">
+      <list>
+        <value>file:///${catalina.base}/conf/solrupdate.xml</value>
+        <value>file:///${user.home}/solrupdate.xml</value>
+      </list>
+    </property>
+  </bean>
+  
+  <import resource="classpath:fsimportContext.xml"/>
+  
   <context:annotation-config/>
   
   <bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor" />
   
+  <import resource="classpath:META-INF/cxf/cxf.xml" />
+  <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+
+  <jaxws:endpoint 
+    id="studinfoSolrService" 
+    implementor="#studinfoSolr" 
+    address="/studinfosolr" 
+    xmlns:ns="http://studinfosolr.ws.service.uis.no/"
+    serviceName="ns:StudinfoSolrService"
+    endpointName="ns:StudinfoSolrPort">
+    <jaxws:properties>
+      <entry key="mtom-enabled" value="true"/>
+    </jaxws:properties>
+  </jaxws:endpoint>
+
+  <bean id="studinfoSolr" class="no.uis.service.ws.studinfosolr.impl.StudinfoSolrServiceImpl">
+    <property name="studinfoImport" ref="fsStudInfoImport"/>
+    <property name="solrUpdater" ref="solrUpdater"/>
+  </bean>
+
   <bean id="solrUpdater" class="no.uis.service.ws.studinfosolr.impl.SolrUpdaterImpl">
-    <!--property name="solrServers">
+    <property name="solrServers">
       <map>
-        <entry key="EMNE_HOST" >
-          <ref bean="emne_host_solr"/>
-        </entry>
+        <entry key="EMNE_BOKMÅL" value-ref="solrServerNB"/>
+        <entry key="STUDIEPROGRAM_BOKMÅL" value-ref="solrServerNB"/>
+        <entry key="KURS_BOKMÅL" value-ref="solrServerNB"/>
       </map>
-    </property-->
+    </property>
     <property name="purgeIndexBeforeUpdate" value="true"/>
     <property name="solrFieldMapping">
       <description><![CDATA[
@@ -113,12 +147,10 @@
 
   <bean id="calendarAdapter" class="no.uis.service.ws.studinfosolr.json.CalendarSerializer"/>
   
-  <bean id="solrServerEmneNB" class="no.uis.service.ws.studinfosolr.impl.SolrServerFactory">
-    <property name="url" value="${solr.server.emne.nb.url}"/>
-    <property name="username" value="${solr.server.username}"/>
-    <property name="password" value="${solr.server.password}"/>
+  <bean id="solrServerNB" class="no.uis.service.ws.studinfosolr.impl.SolrServerFactory">
+    <property name="url" value="${solr.server.nb.url}"/>
+    <!--property name="username" value="${solr.server.username}"/-->
+    <!--property name="password" value="${solr.server.password}"/-->
   </bean>
-  
-  <bean id="emne_host_solr" class="java.lang.Object"/>  
   
 </beans>

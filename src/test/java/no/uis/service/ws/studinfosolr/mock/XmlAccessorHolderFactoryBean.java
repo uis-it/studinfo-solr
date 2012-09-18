@@ -1,4 +1,4 @@
-package no.uis.service.component.studinfosolr.mock;
+package no.uis.service.ws.studinfosolr.mock;
 
 import static org.easymock.EasyMock.*;
 
