@@ -3,19 +3,19 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
-  <bean id="emneList" class="no.uis.service.ws.studinfosolr.StudinfoFactory">
+  <bean id="emneList" class="no.uis.service.ws.studinfosolr.mock.StudinfoFactory">
     <!--property name="source" value="file:src/test/data/emne.xml"/-->
-    <property name="source" value="file:///d:/temp/emne2012høstb-demo-processed.xml"/>
+    <property name="source" value="file:///d:/temp/fsdata/emne2012høstb-demo-processed.xml"/>
   </bean>
   
-  <bean id="programList" class="no.uis.service.ws.studinfosolr.StudinfoFactory">
+  <bean id="programList" class="no.uis.service.ws.studinfosolr.mock.StudinfoFactory">
     <!--property name="source" value="file:src/test/data/programmer.xml"/-->
-    <property name="source" value="file:///d:/temp/studieprogram2012høstb-processed.xml"/>
+    <property name="source" value="file:///d:/temp/fsdata/studieprogram2012høstb-processed.xml"/>
   </bean>
 
-  <bean id="kursList" class="no.uis.service.ws.studinfosolr.StudinfoFactory">
+  <bean id="kursList" class="no.uis.service.ws.studinfosolr.mock.StudinfoFactory">
     <!--property name="source" value="file:src/test/data/programmer.xml"/-->
-    <property name="source" value="file:///d:/temp/kurs2012høstb-processed.xml"/>
+    <property name="source" value="file:///d:/temp/fsdata/kurs2012høstb-processed.xml"/>
   </bean>
 
 </beans>

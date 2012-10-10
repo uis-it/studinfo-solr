@@ -9,12 +9,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.corepublish.api.Accessor;
 import com.corepublish.api.ArticleQuery;
 import com.corepublish.api.ArticleQueryResult;
 import com.corepublish.impl.defaultt.DefaultArticleQuery;
 import com.corepublish.impl.xml.XmlAccessor;
-import com.corepublish.impl.xml.XmlAccessorHolder;
 import com.corepublish.impl.xml.XmlRequest;
 import com.corepublish.util.DomainUrl;
 

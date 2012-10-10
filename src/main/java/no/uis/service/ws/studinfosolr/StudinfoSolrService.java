@@ -3,8 +3,6 @@ package no.uis.service.ws.studinfosolr;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 
-import no.uis.service.studinfo.data.FsSemester;
-
 @WebService
 public interface StudinfoSolrService {
 

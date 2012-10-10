@@ -3,24 +3,43 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:jaxws="http://cxf.apache.org/jaxws"
 	xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-	 http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
-	 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
-	">
+  xmlns:aop="http://www.springframework.org/schema/aop" 
+  xmlns:tx="http://www.springframework.org/schema/tx"
+  xmlns:http-conf="http://cxf.apache.org/transports/http/configuration"
+  xmlns:sec="http://cxf.apache.org/configuration/security"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+    http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd 
+    http://cxf.apache.org/configuration/security http://cxf.apache.org/schemas/configuration/security.xsd
+    http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd">
 
-  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-    <property name="ignoreResourceNotFound" value="true"/>
-    <property name="locations">
-      <list>
-        <value>file:///${catalina.base}/conf/solrupdate.xml</value>
-        <value>file:///${user.home}/solrupdate.xml</value>
-      </list>
-    </property>
-  </bean>
-  
-  <import resource="classpath:fsimportContext.xml"/>
+  <context:property-placeholder location="file:///${catalina.base}/conf/solrupdate.xml"/>
   
   <context:annotation-config/>
+    
+  <bean id="fsStudInfoImport" class="no.uis.service.fsimport.impl.StudInfoImportImpl">
+    <property name="fsServiceStudInfo">
+      <ref bean="fsWsStudInfo"/>
+    </property>
+    <property name="schemaUrl" value="classpath:fspreprocess.xsl"/>
+  </bean>
+
+  <jaxws:client id="fsWsStudInfo" serviceClass="no.usit.fsws.wsdl.studinfo.StudInfoService"
+    address="${fs.ws.studinfo.url}" username="${fs.ws.username}" password="${fs.ws.password}" >
+    <jaxws:properties>
+      <entry key="mtom-enabled" value="true" />
+    </jaxws:properties>
+  </jaxws:client>
+  
+  <http-conf:conduit name="{http://fsws.usit.no/wsdl/studinfo}StudInfoServicePort.http-conduit">
+    <http-conf:client ConnectionTimeout="${fs.ws.connection.timeout}"
+      ReceiveTimeout="${fs.ws.receive.timeout}" AllowChunking="false"
+      Connection="Keep-Alive" />
+    <http-conf:tlsClientParameters disableCNCheck="true"/>
+  </http-conf:conduit>  
+  
   
   <bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor" />
   
@@ -39,17 +58,12 @@
     </jaxws:properties>
   </jaxws:endpoint>
 
-  <bean id="studinfoSolr" class="no.uis.service.ws.studinfosolr.impl.StudinfoSolrServiceImpl">
-    <property name="studinfoImport" ref="fsStudInfoImport"/>
-    <property name="solrUpdater" ref="solrUpdater"/>
-  </bean>
-
   <bean id="solrUpdater" class="no.uis.service.ws.studinfosolr.impl.SolrUpdaterImpl">
     <property name="solrServers">
       <map>
-        <entry key="EMNE_BOKMÅL" value-ref="solrServerNB"/>
-        <entry key="STUDIEPROGRAM_BOKMÅL" value-ref="solrServerNB"/>
-        <entry key="KURS_BOKMÅL" value-ref="solrServerNB"/>
+        <entry key="B" value-ref="solrServerNB"/>
+        <entry key="N" value-ref="solrServerNN"/>
+        <entry key="E" value-ref="solrServerEN"/>
       </map>
     </property>
     <property name="purgeIndexBeforeUpdate" value="true"/>
@@ -99,6 +113,11 @@
         <entry key="opptakskrav" value="opptakskrav_t"/>
         <entry key="periodeEks" value="periodeEks_json"/>
         <entry key="periodeUnd" value="periodeUnd_json"/>
+        <entry key="PFormkrav" value="pFormkrav_t"/>
+        <entry key="PInnhold" value="pInnhold_t"/>
+        <entry key="PKortintr" value="pKortintr_t"/>
+        <entry key="PProfkval" value="pProfkval_t"/>
+        <entry key="PStudkval" value="pStudkval_t"/>
         <entry key="rammeplanTekst" value="rammeplanTekst_t"/>
         <entry key="skalAvholdes" value="skalAvholdes_b"/>
         <entry key="sprakListe" value="undsprak_json"/>
@@ -145,12 +164,27 @@
     </property>
   </bean>
 
-  <bean id="calendarAdapter" class="no.uis.service.ws.studinfosolr.json.CalendarSerializer"/>
-  
   <bean id="solrServerNB" class="no.uis.service.ws.studinfosolr.impl.SolrServerFactory">
     <property name="url" value="${solr.server.nb.url}"/>
     <!--property name="username" value="${solr.server.username}"/-->
     <!--property name="password" value="${solr.server.password}"/-->
   </bean>
   
+  <bean id="solrServerNN" class="no.uis.service.ws.studinfosolr.impl.SolrServerFactory">
+    <property name="url" value="${solr.server.nn.url}"/>
+    <!--property name="username" value="${solr.server.username}"/-->
+    <!--property name="password" value="${solr.server.password}"/-->
+  </bean>
+  
+  <bean id="solrServerEN" class="no.uis.service.ws.studinfosolr.impl.SolrServerFactory">
+    <property name="url" value="${solr.server.en.url}"/>
+    <!--property name="username" value="${solr.server.username}"/-->
+    <!--property name="password" value="${solr.server.password}"/-->
+  </bean>
+  
+  <bean id="studinfoSolr" class="no.uis.service.ws.studinfosolr.impl.StudinfoSolrServiceImpl">
+    <property name="studinfoImport" ref="fsStudInfoImport"/>
+    <property name="solrUpdater" ref="solrUpdater"/>
+  </bean>
+
 </beans>

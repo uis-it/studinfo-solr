@@ -22,7 +22,6 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import no.uis.service.fsimport.StudInfoImport.StudinfoType;
 import no.uis.service.studinfo.data.Emne;
 import no.uis.service.studinfo.data.Emneid;
-import no.uis.service.studinfo.data.Fagperson;
 import no.uis.service.studinfo.data.FsSemester;
 import no.uis.service.studinfo.data.FsStudieinfo;
 import no.uis.service.studinfo.data.KravSammensetting;
@@ -326,12 +325,11 @@ public class SolrUpdaterImpl implements SolrUpdater {
   private void updateDocument(StudinfoType infoType, String lang, SolrInputDocument doc) throws SolrServerException, IOException {
     SolrServer solrServer = getSolrServer(lang, infoType);
     solrServer.add(doc, 3000);
-    //solrServer.commit(true, true);
   }
 
   private SolrServer getSolrServer(String sprak, StudinfoType studinfoType) {
 
-    return solrServers.get(formatTokens(studinfoType.name(), sprak));
+    return solrServers.get(sprak.substring(0, 1));
   }
 
   private static void addCategories(SolrInputDocument doc, StudinfoType infoType) {
@@ -464,7 +462,6 @@ public class SolrUpdaterImpl implements SolrUpdater {
     int validFromYear = ks.getArstallGjelderFra().getYear();
     
     FsSemester validFromSemester = ks.getTerminkodeGjelderFra();
-    
     int _catalogYear = catalogYear .get();
     
     if (validFromYear < _catalogYear) {
@@ -473,7 +470,7 @@ public class SolrUpdaterImpl implements SolrUpdater {
     
     if (validFromYear == _catalogYear) {
       FsSemester _catalogSemester = catalogSemester.get();
-      if (_catalogSemester.equals(FsSemester.HOST) && validFromSemester.equals(FsSemester.VAR)) {
+      if (_catalogSemester.equals(FsSemester.HOST) && FsSemester.VAR.equals(validFromSemester)) {
         return true;
       }
     }

@@ -17,7 +17,7 @@
 		<inceptionYear>2012</inceptionYear>
 
     <properties>
-      <spring.version>3.0.6.RELEASE</spring.version>
+      <spring.version>3.0.7.RELEASE</spring.version>
       <solr.version>4.0.0-BETA</solr.version>
       <jetty.version>6.1.14</jetty.version>
       <cxf.version>2.4.0</cxf.version>
@@ -62,7 +62,7 @@
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
-            <version>1.2.15</version>
+            <version>1.2.16</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
@@ -106,7 +106,7 @@
 				<dependency>
 						<groupId>no.uis.service.component</groupId>
 						<artifactId>fs-import</artifactId>
-						<version>1.2.1</version>
+						<version>1.2.5</version>
 				</dependency>
 				<dependency>
 						<groupId>log4j</groupId>

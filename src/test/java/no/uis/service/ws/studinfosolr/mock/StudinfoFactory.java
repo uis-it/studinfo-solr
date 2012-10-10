@@ -1,4 +1,4 @@
-package no.uis.service.ws.studinfosolr;
+package no.uis.service.ws.studinfosolr.mock;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
