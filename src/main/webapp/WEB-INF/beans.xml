@@ -18,7 +18,9 @@
   <context:property-placeholder location="file:///${catalina.base}/conf/solrupdate.xml"/>
   
   <context:annotation-config/>
-    
+  
+  <import resource="classpath:fsimportContext.xml"/>
+  
   <bean id="fsStudInfoImport" class="no.uis.service.fsimport.impl.StudInfoImportImpl">
     <property name="fsServiceStudInfo">
       <ref bean="fsWsStudInfo"/>
@@ -130,6 +132,7 @@
         <entry key="utdanningsplan" value="utdanningsplan_json"/>
         <entry key="utenlandsopphold" value="utenlandsopphold_t"/>
         <entry key="varighet" value="varighet_json"/>
+        <entry key="vektingsreduksjon" value="vektingsreduksjon_json"/>
         <entry key="vurdordning" value="vurdordning_json"/>
       </map>
     </property>

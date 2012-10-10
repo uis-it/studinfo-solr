@@ -40,8 +40,8 @@ public class KursSolrTest extends AbstractSolrTestCase {
     }
     bf = new ClassPathXmlApplicationContext(new String[] {
       "studinfo-solr.xml",
-      "fsMock.xml"
-      ,"cpmock.xml"});
+      "fsMock.xml",
+      "cpmock.xml"});
     
     fsInfo = bf.getBean("kursList", FsStudieinfo.class);
   }

@@ -39,7 +39,7 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService {
   public void updateSolrEmne(int year, String semester, String language) throws SolrUpdateException {
     try {
       FsSemester fsSemester = FsSemester.valueOf(semester);
-      FsStudieinfo fsinfo = studinfoImport.fetchSubjects(217, year, semester, language);
+      FsStudieinfo fsinfo = studinfoImport.fetchSubjects(217, year, fsSemester.toString(), language);
       solrUpdater.pushStudieInfo(fsinfo, year, fsSemester, language);
     } catch(Exception e) {
       log.error(String.format("updateSolrKurs: %d, %s, %s", year, semester, language), e);
