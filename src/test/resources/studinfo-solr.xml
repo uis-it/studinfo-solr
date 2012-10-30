@@ -99,12 +99,6 @@
         </entry>
         <entry>
           <key>
-            <value type="java.lang.Class">no.uis.service.studinfo.data.YESNOType</value>
-          </key>
-          <bean class="no.uis.service.ws.studinfosolr.json.YESNOTypeSerializer"/>
-        </entry>
-        <entry>
-          <key>
             <value type="java.lang.Class">no.uis.service.studinfo.data.Fagperson</value>
           </key>
           <bean class="no.uis.service.ws.studinfosolr.json.FagpersonSerializer"/>

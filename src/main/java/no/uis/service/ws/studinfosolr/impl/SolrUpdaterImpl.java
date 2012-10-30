@@ -30,7 +30,6 @@ import no.uis.service.studinfo.data.Kursid;
 import no.uis.service.studinfo.data.Kurskategori;
 import no.uis.service.studinfo.data.Studieprogram;
 import no.uis.service.studinfo.data.Utdanningsplan;
-import no.uis.service.studinfo.data.YESNOType;
 import no.uis.service.ws.studinfosolr.SolrUpdater;
 
 import org.apache.commons.lang.StringUtils;
@@ -490,9 +489,6 @@ public class SolrUpdaterImpl implements SolrUpdater {
     
     } else if (value instanceof Number) {
       map.put(propName, value);
-    
-    } else if (value instanceof YESNOType) {
-      map.put(propName, value.equals(YESNOType.J) ? Boolean.TRUE : Boolean.FALSE);
     
     } else if(value instanceof Utdanningsplan) {
       Utdanningsplan uplan = (Utdanningsplan)value;

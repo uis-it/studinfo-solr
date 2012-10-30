@@ -25,7 +25,7 @@
     <property name="fsServiceStudInfo">
       <ref bean="fsWsStudInfo"/>
     </property>
-    <property name="schemaUrl" value="classpath:fspreprocess.xsl"/>
+    <property name="transformerUrl" value="classpath:fspreprocess.xsl"/>
   </bean>
 
   <jaxws:client id="fsWsStudInfo" serviceClass="no.usit.fsws.wsdl.studinfo.StudInfoService"
@@ -150,12 +150,6 @@
             <value type="java.lang.Class">javax.xml.datatype.XMLGregorianCalendar</value>
           </key>
           <bean class="no.uis.service.ws.studinfosolr.json.CalendarSerializer"/>
-        </entry>
-        <entry>
-          <key>
-            <value type="java.lang.Class">no.uis.service.studinfo.data.YESNOType</value>
-          </key>
-          <bean class="no.uis.service.ws.studinfosolr.json.YESNOTypeSerializer"/>
         </entry>
         <entry>
           <key>
