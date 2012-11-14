@@ -1,10 +1,8 @@
 package no.uis.service.ws.studinfosolr.impl;
 
-import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.GregorianCalendar;
@@ -20,6 +18,8 @@ import javax.annotation.PostConstruct;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import no.uis.service.fsimport.StudInfoImport.StudinfoType;
+import no.uis.service.fsimport.util.PropertyInfo;
+import no.uis.service.fsimport.util.PropertyInfoUtils;
 import no.uis.service.studinfo.data.Emne;
 import no.uis.service.studinfo.data.Emneid;
 import no.uis.service.studinfo.data.FsSemester;
@@ -32,12 +32,10 @@ import no.uis.service.studinfo.data.Studieprogram;
 import no.uis.service.studinfo.data.Utdanningsplan;
 import no.uis.service.ws.studinfosolr.SolrUpdater;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.schema.DateField;
-import org.springframework.beans.BeanUtils;
 
 import com.corepublish.api.Accessor;
 import com.corepublish.api.Article;
@@ -63,8 +61,6 @@ public class SolrUpdaterImpl implements SolrUpdater {
 
   private static final char ID_TOKEN_SEPARATOR = '_';
   
-  private static final List<String> SKIPPED_PROPERTIES = Arrays.asList("class", "declaringClass");
-  
   private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(SolrUpdaterImpl.class);
 
   private Map<String, SolrServer> solrServers;
@@ -79,8 +75,6 @@ public class SolrUpdaterImpl implements SolrUpdater {
 
   private Gson gson;
   private Map<Class<?>, TypeAdapter<?>> typeAdapters;
-
-  private static final Object[] NULL_OBJECTS = (Object[])null;
 
   @PostConstruct
   public void init() {
@@ -166,7 +160,7 @@ public class SolrUpdaterImpl implements SolrUpdater {
   }
 
   private void pushProgramToSolr(Studieprogram prog) throws Exception {
-    Map<String, Object> beanmap = getDescriptor(prog, "/studieprogram");
+    Map<String, Object> beanmap = getBeanMap(prog, "/studieprogram");
     updateDocuments(StudinfoType.STUDIEPROGRAM, prog.getSprak(), beanmap, null, "/studieprogram");
   }
 
@@ -211,32 +205,19 @@ public class SolrUpdaterImpl implements SolrUpdater {
     return solrFieldName;
   }
 
-  private Map<String, Object> getDescriptor(Object fsType, String path) {
+  private Map<String, Object> getBeanMap(Object fsType, String path) {
     Class<?> klass = fsType.getClass();
-    PropertyDescriptor[] pdArray = BeanUtils.getPropertyDescriptors(klass);
+    List<PropertyInfo> pinfos = PropertyInfoUtils.getPropertyInfos(klass);
     Map<String, Object> map = new HashMap<String, Object>();
-    for (PropertyDescriptor pd : pdArray) {
-      String name = pd.getName();
-      if (!isSkippedProperty(name) && !isIsSetProperty(pd)) {
-        Object value = getValue(fsType, pd);
-        if (value != null) {
-          String newPath = path + "/" + name;
-          addValue(map, name, value, newPath);
-        }
+    for (PropertyInfo pi : pinfos) {
+      String name = pi.getPropName();
+      Object value = getValue(fsType, pi);
+      if (value != null) {
+        String newPath = path + "/" + name;
+        addValue(map, name, value, newPath);
       }
     }
     return map;
-  }
-
-  private boolean isSkippedProperty(String name) {
-    return SKIPPED_PROPERTIES.contains(name);
-  }
-
-  private boolean isIsSetProperty(PropertyDescriptor pd) {
-    if (pd.getReadMethod().getName().startsWith("isSet")) {
-      return true;
-    }
-    return false;
   }
 
   private String createId(StudinfoType infoType, Map<String, ?> beanmap, String path) {
@@ -262,7 +243,7 @@ public class SolrUpdaterImpl implements SolrUpdater {
   }
 
   private void pushKursToSolr(Kurs kurs) throws Exception {
-    Map<String, Object> beanmap = getDescriptor(kurs, "/kurs");
+    Map<String, Object> beanmap = getBeanMap(kurs, "/kurs");
     
     updateDocuments(StudinfoType.KURS, kurs.getSprak(), beanmap, null, "/kurs");
 
@@ -306,7 +287,7 @@ public class SolrUpdaterImpl implements SolrUpdater {
 
   private void pushEmneToSolr(Emne emne) throws Exception {
     
-    Map<String, Object> beanmap = getDescriptor(emne, "/emne");
+    Map<String, Object> beanmap = getBeanMap(emne, "/emne");
     if (!beanmap.containsKey("kortsam")) {
       
       Object kortsam = beanmap.get("intro");
@@ -567,36 +548,23 @@ public class SolrUpdaterImpl implements SolrUpdater {
     return jsonArray;
   }
 
-  private static Object getValue(Object fsType, PropertyDescriptor pd) {
+  private static Object getValue(Object fsType, PropertyInfo pi) {
     try {
-      if (isPropertySet(fsType, pd)) {
-        Method rm = pd.getReadMethod();
-        if (rm != null) {
-          return rm.invoke(fsType, NULL_OBJECTS);
+      Method mIsSet = pi.getIsSet();
+      if (mIsSet != null) {
+        if ((boolean)mIsSet.invoke(fsType) == false) {
+          return null;
         }
+      }
+      
+      Method mGet = pi.getGet();
+      if (mGet != null) {
+        return mGet.invoke(fsType);
       }
     } catch(Exception ex) {
-      log.error("get " + pd.getName(), ex);
+      log.error("get " + pi.getPropName(), ex);
     }
     return null;
-  }
-
-  private static boolean isPropertySet(Object fsType, PropertyDescriptor pd) throws Exception {
-    boolean useValue = true;
-    
-    String methodName = "isSet"+StringUtils.capitalize(pd.getName());
-    try {
-      Method isSetMethod = fsType.getClass().getMethod(methodName);
-      if (isSetMethod != null) {
-        Boolean isSet = (Boolean)isSetMethod.invoke(fsType, NULL_OBJECTS);
-        if (!isSet.booleanValue()) {
-          useValue = false;
-        }
-      }
-    } catch(NoSuchMethodException ex) {
-      log.info(methodName, ex);
-    }
-    return useValue;
   }
 
   private static class CPArticleInfo {

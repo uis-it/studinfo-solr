@@ -2,8 +2,11 @@ package no.uis.service.ws.studinfosolr;
 
 import static org.hamcrest.CoreMatchers.*;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
@@ -12,6 +15,7 @@ import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.util.AbstractSolrTestCase;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.BeanFactory;
@@ -27,16 +31,22 @@ public class ProgramsSolrTest extends AbstractSolrTestCase {
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    String[] langs = {"b", "n", "e"};
+    Properties configProps = new Properties();
+    File configFile = new File(System.getProperty("user.home"), "studinfo-solr.xml");
+    configProps.loadFromXML(new FileInputStream(configFile));
+//    String[] langs = {"B", "N", "E"};
+    String[] langs = {"B"};
     for (String lang : langs) {
-      String solrServerUrl = System.getProperty("solr.server.url."+lang);
+      String solrServerUrl = configProps.getProperty(String.format("solr.server.%s.url", lang));
       SolrServer solrServer;
       if (solrServerUrl != null) {
-        solrServer = new HttpSolrServer(solrServerUrl);
-      } else {
-        solrServer = new EmbeddedSolrServer(h.getCoreContainer(), h.getCore().getName());
+        if (solrServerUrl.equalsIgnoreCase("embedded")) {
+          solrServer = new EmbeddedSolrServer(h.getCoreContainer(), h.getCore().getName());
+        } else {
+          solrServer = new HttpSolrServer(solrServerUrl);
+        }
+        solrServerMap.put(lang, solrServer);
       }
-      solrServerMap.put(lang.toUpperCase(), solrServer);
     }
     
     StaticApplicationContext bfParent = new StaticApplicationContext();
@@ -61,6 +71,8 @@ public class ProgramsSolrTest extends AbstractSolrTestCase {
   }
   
   private void testProgram(String lang) throws Exception {
+    Assume.assumeNotNull(solrServerMap.get(lang));
+
     StudinfoSolrService service = bf.getBean("studinfoSolrService", StudinfoSolrService.class);
     service.updateSolrStudieprogram(2012, "HOST", lang);
     
