@@ -1,60 +1,158 @@
 package no.uis.service.ws.studinfosolr.mock;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringReader;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.events.XMLEvent;
-import javax.xml.stream.util.EventReaderDelegate;
-import javax.xml.stream.util.StreamReaderDelegate;
+import no.usit.fsws.wsdl.studinfo.StudInfoService;
 
-import no.uis.service.studinfo.data.FsStudieinfo;
-
-import org.springframework.beans.factory.FactoryBean;
+import org.apache.cxf.helpers.IOUtils;
 import org.springframework.core.io.Resource;
 
-public class StudinfoFactory implements FactoryBean<FsStudieinfo> {
+public class StudinfoFactory implements StudInfoService {
 
-  private Resource sourceFile;
+  private File programSource;
+  private File emneSource;
+  private File kursSource;
 
-  @Override
-  public FsStudieinfo getObject() throws Exception {
-    FsStudieinfo info = unmarshalSource();
-    
-    return info;
+  public void setProgramSource(File programSource) {
+    this.programSource = programSource;
   }
 
-  private FsStudieinfo unmarshalSource() throws IOException, FactoryConfigurationError, XMLStreamException, JAXBException {
-    XMLInputFactory xif = XMLInputFactory.newFactory();
-    
-    XMLStreamReader xsr = xif.createXMLStreamReader(new InputStreamReader(sourceFile.getInputStream()));
-
-    JAXBContext jc = JAXBContext.newInstance(FsStudieinfo.class);
-    Unmarshaller um = jc.createUnmarshaller();
-
-    FsStudieinfo info = (FsStudieinfo)um.unmarshal(xsr);
-    return info;
-  }
-
-  @Override
-  public Class<?> getObjectType() {
-    return FsStudieinfo.class;
-  }
-
-  @Override
-  public boolean isSingleton() {
-    return false;
+  public void setEmneSource(File emneSource) {
+    this.emneSource = emneSource;
   }
   
-  public void setSource(Resource src) {
-    this.sourceFile = src;
+  public void setKursSource(File kursSource) {
+    this.kursSource = kursSource;
+  }
+
+  @Override
+  public String getEksamenSI(Integer institusjonsnr, Integer faknr,
+      Integer instituttnr,
+      Integer gruppenr,
+      Integer arstall,
+      String terminkode,
+      String sprak)
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public String getStudieprogramSI(Integer arstall,
+      String terminkode,
+      Integer medUPinfo,
+      String studieprogramkode,
+      Integer institusjonsnr,
+      Integer faknr,
+      Integer instituttnr,
+      Integer gruppenr,
+      String sprak)
+  {
+    try {
+      return IOUtils.toString(new FileInputStream(programSource), "UTF-8");
+    } catch(IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @Override
+  public String getKodeSI(Integer arstall, String terminkode, String sprak)
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public String getEmneSI(Integer institusjonsnr,
+      String emnekode,
+      String versjonskode,
+      Integer faknr,
+      Integer instituttnr,
+      Integer gruppenr,
+      Integer arstall,
+      String terminkode,
+      String sprak)
+  {
+    try {
+      return IOUtils.toString(new FileInputStream(emneSource), "UTF-8");
+    } catch(IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @Override
+  public String getFagpersonSI(Integer arstall,
+      String terminkode,
+      Integer fodselsdato,
+      Integer personnr,
+      Integer institusjonsnr,
+      Integer faknr,
+      Integer instituttnr,
+      Integer gruppenr,
+      String sprak)
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public String getStudieretningSI(Integer arstall,
+      String terminkode,
+      String studieretningkode,
+      Integer institusjonsnr,
+      Integer faknr,
+      Integer instituttnr,
+      Integer gruppenr,
+      String sprak)
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public String getStedSI(Integer institusjonsnr,
+      Integer faknr,
+      Integer instituttnr,
+      Integer gruppenr,
+      Integer arstall,
+      String terminkode,
+      String sprak)
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public String getKursSI(Integer institusjonsnr,
+      Integer faknr,
+      Integer instituttnr,
+      Integer gruppenr,
+      String sprak)
+  {
+    try {
+      return IOUtils.toString(new FileInputStream(kursSource), "UTF-8");
+    } catch(IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @Override
+  public String getUndervisningSI(Integer institusjonsnr,
+      Integer faknr,
+      Integer instituttnr,
+      Integer gruppenr,
+      Integer arstall,
+      String terminkode,
+      String emnekode,
+      String versjonskode,
+      Integer fraStudieNiva,
+      Integer tilStudieNiva,
+      String sprak)
+  {
+    // TODO Auto-generated method stub
+    return null;
   }
 }

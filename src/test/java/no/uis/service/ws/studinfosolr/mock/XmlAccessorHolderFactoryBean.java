@@ -50,7 +50,7 @@ public class XmlAccessorHolderFactoryBean implements FactoryBean<XmlAccessorHold
     DefaultNewTextElement mainText = new DefaultNewTextElement();
     mainText.setProgrammaticName("mainText");
     DefaultRichText content = new DefaultRichText();
-    Token token = new DefaultHtmlFragmentToken("This is <b>test</b> text");
+    Token token = new DefaultHtmlFragmentToken("This is <b>Pasientsikkerhet</b> text");
     content.addToken(token);
     mainText.setContent(content);
     elements.add(mainText);
@@ -64,8 +64,8 @@ public class XmlAccessorHolderFactoryBean implements FactoryBean<XmlAccessorHold
     @SuppressWarnings("unchecked")
     List<Integer> anyArticleIds = anyObject(List.class);
     expect(accessor.getArticles(anyArticleIds)).andReturn(Arrays.asList((Article)article)).atLeastOnce();
-    expect(accessor.getProgrammaticElementObjectValue(eq(kurskode))).andReturn("PBYGG").atLeastOnce();
-    expect(accessor.getProgrammaticElementObjectValue(eq(tidskode))).andReturn("2011V").atLeastOnce();
+    expect(accessor.getProgrammaticElementObjectValue(eq(kurskode))).andReturn("DIGIMATTE").atLeastOnce();
+    expect(accessor.getProgrammaticElementObjectValue(eq(tidskode))).andReturn("2012H").atLeastOnce();
     
     replay(accessor, holder);
     return holder;

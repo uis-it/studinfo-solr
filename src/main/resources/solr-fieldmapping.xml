@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+  <util:map id="solrFieldMapping">
+    <description><![CDATA[
+      key: path/property (takes precedence) over propery name
+      value: Solr field name 
+      ]]>
+    </description>
+    <entry key="absForkunnskaperFritekst" value="absForkunnskaperFritekst_t"/>
+    <entry key="adminansvarlig" value="adminansvarlig_json"/>
+    <entry key="antallForelesningstimer" value="antallForelesningstimer_i"/>
+    <entry key="antallUndsemester" value="antallUndsemester_i"/>
+    <entry key="arbeidsformer" value="arbeidsformer_t"/>
+    <entry key="cp_article_id" value="cp_article_id_l"/>
+    <entry key="cp_category_id" value="cp_category_id_l"/>
+    <entry key="cp_text" value="cp_text_ht"/>
+    <entry key="datoFra" value="datoFra_dt"/>
+    <entry key="datoFristSoknad" value="datoFristSoknad_dt"/>
+    <entry key="datoOpptak" value="datoOpptak_dt"/>
+    <entry key="datoOpptakFra" value="datoOpptakFra_dt"/>
+    <entry key="datoOpptakTil" value="datoOpptakTil_dt"/>
+    <entry key="datoPubliseresFra" value="datoPubliseresFra_dt"/>
+    <entry key="datoPubliseresTil" value="datoPubliseresTil_dt"/>
+    <entry key="desentralUndervisning" value="desentralUndervisning_b"/>
+    <entry key="eksamensordning" value="eksamensordning_json"/>
+    <entry key="emnekode" value="kode_s"/>
+    <entry key="kvalifikOgJobbmuligheter" value="kvalifikOgJobbmuligheter_t"/>
+    <entry key="fagansvarlig" value="fagansvarlig_json"/>
+    <entry key="fagpersonListe" value="fagperson_mjson"/>
+    <entry key="finansieringsprosent" value="finansieringsprosent_i"/>
+    <entry key="fjernundervisning" value="fjernundervisning_b"/>
+    <entry key="grunnstudium" value="grunnstudium_b"/>
+    <entry key="heltidsprosent" value="heltidsprosent_i"/>
+    <entry key="inngarIFag" value="inngarIFag_ms"/>
+    <entry key="inngarIStudieprogram" value="inngarIStudieprogram_json"/>
+    <entry key="innhold" value="innhold_t"/>
+    <entry key="intro" value="intro_t"/>
+    <entry key="kanTilbys" value="kanTilbys_b"/>
+    <entry key="kontaktinformasjon" value="kontaktinformasjon_t"/>
+    <entry key="kortsam" value="kortsam_t"/>
+    <entry key="kulltrinnplan" value="kulltrinnplan_b"/>
+    <entry key="kurskategoriListe" value="kurskategori_ms"/>
+    <entry key="kursid" value="kode_s"/>
+    <entry key="laringsutbytte" value="laringsutbytte_t"/>
+    <entry key="litteratur" value="litteratur_t"/>
+    <entry key="nettbasertUndervisning" value="nettbasertUndervisning_b"/>
+    <entry key="obligund" value="obligund_json"/>
+    <entry key="obligUndaktTilleggsinfo" value="obligUndaktTilleggsinfo_t"/>
+    <entry key="opptak" value="opptak_json"/>
+    <entry key="opptaksinformasjon" value="opptaksinformasjon_t"/>
+    <entry key="opptakskrav" value="opptakskrav_t"/>
+    <entry key="periodeEks" value="periodeEks_json"/>
+    <entry key="periodeUnd" value="periodeUnd_json"/>
+    <entry key="pFormkrav" value="pFormkrav_t"/>
+    <entry key="pInnhold" value="pInnhold_t"/>
+    <entry key="pKortintr" value="pKortintr_t"/>
+    <entry key="pProfkval" value="pProfkval_t"/>
+    <entry key="pStudkval" value="pStudkval_t"/>
+    <entry key="rammeplanTekst" value="rammeplanTekst_t"/>
+    <entry key="skalAvholdes" value="skalAvholdes_b"/>
+    <entry key="sprakListe" value="undsprak_json"/>
+    <entry key="statusOblig" value="statusOblig_b"/>
+    <entry key="statusPrivatist" value="statusPrivatist_b"/>
+    <entry key="studentevaluering" value="studentevaluering_t"/>
+    <entry key="studiepoeng" value="studiepoeng_i"/>
+    <entry key="studieprogramkode" value="kode_s"/>
+    <entry key="undsemester" value="undsemester_json"/>
+    <entry key="utdanningsplan" value="utdanningsplan_json"/>
+    <entry key="utenlandsopphold" value="utenlandsopphold_t"/>
+    <entry key="varighet" value="varighet_json"/>
+    <entry key="vektingsreduksjon" value="vektingsreduksjon_json"/>
+    <entry key="vurdordning" value="vurdordning_json"/>
+  </util:map>
+  
+</beans>

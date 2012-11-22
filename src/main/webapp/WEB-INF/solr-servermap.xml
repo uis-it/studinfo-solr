@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+  <util:map id="solrServerMap">
+    <entry key="B">
+      <bean class="no.uis.service.ws.studinfosolr.impl.SolrServerFactory">
+        <property name="url" value="${solr.server.nb.url}"/>
+        <!--property name="username" value="${solr.server.username}"/-->
+        <!--property name="password" value="${solr.server.password}"/-->
+      </bean>
+    </entry>
+    
+    <entry key="N">
+      <bean class="no.uis.service.ws.studinfosolr.impl.SolrServerFactory">
+        <property name="url" value="${solr.server.nn.url}"/>
+        <!--property name="username" value="${solr.server.username}"/-->
+        <!--property name="password" value="${solr.server.password}"/-->
+      </bean>
+    </entry>
+    
+    <entry key="E">
+      <bean class="no.uis.service.ws.studinfosolr.impl.SolrServerFactory">
+        <property name="url" value="${solr.server.en.url}"/>
+        <!--property name="username" value="${solr.server.username}"/-->
+        <!--property name="password" value="${solr.server.password}"/-->
+      </bean>
+    </entry>
+  </util:map>
+</beans>

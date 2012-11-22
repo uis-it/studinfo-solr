@@ -2,109 +2,48 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:util="http://www.springframework.org/schema/util"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 	 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+   http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
 	">
 	
-  <context:property-placeholder location="file:///${user.home}/studinfo-solr.xml"/>
+  <context:property-placeholder location="file:///${user.home}/ws-studinfo-solr.xml"/>
 
   <context:annotation-config/>
-
-  <import resource="classpath:fsimportContext.xml"/>
-  
   <bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor" />
+
+  <import resource="classpath:solr-fieldmapping.xml"/>
+  <import resource="classpath:solr-typemap.xml"/>
+  
+  <bean id="fsStudInfoImport" class="no.uis.service.fsimport.impl.StudInfoImportImpl">
+    <property name="fsServiceStudInfo">
+      <bean class="no.uis.service.ws.studinfosolr.mock.StudinfoFactory">
+        <property name="emneSource" value="src/test/data/emner.xml"/>
+        <property name="programSource" value="src/test/data/programmer.xml"/>
+        <property name="kursSource" value="src/test/data/kurser.xml"/>
+      </bean>
+    </property>
+    <property name="transformerUrl" value="classpath:fspreprocess.xsl"/>
+  </bean>
   
   <bean id="solrUpdater" class="no.uis.service.ws.studinfosolr.impl.SolrUpdaterImpl">
     <property name="solrServers" ref="solrServerMap"/>
     <property name="purgeIndexBeforeUpdate" value="true"/>
-    <property name="solrFieldMapping">
-      <description><![CDATA[
-      key: path/property (takes precedence) over propery name
-      value: Solr field name 
-      ]]>
-      </description>
-      <map>
-        <entry key="absForkunnskaperFritekst" value="absForkunnskaperFritekst_t"/>
-        <entry key="adminansvarlig" value="adminansvarlig_json"/>
-        <entry key="antallForelesningstimer" value="antallForelesningstimer_i"/>
-        <entry key="antallUndsemester" value="antallUndsemester_i"/>
-        <entry key="arbeidsformer" value="arbeidsformer_t"/>
-        <entry key="datoOpptak" value="datoOpptak_dt"/>
-        <entry key="datoOpptakFra" value="datoOpptakFra_dt"/>
-        <entry key="datoPubliseresFra" value="datoPubliseresFra_dt"/>
-        <entry key="datoPubliseresTil" value="datoPubliseresTil_dt"/>
-        <entry key="datoFra" value="datoFra_dt"/>
-        <entry key="desentralUndervisning" value="desentralUndervisning_b"/>
-        <entry key="eksamensordning" value="eksamensordning_json"/>
-        <entry key="emnekode" value="kode_s"/>
-        <entry key="kvalifikOgJobbmuligheter" value="kvalifikOgJobbmuligheter_t"/>
-        <entry key="fagansvarlig" value="fagansvarlig_json"/>
-        <entry key="fagpersonListe" value="fagperson_mjson"/>
-        <entry key="finansieringsprosent" value="finansieringsprosent_i"/>
-        <entry key="fjernundervisning" value="fjernundervisning_b"/>
-        <entry key="grunnstudium" value="grunnstudium_b"/>
-        <entry key="heltidsprosent" value="heltidsprosent_i"/>
-        <entry key="inngarIFag" value="inngarIFag_ms"/>
-        <entry key="inngarIStudieprogram" value="inngarIStudieprogram_ms"/>
-        <entry key="innhold" value="innhold_t"/>
-        <entry key="intro" value="intro_t"/>
-        <entry key="kanTilbys" value="kanTilbys_b"/>
-        <entry key="kontaktinformasjon" value="kontaktinformasjon_t"/>
-        <entry key="kortsam" value="kortsam_t"/>
-        <entry key="kulltrinnplan" value="kulltrinnplan_b"/>
-        <entry key="kurskategoriListe" value="kurskategori_ms"/>
-        <entry key="laringsutbytte" value="laringsutbytte_t"/>
-        <entry key="litteratur" value="litteratur_t"/>
-        <entry key="nettbasertUndervisning" value="nettbasertUndervisning_b"/>
-        <entry key="obligund" value="obligund_b"/>
-        <entry key="obligUndaktTilleggsinfo" value="obligUndaktTilleggsinfo_t"/>
-        <entry key="opptak" value="opptak_json"/>
-        <entry key="opptaksinformasjon" value="opptaksinformasjon_t"/>
-        <entry key="opptakskrav" value="opptakskrav_t"/>
-        <entry key="periodeEks" value="periodeEks_json"/>
-        <entry key="periodeUnd" value="periodeUnd_json"/>
-        <entry key="PFormkrav" value="pFormkrav_t"/>
-        <entry key="PInnhold" value="pInnhold_t"/>
-        <entry key="PKortintr" value="pKortintr_t"/>
-        <entry key="PProfkval" value="pProfkval_t"/>
-        <entry key="PStudkval" value="pStudkval_t"/>
-        <entry key="rammeplanTekst" value="rammeplanTekst_t"/>
-        <entry key="skalAvholdes" value="skalAvholdes_b"/>
-        <entry key="sprakListe" value="undsprak_json"/>
-        <entry key="statusOblig" value="statusOblig_b"/>
-        <entry key="statusPrivatist" value="statusPrivatist_b"/>
-        <entry key="studentevaluering" value="studentevaluering_t"/>
-        <entry key="studiepoeng" value="studiepoeng_i"/>
-        <entry key="studieprogramkode" value="kode_s"/>
-        <entry key="undsemester" value="undsemester_json"/>
-        <entry key="utdanningsplan" value="utdanningsplan_json"/>
-        <entry key="utenlandsopphold" value="utenlandsopphold_t"/>
-        <entry key="varighet" value="varighet_json"/>
-        <entry key="vurdordning" value="vurdordning_json"/>
-      </map>
+    <property name="cpUrl">
+      <bean class="com.corepublish.util.DomainUrl">
+        <constructor-arg index="0" value="${cplib4j.url}"/>
+        <constructor-arg index="1" value="${cplib4j.domainId}"/>
+      </bean>
     </property>
-    <property name="typeAdapters">
-      <description><![CDATA[
-      map of Gson Type converters
-      key: class for which the type adapter is registered
-      value: the TypeAdapter
-      ]]>
-      </description>
-      <map>
-        <entry> 
-          <key>
-            <value type="java.lang.Class">javax.xml.datatype.XMLGregorianCalendar</value>
-          </key>
-          <bean class="no.uis.service.ws.studinfosolr.json.CalendarSerializer"/>
-        </entry>
-        <entry>
-          <key>
-            <value type="java.lang.Class">no.uis.service.studinfo.data.Fagperson</value>
-          </key>
-          <bean class="no.uis.service.ws.studinfosolr.json.FagpersonSerializer"/>
-        </entry>
-      </map>
+    <property name="cpAccessorHolder">
+      <!--bean class="no.uis.service.ws.studinfosolr.mock.XmlAccessorHolderFactoryBean"/-->
+      <bean class="com.corepublish.impl.xml.XmlAccessorHolder2"/>
     </property>
+    <property name="evuCategoryId" value="${cp.evu.root.category}"/>
+    <property name="evuTemplateIds" value="${cp.evu.templates}"/>
+    <property name="solrFieldMapping" ref="solrFieldMapping"/>
+    <property name="typeAdapters" ref="gsonTypeAdapters"/>
   </bean>
 
   <bean id="studinfoSolrService" class="no.uis.service.ws.studinfosolr.impl.StudinfoSolrServiceImpl">

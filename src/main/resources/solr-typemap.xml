@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+  <util:map id="gsonTypeAdapters">
+    <description><![CDATA[
+    map of Gson Type converters for types where the generic serializer is not good enogh.
+    key: class for which the type adapter is registered
+    value: the TypeAdapter
+    ]]>
+    </description>
+    <entry> 
+      <key>
+        <value type="java.lang.Class">javax.xml.datatype.XMLGregorianCalendar</value>
+      </key>
+      <bean class="no.uis.service.ws.studinfosolr.json.CalendarSerializer"/>
+    </entry>
+    <entry>
+      <key>
+        <value type="java.lang.Class">no.uis.service.studinfo.data.Fagperson</value>
+      </key>
+      <description><![CDATA[This serializer skips the serialization of "personnummer", which we don't want in the index]]></description>
+      <bean class="no.uis.service.ws.studinfosolr.json.FagpersonSerializer"/>
+    </entry>
+  </util:map>
+
+</beans>

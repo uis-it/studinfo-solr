@@ -2,8 +2,13 @@ package no.uis.service.ws.studinfosolr;
 
 import static org.hamcrest.CoreMatchers.*;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
+
+import no.uis.service.studinfo.data.FsSemester;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
@@ -12,6 +17,7 @@ import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.util.AbstractSolrTestCase;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.BeanFactory;
@@ -22,14 +28,19 @@ public class EmnerSolrTest extends AbstractSolrTestCase {
 
   private BeanFactory bf;
   private Map<String, SolrServer> solrServerMap = new HashMap<String, SolrServer>();
+  private Properties testConfig;
 
   @Before
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    String[] langs = {"b", "n", "e"};
+    File configFile = new File(System.getProperty("user.home"), "studinfo-solr.xml");
+    Assume.assumeTrue(configFile.canRead());
+    Properties configProps = new Properties();
+    configProps.loadFromXML(new FileInputStream(configFile));
+    String[] langs = configProps.getProperty("languages", "B").split("\\s+");
     for (String lang : langs) {
-      String solrServerUrl = System.getProperty("solr.server.url."+lang);
+      String solrServerUrl = configProps.getProperty(String.format("solr.server.%s.url", lang));
       SolrServer solrServer;
       if (solrServerUrl != null) {
         solrServer = new HttpSolrServer(solrServerUrl);
@@ -38,6 +49,8 @@ public class EmnerSolrTest extends AbstractSolrTestCase {
       }
       solrServerMap.put(lang.toUpperCase(), solrServer);
     }
+    
+    this.testConfig = configProps;
     
     StaticApplicationContext bfParent = new StaticApplicationContext();
     bfParent.getDefaultListableBeanFactory().registerSingleton("solrServerMap", solrServerMap);
@@ -61,8 +74,13 @@ public class EmnerSolrTest extends AbstractSolrTestCase {
   }
   
   private void testEmne(String lang) throws Exception {
+    Assume.assumeNotNull(solrServerMap.get(lang));
+    
+    int year = Integer.parseInt(testConfig.getProperty("year", "2013"));
+    FsSemester semester = FsSemester.stringToUisSemester(testConfig.getProperty("semester"));
+    
     StudinfoSolrService service = bf.getBean("studinfoSolrService", StudinfoSolrService.class);
-    service.updateSolrEmne(2012, "HOST", lang);
+    service.updateSolrEmne(year, semester.toString(), lang);
     
     solrServerMap.get(lang).commit();
     SolrParams params = new SolrQuery("cat:STUDINFO AND cat:EMNE");
@@ -71,7 +89,6 @@ public class EmnerSolrTest extends AbstractSolrTestCase {
     assertThat(status, is(equalTo(0)));
     assertThat(response.getResults().getNumFound(), is(not(equalTo(Long.valueOf(0L)))));
   }
-  
   
   @Override
   public String getSchemaFile() {

@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import no.uis.service.studinfo.data.FsSemester;
+
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
@@ -26,16 +28,17 @@ public class ProgramsSolrTest extends AbstractSolrTestCase {
 
   private BeanFactory bf;
   private Map<String, SolrServer> solrServerMap = new HashMap<String, SolrServer>();
+  private Properties testConfig;
 
   @Before
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    Properties configProps = new Properties();
     File configFile = new File(System.getProperty("user.home"), "studinfo-solr.xml");
+    Assume.assumeTrue(configFile.canRead());
+    Properties configProps = new Properties();
     configProps.loadFromXML(new FileInputStream(configFile));
-//    String[] langs = {"B", "N", "E"};
-    String[] langs = {"B"};
+    String[] langs = configProps.getProperty("languages", "B").split("\\s+");
     for (String lang : langs) {
       String solrServerUrl = configProps.getProperty(String.format("solr.server.%s.url", lang));
       SolrServer solrServer;
@@ -48,6 +51,7 @@ public class ProgramsSolrTest extends AbstractSolrTestCase {
         solrServerMap.put(lang, solrServer);
       }
     }
+    this.testConfig = configProps;
     
     StaticApplicationContext bfParent = new StaticApplicationContext();
     bfParent.getDefaultListableBeanFactory().registerSingleton("solrServerMap", solrServerMap);
@@ -73,8 +77,11 @@ public class ProgramsSolrTest extends AbstractSolrTestCase {
   private void testProgram(String lang) throws Exception {
     Assume.assumeNotNull(solrServerMap.get(lang));
 
+    int year = Integer.parseInt(testConfig.getProperty("year", "2013"));
+    FsSemester semester = FsSemester.stringToUisSemester(testConfig.getProperty("semester"));
+    
     StudinfoSolrService service = bf.getBean("studinfoSolrService", StudinfoSolrService.class);
-    service.updateSolrStudieprogram(2012, "HOST", lang);
+    service.updateSolrStudieprogram(year, semester.toString(), lang);
     
     solrServerMap.get(lang).commit();
     SolrParams params = new SolrQuery("cat:STUDINFO AND cat:STUDIEPROGRAM");
@@ -83,7 +90,6 @@ public class ProgramsSolrTest extends AbstractSolrTestCase {
     assertThat(status, is(equalTo(0)));
     assertThat(response.getResults().getNumFound(), is(not(equalTo(Long.valueOf(0L)))));
   }
-  
   
   @Override
   public String getSchemaFile() {

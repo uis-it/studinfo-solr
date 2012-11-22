@@ -2,12 +2,13 @@ package no.uis.service.ws.studinfosolr;
 
 import static org.hamcrest.CoreMatchers.*;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import no.uis.service.studinfo.data.FsSemester;
-import no.uis.service.studinfo.data.FsStudieinfo;
-import no.uis.service.ws.studinfosolr.impl.SolrUpdaterImpl;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
@@ -16,49 +17,75 @@ import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.util.AbstractSolrTestCase;
+import org.junit.After;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.StaticApplicationContext;
 
 public class KursSolrTest extends AbstractSolrTestCase {
 
-  private FsStudieinfo fsInfo;
-  private SolrServer solrServer;
-  
-  private BeanFactory bf;
+  private AbstractApplicationContext appCtx;
+  private Map<String, SolrServer> solrServerMap = new HashMap<String, SolrServer>();
+  private Properties testConfig;
 
   @Before
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    String solrServerUrl = System.getProperty("solr.server.url");
-    if (solrServerUrl != null) {
-      solrServer = new HttpSolrServer(solrServerUrl);
-    } else {
-      solrServer = new EmbeddedSolrServer(h.getCoreContainer(), h.getCore().getName());
+    File configFile = new File(System.getProperty("user.home"), "ws-studinfo-solr.xml");
+    Assume.assumeTrue(configFile.canRead());
+    Properties configProps = new Properties();
+    configProps.loadFromXML(new FileInputStream(configFile));
+    String[] langs = configProps.getProperty("languages", "B").split("\\s+");
+    for (String lang : langs) {
+      String solrServerUrl = configProps.getProperty(String.format("solr.server.%s.url", lang));
+      SolrServer solrServer;
+      if (solrServerUrl != null) {
+        if (solrServerUrl.equals("embedded")) {
+          solrServer = new EmbeddedSolrServer(h.getCoreContainer(), h.getCore().getName());
+        } else {
+          solrServer = new HttpSolrServer(solrServerUrl);
+        }
+        solrServerMap.put(lang.toUpperCase(), solrServer);
+      }
     }
-    bf = new ClassPathXmlApplicationContext(new String[] {
-      "studinfo-solr.xml",
-      "fsMock.xml",
-      "cpmock.xml"});
     
-    fsInfo = bf.getBean("kursList", FsStudieinfo.class);
+    this.testConfig = configProps;
+    
+    StaticApplicationContext bfParent = new StaticApplicationContext();
+    bfParent.getDefaultListableBeanFactory().registerSingleton("solrServerMap", solrServerMap);
+    bfParent.refresh();
+    appCtx = new ClassPathXmlApplicationContext(new String[] {"studinfo-solr.xml"}, bfParent);
+    appCtx.registerShutdownHook();
+  }
+  
+  @After
+  @Override
+  public void tearDown() throws Exception {
+    super.tearDown();
+    appCtx.destroy();
   }
   
   @Test
   public void kursExists() throws Exception {
     
-    SolrUpdaterImpl updater = bf.getBean("solrUpdater", SolrUpdaterImpl.class);
-
-    Map<String, SolrServer> solrServers = new HashMap<String, SolrServer>();
+    String lang = "B";
+    Assume.assumeNotNull(solrServerMap.get(lang));
     
-    solrServers.put("KURS_BOKMÅL", solrServer);
-    updater.setSolrServers(solrServers);
-    updater.pushStudieInfo(fsInfo, 2012, FsSemester.HOST, "BOKMÅL");
+    int year = Integer.parseInt(testConfig.getProperty("year", "2013"));
+    FsSemester semester = FsSemester.stringToUisSemester(testConfig.getProperty("semester"));
     
-    SolrParams params = new SolrQuery("cat:STUDINFO AND cat:KURS");
-    QueryResponse response = solrServer.query(params);
+    StudinfoSolrService service = appCtx.getBean("studinfoSolrService", StudinfoSolrService.class);
+    service.updateSolrKurs(year, semester.toString(), lang);
+    
+    solrServerMap.get(lang).commit();
+    SolrParams params = new SolrQuery("cat:STUDINFO AND cat:KURS AND Pasientsikkerhet");
+    QueryResponse response = solrServerMap.get(lang).query(params);
     int status = response.getStatus();
     assertThat(status, is(equalTo(0)));
     assertThat(response.getResults().getNumFound(), is(not(equalTo(Long.valueOf(0L)))));

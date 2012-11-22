@@ -1,8 +1,9 @@
 <?xml version="1.0" ?>
 <schema name="studinfo" version="1.1">
   <types>
-    <fieldtype name="string" class="solr.StrField" sortMissingLast="true" omitNorms="true"/>
+    <fieldType name="string" class="solr.StrField" sortMissingLast="true" omitNorms="true"/>
     <fieldType name="int" class="solr.TrieIntField" precisionStep="0" omitNorms="true" positionIncrementGap="0"/>
+    <fieldType name="long" class="solr.TrieLongField" precisionStep="0" omitNorms="true" positionIncrementGap="0"/>
     <fieldType name="date" class="solr.TrieDateField" omitNorms="true" precisionStep="0" positionIncrementGap="0"/>
     <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true"/>
    
@@ -15,6 +16,21 @@
         -->
         <filter class="solr.LowerCaseFilterFactory"/>
       </analyzer>
+      <analyzer type="query">
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt" enablePositionIncrements="true" />
+        <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+      </analyzer>
+    </fieldType>
+    
+    <fieldType name="text_html" class="solr.TextField" positionIncrementGap="100">
+      <analyzer type="index">
+        <charFilter class="solr.HTMLStripCharFilterFactory"/>
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+      </analyzer>
+      
       <analyzer type="query">
         <tokenizer class="solr.StandardTokenizerFactory"/>
         <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt" enablePositionIncrements="true" />
@@ -36,10 +52,12 @@
    <dynamicField name="*_ms" type="string" indexed="true" stored="true" multiValued="true"/>
    <dynamicField name="*_t" type="text_general" indexed="true" stored="true"/>
    <dynamicField name="*_i" type="int" indexed="true" stored="true"/>
+   <dynamicField name="*_l" type="long" indexed="true" stored="true"/>
    <dynamicField name="*_b" type="boolean" indexed="true" stored="true"/>
    <dynamicField name="*_json" type="text_literal" indexed="false" stored="true"/>
    <dynamicField name="*_mjson" type="text_literal" indexed="false" stored="true" multiValued="true"/>
    <dynamicField name="*_dt" type="date" indexed="true" stored="true"/>
+   <dynamicField name="*_ht" type="text_html" indexed="true" stored="false"/>
  </fields>
 
  <!-- field to use to determine and enforce document uniqueness. -->
@@ -50,8 +68,9 @@
 
  <!-- SolrQueryParser configuration: defaultOperator="AND|OR" -->
  <solrQueryParser defaultOperator="AND"/>
-
+ 
+ <!-- This is not supposed to be a good idea, we should explicitly define the fields to be searched for on the request handler -->
  <copyField source="*_s" dest="text"/>
- <copyField source="*_t" dest="text"/> 
-
+ <copyField source="*_t" dest="text"/>
+ <copyField source="*_ht" dest="text"/> 
 </schema>
