@@ -34,7 +34,7 @@ public class ProgramsSolrTest extends AbstractSolrTestCase {
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    File configFile = new File(System.getProperty("user.home"), "studinfo-solr.xml");
+    File configFile = new File(System.getProperty("user.home"), "ws-studinfo-solr.xml");
     Assume.assumeTrue(configFile.canRead());
     Properties configProps = new Properties();
     configProps.loadFromXML(new FileInputStream(configFile));
