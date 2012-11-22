@@ -26,7 +26,6 @@ import no.uis.service.studinfo.data.Emneid;
 import no.uis.service.studinfo.data.FsSemester;
 import no.uis.service.studinfo.data.FsStudieinfo;
 import no.uis.service.studinfo.data.FsYearSemester;
-import no.uis.service.studinfo.data.KravSammensetting;
 import no.uis.service.studinfo.data.Kurs;
 import no.uis.service.studinfo.data.Kursid;
 import no.uis.service.studinfo.data.Kurskategori;
@@ -38,8 +37,7 @@ import no.uis.service.ws.studinfosolr.SolrUpdater;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
-import org.apache.solr.schema.DateField;
-import org.springframework.beans.factory.DisposableBean;
+import org.apache.solr.common.util.DateUtil;
 
 import com.corepublish.api.Accessor;
 import com.corepublish.api.Article;
@@ -505,7 +503,14 @@ public class SolrUpdaterImpl implements SolrUpdater {
 
   private String xmlCalToSolrDateString(XMLGregorianCalendar value) {
     GregorianCalendar gregorianCalendar = value.toGregorianCalendar(TIME_ZONE_UTC, null, null);
-    return DateField.formatExternal(gregorianCalendar.getTime());
+    StringBuilder out = new StringBuilder();
+    try {
+      DateUtil.formatDate(gregorianCalendar.getTime(), gregorianCalendar, out);
+    } catch(IOException e) {
+      log.warn("xml cal: " + value.toXMLFormat());
+    }
+    
+    return out.toString();
   }
 
   private List<String> createStringArray(Object value) {
