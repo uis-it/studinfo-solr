@@ -18,7 +18,7 @@
   <context:annotation-config/>
   <bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor" />
   
-  <import resource="claspath:solr-fieldmapping.xml"/>
+  <import resource="classpath:solr-fieldmapping.xml"/>
   <import resource="classpath:solr-typemap.xml"/>
   <import resource="solr-servermap.xml"/>
   

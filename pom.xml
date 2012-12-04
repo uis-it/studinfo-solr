@@ -254,6 +254,16 @@
             <resource>
               <directory>src/main/webapp</directory>
               <filtering>true</filtering>
+              <includes>
+                <include>version.txt</include>
+              </includes>
+            </resource>
+            <resource>
+              <directory>src/main/webapp</directory>
+              <filtering>false</filtering>
+              <excludes>
+                <exclude>version.txt</exclude>
+              </excludes>
             </resource>
           </webResources>
         </configuration>

@@ -69,6 +69,7 @@
     <entry key="studentevaluering" value="studentevaluering_t"/>
     <entry key="studiepoeng" value="studiepoeng_i"/>
     <entry key="studieprogramkode" value="kode_s"/>
+    <entry key="terminSisteOpptak" value="terminSisteOpptak_json"/>
     <entry key="undsemester" value="undsemester_json"/>
     <entry key="utdanningsplan" value="utdanningsplan_json"/>
     <entry key="utenlandsopphold" value="utenlandsopphold_t"/>
