@@ -24,7 +24,6 @@ public class XmlAccessorHolder2 extends XmlAccessorHolder {
   
   @Override
   public void destroy() {
-    // TODO Auto-generated method stub
     super.destroy();
     MultiThreadedHttpConnectionManager.shutdownAll();
   }

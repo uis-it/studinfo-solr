@@ -354,9 +354,9 @@ public class SolrUpdaterImpl implements SolrUpdater {
         String mainText = "";
         for (ArticleElement articleElement : elements) {
           String pName = articleElement.getProgrammaticName();
-          if (pName.equalsIgnoreCase("kurskode")) {
+          if (pName.equalsIgnoreCase("pluss_course_code")) {
             kursKode = getStringValue(articleElement, cpAccessor);
-          } else if (pName.equalsIgnoreCase("tidskode")) {
+          } else if (pName.equalsIgnoreCase("pluss_time_code")) {
             tidKode = getStringValue(articleElement, cpAccessor);
           } else if (pName.equalsIgnoreCase("maintext")) {
             mainText = getStringValue(articleElement, cpAccessor);
