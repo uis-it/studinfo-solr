@@ -36,6 +36,7 @@
         <constructor-arg index="1" value="${cplib4j.domainId}"/>
       </bean>
     </property>
+    <property name="siteId" value="${cplib4j.siteId}"/>
     <property name="cpAccessorHolder">
       <!--bean class="no.uis.service.ws.studinfosolr.mock.XmlAccessorHolderFactoryBean"/-->
       <bean class="com.corepublish.impl.xml.XmlAccessorHolder2"/>

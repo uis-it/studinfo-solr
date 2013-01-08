@@ -75,6 +75,7 @@ public class SolrUpdaterImpl implements SolrUpdater {
   private boolean purgeIndexBeforeUpdate;
   
   private DomainUrl cpUrl;
+  private int siteId; 
   private XmlAccessorHolder xmlAccessorHolder;
   private int evuCategoryId = 5793;
   private int[] evuTemplateIds = new int[] {10, 11}; // EVU article and EVU category article template
@@ -340,7 +341,8 @@ public class SolrUpdaterImpl implements SolrUpdater {
       log.warn("CorePublish access disabled");
       return;
     }
-    ArticleQuery articleQuery = new DefaultArticleQuery().includeCategoryId(evuCategoryId, true).includeTemplateIds(evuTemplateIds); 
+    ArticleQuery articleQuery = new DefaultArticleQuery().includeCategoryId(evuCategoryId, true).includeTemplateIds(evuTemplateIds);
+    articleQuery.setSiteList(this.siteId);
     List<ArticleQueryResult> aqr = cpAccessor.getArticleQueryResult(articleQuery);
 
     List<Integer> articleIds = cpAccessor.getArticleIds(aqr);
@@ -428,6 +430,10 @@ public class SolrUpdaterImpl implements SolrUpdater {
     this.cpUrl = cpUrl;
   }
 
+  public void setSiteId(int siteId) {
+    this.siteId = siteId;
+  }
+  
   public void setCpAccessorHolder(XmlAccessorHolder holder) {
     this.xmlAccessorHolder = holder;
   }

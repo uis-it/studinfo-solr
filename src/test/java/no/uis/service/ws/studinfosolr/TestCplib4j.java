@@ -57,13 +57,15 @@ public class TestCplib4j {
   public void testCplib4j() {
     Assume.assumeNotNull(cpAccessor);
     ArticleQuery articleQuery = new DefaultArticleQuery();
-    articleQuery.includeCategoryId(5793, true);
-    articleQuery.includeTemplateIds(10, 11); // EVU article and EVU category article template
+    //articleQuery.includeCategoryId(5793, true);
+    articleQuery.setSiteList(1, 21);
+    articleQuery.includeTemplateIds(10,11,22); // EVU article and EVU category article template
     List<ArticleQueryResult> aqr = cpAccessor.getArticleQueryResult(articleQuery);
     assertNotNull(aqr);
     assertFalse(aqr.isEmpty());
   }
   
+  // disabled: makes Corepublish hang: reported to corepublish
   //@Test
   public void testSiteIds() {
     Assume.assumeNotNull(cpAccessor);
@@ -72,12 +74,12 @@ public class TestCplib4j {
     assertFalse(siteIds.isEmpty());
   }
   
-  // disabled: makes Corepublis hang: reported to corepublish
+  // disabled: makes Corepublish hang: reported to corepublish
   //@Test
   public void testSiteIdsManual() {
     Assume.assumeNotNull(cpAccessor);
     XmlRequest xmlRequest = new XmlRequest(cpAccessor, "cplib4j.SiteListService");
-    xmlRequest.addParameter("siteID", 1);
+    xmlRequest.addParameter("site_id", 1);
     Element sites = xmlRequest.execute();
     
     assertNotNull(sites);
