@@ -82,7 +82,7 @@ public class KursSolrTest extends AbstractSolrTestCase {
     service.updateSolrKurs(year, semester.toString(), lang);
     
     solrServerMap.get(lang).commit();
-    SolrParams params = new SolrQuery("cat:STUDINFO AND cat:KURS AND Pasientsikkerhet");
+    SolrParams params = new SolrQuery("cat:STUDINFO AND cat:KURS AND id:KURS_RISSIKV13_2013V");
     QueryResponse response = solrServerMap.get(lang).query(params);
     int status = response.getStatus();
     assertThat(status, is(equalTo(0)));
