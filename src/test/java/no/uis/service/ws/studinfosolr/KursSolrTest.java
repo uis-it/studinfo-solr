@@ -21,8 +21,6 @@ import org.junit.After;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.StaticApplicationContext;
@@ -68,7 +66,7 @@ public class KursSolrTest extends AbstractSolrTestCase {
   @Override
   public void tearDown() throws Exception {
     super.tearDown();
-    appCtx.destroy();
+    appCtx.close();
   }
   
   @Test

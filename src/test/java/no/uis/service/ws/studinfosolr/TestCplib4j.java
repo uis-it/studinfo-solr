@@ -14,7 +14,6 @@ import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.corepublish.api.Accessor;
 import com.corepublish.api.ArticleQuery;
 import com.corepublish.api.ArticleQueryResult;
 import com.corepublish.impl.defaultt.DefaultArticleQuery;

@@ -17,16 +17,17 @@ import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.util.AbstractSolrTestCase;
+import org.junit.After;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.BeanFactory;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.StaticApplicationContext;
 
 public class EmnerSolrTest extends AbstractSolrTestCase {
 
-  private BeanFactory bf;
+  private AbstractApplicationContext appCtx;
   private Map<String, SolrServer> solrServerMap = new HashMap<String, SolrServer>();
   private Properties testConfig;
 
@@ -55,9 +56,16 @@ public class EmnerSolrTest extends AbstractSolrTestCase {
     StaticApplicationContext bfParent = new StaticApplicationContext();
     bfParent.getDefaultListableBeanFactory().registerSingleton("solrServerMap", solrServerMap);
     bfParent.refresh();
-    bf = new ClassPathXmlApplicationContext(new String[] {"studinfo-solr.xml"}, bfParent);
+    appCtx = new ClassPathXmlApplicationContext(new String[] {"studinfo-solr.xml"}, bfParent);
   }
-  
+
+  @After
+  @Override
+  public void tearDown() throws Exception {
+    super.tearDown();
+    appCtx.close();
+  }
+
   @Test
   public void emneBExists() throws Exception {
     testEmne("B");
@@ -79,7 +87,7 @@ public class EmnerSolrTest extends AbstractSolrTestCase {
     int year = Integer.parseInt(testConfig.getProperty("year", "2013"));
     FsSemester semester = FsSemester.stringToUisSemester(testConfig.getProperty("semester"));
     
-    StudinfoSolrService service = bf.getBean("studinfoSolrService", StudinfoSolrService.class);
+    StudinfoSolrService service = appCtx.getBean("studinfoSolrService", StudinfoSolrService.class);
     service.updateSolrEmne(year, semester.toString(), lang);
     
     solrServerMap.get(lang).commit();
