@@ -23,6 +23,7 @@ import no.uis.service.fsimport.util.PropertyInfoUtils;
 import no.uis.service.fsimport.util.Studinfos;
 import no.uis.service.studinfo.data.Emne;
 import no.uis.service.studinfo.data.Emneid;
+import no.uis.service.studinfo.data.FsEksamensdato;
 import no.uis.service.studinfo.data.FsSemester;
 import no.uis.service.studinfo.data.FsStudieinfo;
 import no.uis.service.studinfo.data.FsYearSemester;
@@ -477,7 +478,6 @@ public class SolrUpdaterImpl implements SolrUpdater {
       Kursid kursid = (Kursid)value;
       map.put("kurskode", kursid.getKurskode());
       map.put("tidkode", kursid.getTidkode());
-    
     } else if (propName.equals("kurskategoriListe")) {
       @SuppressWarnings("unchecked")
       List<Kurskategori> kkList = (List<Kurskategori>)value;
