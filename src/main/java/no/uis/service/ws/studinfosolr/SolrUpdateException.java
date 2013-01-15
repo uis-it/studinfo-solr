@@ -21,6 +21,7 @@ public class SolrUpdateException extends RuntimeException {
   }
   
   public SolrUpdateException(Exception ex) {
+    initCause(ex);
     shortMessage = ex.getMessage();
     StringWriter sw = new StringWriter();
     ex.printStackTrace(new PrintWriter(sw));
