@@ -23,7 +23,6 @@ import no.uis.service.fsimport.util.PropertyInfoUtils;
 import no.uis.service.fsimport.util.Studinfos;
 import no.uis.service.studinfo.data.Emne;
 import no.uis.service.studinfo.data.Emneid;
-import no.uis.service.studinfo.data.FsEksamensdato;
 import no.uis.service.studinfo.data.FsSemester;
 import no.uis.service.studinfo.data.FsStudieinfo;
 import no.uis.service.studinfo.data.FsYearSemester;
@@ -78,7 +77,7 @@ public class SolrUpdaterImpl implements SolrUpdater {
   private int siteId; 
   private XmlAccessorHolder xmlAccessorHolder;
   private int evuCategoryId = 5793;
-  private int[] evuTemplateIds = new int[] {10, 11}; // EVU article and EVU category article template
+  private int[] evuTemplateIds;
 
   private Gson gson;
   private Map<Class<?>, TypeAdapter<?>> typeAdapters;

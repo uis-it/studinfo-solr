@@ -50,7 +50,7 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService {
   @Override
   public void updateSolrStudieprogram(int year, String semester, String language) throws SolrUpdateException {
     try {
-      FsSemester fsSemester=FsSemester.stringToUisSemester(semester);
+      FsSemester fsSemester = FsSemester.stringToUisSemester(semester);
 
       FsStudieinfo fsinfo = studinfoImport.fetchStudyPrograms(217, year, fsSemester.toString(), true, language);
       solrUpdater.pushStudieInfo(fsinfo, year, fsSemester, language);
