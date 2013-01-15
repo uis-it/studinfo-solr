@@ -21,6 +21,7 @@ import org.junit.After;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.internal.AssumptionViolatedException;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.StaticApplicationContext;
@@ -88,7 +89,15 @@ public class EmnerSolrTest extends AbstractSolrTestCase {
     FsSemester semester = FsSemester.stringToUisSemester(testConfig.getProperty("semester"));
     
     StudinfoSolrService service = appCtx.getBean("studinfoSolrService", StudinfoSolrService.class);
-    service.updateSolrEmne(year, semester.toString(), lang);
+    try {
+      service.updateSolrEmne(year, semester.toString(), lang);
+    } catch(SolrUpdateException e) {
+      if (e.getCause() instanceof AssumptionViolatedException) {
+        throw (AssumptionViolatedException)e.getCause();
+      } else {
+        throw e;
+      }
+    }
     
     solrServerMap.get(lang).commit();
     SolrParams params = new SolrQuery("cat:STUDINFO AND cat:EMNE");
