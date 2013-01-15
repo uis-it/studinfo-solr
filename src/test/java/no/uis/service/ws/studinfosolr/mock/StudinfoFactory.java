@@ -2,13 +2,12 @@ package no.uis.service.ws.studinfosolr.mock;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import no.usit.fsws.wsdl.studinfo.StudInfoService;
 
 import org.apache.cxf.helpers.IOUtils;
-import org.springframework.core.io.Resource;
+import org.junit.Assume;
 
 public class StudinfoFactory implements StudInfoService {
 
@@ -54,8 +53,9 @@ public class StudinfoFactory implements StudInfoService {
     try {
       return IOUtils.toString(new FileInputStream(programSource), "UTF-8");
     } catch(IOException e) {
-      throw new RuntimeException(e);
+      Assume.assumeNoException(e);
     }
+    return null;
   }
 
   @Override
@@ -79,8 +79,9 @@ public class StudinfoFactory implements StudInfoService {
     try {
       return IOUtils.toString(new FileInputStream(emneSource), "UTF-8");
     } catch(IOException e) {
-      throw new RuntimeException(e);
+    	Assume.assumeNoException(e);
     }
+    return null;
   }
 
   @Override
@@ -135,8 +136,9 @@ public class StudinfoFactory implements StudInfoService {
     try {
       return IOUtils.toString(new FileInputStream(kursSource), "UTF-8");
     } catch(IOException e) {
-      throw new RuntimeException(e);
+      Assume.assumeNoException(e);
     }
+    return null;
   }
 
   @Override
