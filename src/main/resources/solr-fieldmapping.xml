@@ -74,6 +74,7 @@
     <entry key="utdanningsplan" value="utdanningsplan_json"/>
     <entry key="utenlandsopphold" value="utenlandsopphold_t"/>
     <entry key="varighet" value="varighet_json"/>
+    <entry key="varighettimer" value="varighettimer_i"/>
     <entry key="vektingsreduksjon" value="vektingsreduksjon_json"/>
     <entry key="vurdordning" value="vurdordning_json"/>
   </util:map>
