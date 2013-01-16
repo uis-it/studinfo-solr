@@ -9,8 +9,11 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(propOrder =
-  { "shortMessage", "messageDetail" })
+@XmlType(
+  name = "SolrUpdateException",
+  namespace ="http://studinfosolr.ws.service.uis.no/",
+  propOrder = { "shortMessage", "messageDetail" }
+)
 public class SolrUpdateException extends RuntimeException {
 
   private static final long serialVersionUID = 1L;

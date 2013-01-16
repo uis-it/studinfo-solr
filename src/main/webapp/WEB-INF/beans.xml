@@ -47,6 +47,7 @@
   <bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor" />
   
   <import resource="classpath:META-INF/cxf/cxf.xml" />
+  <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
   <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
 
   <jaxws:endpoint 

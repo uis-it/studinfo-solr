@@ -3,7 +3,7 @@ package no.uis.service.ws.studinfosolr;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 
-@WebService
+@WebService(targetNamespace="http://studinfosolr.ws.service.uis.no/")
 public interface StudinfoSolrService {
 
   void updateSolrKurs(
