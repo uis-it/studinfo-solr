@@ -8,7 +8,7 @@
   <util:map id="solrServerMap">
     <entry key="B">
       <bean class="no.uis.service.ws.studinfosolr.impl.SolrServerFactory">
-        <property name="url" value="${solr.server.nb.url}"/>
+        <property name="url" value="${solr.server.B.url}"/>
         <!--property name="username" value="${solr.server.username}"/-->
         <!--property name="password" value="${solr.server.password}"/-->
       </bean>
@@ -16,7 +16,7 @@
     
     <entry key="N">
       <bean class="no.uis.service.ws.studinfosolr.impl.SolrServerFactory">
-        <property name="url" value="${solr.server.nn.url}"/>
+        <property name="url" value="${solr.server.N.url}"/>
         <!--property name="username" value="${solr.server.username}"/-->
         <!--property name="password" value="${solr.server.password}"/-->
       </bean>
@@ -24,7 +24,7 @@
     
     <entry key="E">
       <bean class="no.uis.service.ws.studinfosolr.impl.SolrServerFactory">
-        <property name="url" value="${solr.server.en.url}"/>
+        <property name="url" value="${solr.server.E.url}"/>
         <!--property name="username" value="${solr.server.username}"/-->
         <!--property name="password" value="${solr.server.password}"/-->
       </bean>
