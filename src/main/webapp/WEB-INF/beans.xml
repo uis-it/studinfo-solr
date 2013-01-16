@@ -32,7 +32,7 @@
   <jaxws:client id="fsWsStudInfo" serviceClass="no.usit.fsws.wsdl.studinfo.StudInfoService"
     address="${fs.ws.studinfo.url}" username="${fs.ws.username}" password="${fs.ws.password}" >
     <jaxws:properties>
-      <entry key="mtom-enabled" value="true" />
+      <entry key="mtom-enabled" value="false" />
     </jaxws:properties>
   </jaxws:client>
   
