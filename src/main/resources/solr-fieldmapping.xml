@@ -34,6 +34,7 @@
     <entry key="fagpersonListe" value="fagperson_mjson"/>
     <entry key="finansieringsprosent" value="finansieringsprosent_i"/>
     <entry key="fjernundervisning" value="fjernundervisning_b"/>
+    <entry key="formelleForkunnskaper" value="formelleForkunnskaper_json"/>
     <entry key="grunnstudium" value="grunnstudium_b"/>
     <entry key="heltidsprosent" value="heltidsprosent_i"/>
     <entry key="inngarIFag" value="inngarIFag_ms"/>
@@ -60,6 +61,7 @@
     <entry key="pInnhold" value="pInnhold_t"/>
     <entry key="pKortintr" value="pKortintr_t"/>
     <entry key="pProfkval" value="pProfkval_t"/>
+    <entry key="properties" value="properties_json"/>
     <entry key="pStudkval" value="pStudkval_t"/>
     <entry key="rammeplanTekst" value="rammeplanTekst_t"/>
     <entry key="skalAvholdes" value="skalAvholdes_b"/>

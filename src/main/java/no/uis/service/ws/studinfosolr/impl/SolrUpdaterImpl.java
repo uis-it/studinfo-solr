@@ -9,6 +9,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 import java.util.TimeZone;
 import java.util.UUID;
@@ -17,7 +18,15 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import no.uis.service.component.studinfopdf.convert.CollectionConverter;
+import no.uis.service.component.studinfopdf.convert.InngarIStudieprogramConverter;
+import no.uis.service.component.studinfopdf.convert.ObligoppgaveConverter;
+import no.uis.service.component.studinfopdf.convert.StringConverter;
+import no.uis.service.component.studinfopdf.convert.StringConverterUtil;
 import no.uis.service.fsimport.StudInfoImport.StudinfoType;
+import no.uis.service.fsimport.impl.AcceptAllEmne;
+import no.uis.service.fsimport.impl.AcceptAllStudieprogram;
+import no.uis.service.fsimport.impl.StudinfoFilter;
 import no.uis.service.fsimport.util.PropertyInfo;
 import no.uis.service.fsimport.util.PropertyInfoUtils;
 import no.uis.service.fsimport.util.Studinfos;
@@ -26,6 +35,7 @@ import no.uis.service.studinfo.data.Emneid;
 import no.uis.service.studinfo.data.FsSemester;
 import no.uis.service.studinfo.data.FsStudieinfo;
 import no.uis.service.studinfo.data.FsYearSemester;
+import no.uis.service.studinfo.data.InngarIStudieprogram;
 import no.uis.service.studinfo.data.Kurs;
 import no.uis.service.studinfo.data.Kursid;
 import no.uis.service.studinfo.data.Kurskategori;
@@ -81,9 +91,11 @@ public class SolrUpdaterImpl implements SolrUpdater {
 
   private Gson gson;
   private Map<Class<?>, TypeAdapter<?>> typeAdapters;
+  
+  private StudinfoFilter<Emne> emneFilter = new AcceptAllEmne();
+  private StudinfoFilter<Studieprogram> studieprogramFilter = new AcceptAllStudieprogram();
 
   private static ThreadLocal<CatalogContext> context = new ThreadLocal<CatalogContext>();
-  private static ThreadLocal<String> currentProgramCode = new ThreadLocal<String>();
 
   @PostConstruct
   public void init() {
@@ -94,6 +106,11 @@ public class SolrUpdaterImpl implements SolrUpdater {
       }
     }
     gson = builder.create();
+    StringConverterUtil.registerConverter(new InngarIStudieprogramConverter(), InngarIStudieprogram.class);
+    StringConverter collectionConverter = new CollectionConverter();
+    StringConverterUtil.registerConverter(collectionConverter, List.class);
+    StringConverterUtil.registerConverter(collectionConverter, Set.class);
+    StringConverterUtil.registerConverter(new ObligoppgaveConverter(), Obligoppgave.class);
   }
 
   public void setSolrFieldMapping(Map<String, String> mapping) {
@@ -102,6 +119,14 @@ public class SolrUpdaterImpl implements SolrUpdater {
 
   public void setTypeAdapters(Map<Class<?>, TypeAdapter<?>> typeAdapters) {
     this.typeAdapters = typeAdapters;
+  }
+
+  public void setEmneFilter(StudinfoFilter<Emne> emneFilter) {
+    this.emneFilter = emneFilter;
+  }
+
+  public void setStudieprogramFilter(StudinfoFilter<Studieprogram> studieprogramFilter) {
+    this.studieprogramFilter = studieprogramFilter;
   }
 
   @Override
@@ -135,26 +160,21 @@ public class SolrUpdaterImpl implements SolrUpdater {
 
   private void pushPrograms(List<Studieprogram> programs, String language) throws Exception {
     for (Studieprogram program : programs) {
-      if (program.isSetLaringsutbytte()) {
-        try {
-          currentProgramCode.set(program.getStudieprogramkode());
-          pushProgramToSolr(program);
-        } finally {
-          currentProgramCode.remove();
-        }
+      if (studieprogramFilter.accept(program)) {
+        pushProgramToSolr(program);
       } else {
-        log.info("Skipping \"" + program.getStudieprogramkode() + "\" due to missing læringsutbytte.");
+        log.info(String.format("Skipping \"%s\" due to filter %s", program.getStudieprogramkode(), studieprogramFilter.getClass().getName()));
       }
     }
   }
 
   private void pushSubjects(List<Emne> subjects, String language) throws Exception {
     for (Emne emne : subjects) {
-      if (emne.isSetLaringsutbytte()) {
+      if (emneFilter.accept(emne)) {
         pushEmneToSolr(emne);
       } else {
         String emneid = formatTokens(emne.getEmneid().getEmnekode(), emne.getEmneid().getVersjonskode());
-        log.info("Skipping \"" + emneid + "\" due to missing laringsutbytte.");
+        log.info(String.format("Skipping \"%s\" due to filter %s", emneid, emneFilter.getClass().getName()));
       }
     }
   }
@@ -181,6 +201,12 @@ public class SolrUpdaterImpl implements SolrUpdater {
   }
 
   private void pushProgramToSolr(Studieprogram prog) throws Exception {
+    
+    // clean utdanningsplan
+    if (prog.isSetUtdanningsplan()) {
+      Studinfos.cleanUtdanningsplan(prog.getUtdanningsplan(), prog.getStudieprogramkode(), context.get().getStartYearSemester(), Studinfos.numberOfSemesters(prog));
+    }
+
     Map<String, Object> beanmap = getBeanMap(prog, "/studieprogram");
     updateDocuments(StudinfoType.STUDIEPROGRAM, prog.getSprak(), beanmap, null, "/studieprogram");
   }
@@ -281,20 +307,31 @@ public class SolrUpdaterImpl implements SolrUpdater {
 
   private void pushEmneToSolr(Emne emne) throws Exception {
     
-    // There is no attribute on vurdkombinasjon that tells us if it is compulsory
-    if (emne.isSetVurdordning()) {
-      List<String> excludeCodes;
-      if (emne.isSetObligund()) {
-        List<Obligoppgave> obligund = emne.getObligund();
-        excludeCodes = new ArrayList<String>(obligund.size());
-        for (Obligoppgave oo : obligund) {
-          excludeCodes.add(oo.getNr());
-        }
-      } else {
-        excludeCodes = Collections.emptyList();
-      }
-      
-      Studinfos.cleanVurderingsordning(emne.getVurdordning(), excludeCodes, context.get().getStartYearSemester());
+    // vurdering
+    Studinfos.cleanVurderingsordning(emne, context.get().getStartYearSemester());
+    
+    // forkunnskaper
+    Map<String, Object> forkunnskap = Studinfos.forkunnskap(emne);
+    if (forkunnskap != null) {
+      emne.addProperty("forkunnskapskrav", forkunnskap);
+    }
+    
+    // anbefalte forkunnskaper
+    Map<String, Object> anbForkunn = Studinfos.anbefalteForkunnskaper(emne);
+    if (anbForkunn != null) {
+      emne.addProperty("anbefalteForkunskaper", anbForkunn);
+    }
+    
+    // obligatorisk undervisning
+    Map<String, Object> obligund = Studinfos.obligund(emne);
+    if (obligund != null) {
+      emne.addProperty("obligund", obligund);
+    }
+    
+    // apent for
+    Map<String, Object> apenFor = Studinfos.apenFor(emne);
+    if (apenFor != null) {
+      emne.addProperty("apenFor", apenFor);
     }
     
     Map<String, Object> beanmap = getBeanMap(emne, "/emne");
@@ -464,8 +501,6 @@ public class SolrUpdaterImpl implements SolrUpdater {
     
     } else if(value instanceof Utdanningsplan) {
       Utdanningsplan uplan = (Utdanningsplan)value;
-      String programCode = currentProgramCode.get();
-      Studinfos.cleanUtdanningsplan(programCode, uplan, context.get().getStartYearSemester(), 10);
 
       if (uplan.isSetPlaninformasjon()) {
         uplan.unsetPlaninformasjon();
