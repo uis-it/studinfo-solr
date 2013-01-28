@@ -5,7 +5,7 @@
   <parent>
     <artifactId>parent-pom</artifactId>
     <groupId>no.uis.service</groupId>
-    <version>1.2.0</version>
+    <version>1.2.2</version>
   </parent>
   <groupId>no.uis.service.ws</groupId>
   <artifactId>studinfo-solr</artifactId>
