@@ -1,94 +1,114 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxws="http://cxf.apache.org/jaxws"
 	xmlns:context="http://www.springframework.org/schema/context"
-  xmlns:util="http://www.springframework.org/schema/util"
-  xmlns:http-conf="http://cxf.apache.org/transports/http/configuration"
-  xmlns:sec="http://cxf.apache.org/configuration/security"
-  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:http-conf="http://cxf.apache.org/transports/http/configuration"
+	xmlns:sec="http://cxf.apache.org/configuration/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
     http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
     http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd 
     http://cxf.apache.org/configuration/security http://cxf.apache.org/schemas/configuration/security.xsd
     http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd">
 
-  <context:property-placeholder location="file:///${catalina.base}/conf/ws-studinfo-solr.xml"/>
-  
-  <context:annotation-config/>
-  <bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor" />
-  
-  <import resource="classpath:solr-fieldmapping.xml"/>
-  <import resource="classpath:solr-typemap.xml"/>
-  <import resource="solr-servermap.xml"/>
-  
-  <bean id="fsStudInfoImport" class="no.uis.service.fsimport.impl.StudInfoImportImpl">
-    <property name="fsServiceStudInfo">
-      <ref bean="fsWsStudInfo"/>
-    </property>
-    <property name="transformerUrl" value="classpath:fspreprocess.xsl"/>
-  </bean>
+	<context:property-placeholder
+		location="file:///${catalina.base}/conf/ws-studinfo-solr.xml" />
 
-  <jaxws:client id="fsWsStudInfo" serviceClass="no.usit.fsws.wsdl.studinfo.StudInfoService"
-    address="${fs.ws.studinfo.url}" username="${fs.ws.username}" password="${fs.ws.password}" >
-    <jaxws:properties>
-      <entry key="mtom-enabled" value="false" />
-    </jaxws:properties>
-  </jaxws:client>
-  
-  <http-conf:conduit name="{http://fsws.usit.no/wsdl/studinfo}StudInfoServicePort.http-conduit">
-    <http-conf:client ConnectionTimeout="${fs.ws.connection.timeout}"
-      ReceiveTimeout="${fs.ws.receive.timeout}" AllowChunking="false"
-      Connection="Keep-Alive" />
-    <http-conf:tlsClientParameters disableCNCheck="true"/>
-  </http-conf:conduit>  
-  
-  
-  <bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor" />
-  
-  <import resource="classpath:META-INF/cxf/cxf.xml" />
-  <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
-  <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+	<context:annotation-config />
+	<bean
+		class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor" />
 
-  <jaxws:endpoint 
-    id="studinfoSolrService" 
-    implementor="#studinfoSolr" 
-    address="/studinfosolr" 
-    xmlns:ns="http://studinfosolr.ws.service.uis.no/"
-    serviceName="ns:StudinfoSolrService"
-    endpointName="ns:StudinfoSolrPort">
-    <jaxws:properties>
-      <entry key="mtom-enabled" value="true"/>
-    </jaxws:properties>
-  </jaxws:endpoint>
+	<import resource="classpath:solr-fieldmapping.xml" />
+	<import resource="classpath:solr-typemap.xml" />
+	<import resource="solr-servermap.xml" />
 
-  <bean id="solrUpdater" class="no.uis.service.ws.studinfosolr.impl.SolrUpdaterImpl">
-    <property name="solrServers" ref="solrServerMap"/>
-    <property name="purgeIndexBeforeUpdate" value="true"/>
-    <property name="solrFieldMapping" ref="solrFieldMapping"/>
-    <property name="typeAdapters" ref="gsonTypeAdapters"/>
-    <property name="cpUrl">
-      <bean class="com.corepublish.util.DomainUrl">
-        <constructor-arg index="0" value="${cplib4j.url}">
-          <description><![CDATA[Should point to the corepublish URL like http://fronttest06.uis.no/corepublish]]></description>
-        </constructor-arg>
-        <constructor-arg index="1" value="${cplib4j.domainId}"/>
-      </bean>
-    </property>
-    <property name="siteId" value="${cplib4j.siteId}"/>
-    <property name="cpAccessorHolder">
-      <bean class="com.corepublish.impl.xml.XmlAccessorHolder2"/>
-    </property>
-    <property name="evuCategoryId" value="${cp.evu.root.category}"/>
-    <property name="evuTemplateIds" value="${cp.evu.templates}">
-      <description><![CDATA[The property is a comma separated list of integers, The templateId of the category and article templates]]></description>
-    </property>
-    
-  </bean>
+	<bean id="fsStudInfoImport" class="no.uis.service.fsimport.impl.StudInfoImportImpl">
+		<property name="fsServiceStudInfo">
+			<ref bean="fsWsStudInfo" />
+		</property>
+		<property name="transformerUrl" value="classpath:fspreprocess.xsl" />
+	</bean>
 
-  <bean id="studinfoSolr" class="no.uis.service.ws.studinfosolr.impl.StudinfoSolrServiceImpl">
-    <property name="studinfoImport" ref="fsStudInfoImport"/>
-    <property name="solrUpdater" ref="solrUpdater"/>
-  </bean>
+	<jaxws:client id="fsWsStudInfo"
+		serviceClass="no.usit.fsws.wsdl.studinfo.StudInfoService" address="${fs.ws.studinfo.url}"
+		username="${fs.ws.username}" password="${fs.ws.password}">
+		<jaxws:properties>
+			<entry key="mtom-enabled" value="false" />
+		</jaxws:properties>
+	</jaxws:client>
 
+	<http-conf:conduit
+		name="{http://fsws.usit.no/wsdl/studinfo}StudInfoServicePort.http-conduit">
+		<http-conf:client ConnectionTimeout="${fs.ws.connection.timeout}"
+			ReceiveTimeout="${fs.ws.receive.timeout}" AllowChunking="false"
+			Connection="Keep-Alive" />
+		<http-conf:tlsClientParameters
+			disableCNCheck="true" />
+	</http-conf:conduit>
+
+
+	<bean
+		class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor" />
+
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+
+	<jaxws:endpoint id="studinfoSolrService" implementor="#studinfoSolr"
+		address="/studinfosolr" xmlns:ns="http://studinfosolr.ws.service.uis.no/"
+		serviceName="ns:StudinfoSolrService" endpointName="ns:StudinfoSolrPort">
+		<jaxws:properties>
+			<entry key="mtom-enabled" value="true" />
+		</jaxws:properties>
+	</jaxws:endpoint>
+
+	<bean id="solrUpdater" class="no.uis.service.ws.studinfosolr.impl.SolrUpdaterImpl">
+		<property name="solrServers" ref="solrServerMap" />
+		<property name="purgeIndexBeforeUpdate" value="true" />
+		<property name="solrFieldMapping" ref="solrFieldMapping" />
+		<property name="typeAdapters" ref="gsonTypeAdapters" />
+		<property name="cpUrl">
+			<bean class="com.corepublish.util.DomainUrl">
+				<constructor-arg index="0" value="${cplib4j.url}">
+					<description><![CDATA[Should point to the corepublish URL like http://fronttest06.uis.no/corepublish]]></description>
+				</constructor-arg>
+				<constructor-arg index="1" value="${cplib4j.domainId}" />
+			</bean>
+		</property>
+		<property name="siteId" value="${cplib4j.siteId}" />
+		<property name="cpAccessorHolder">
+			<bean class="com.corepublish.impl.xml.XmlAccessorHolder2" />
+		</property>
+		<property name="evuCategoryId" value="${cp.evu.root.category}" />
+		<property name="evuTemplateIds" value="${cp.evu.templates}">
+			<description><![CDATA[The property is a comma separated list of integers, The templateId of the category and article templates]]></description>
+		</property>
+		<property name="emneFilter">
+			<bean class="no.uis.service.fsimport.impl.AcceptAllEmne" />
+		</property>
+		<property name="studieprogramFilter">
+			<bean class="no.uis.service.fsimport.impl.AcceptAllStudieprogram" />
+		</property>
+	</bean>
+	<bean id="studinfoSolr"
+		class="no.uis.service.ws.studinfosolr.impl.StudinfoSolrServiceImpl">
+		<property name="studinfoImport" ref="fsStudInfoImport" />
+		<property name="solrUpdater" ref="solrUpdater" />
+	</bean>
+
+	<bean class="org.springframework.jmx.export.MBeanExporter">
+		<property name="beans">
+			<map>
+				<entry key="uis:name=uis-ws-studinfo-solr" value-ref="solrUpdater" />
+			</map>
+		</property>
+		<property name="assembler">
+			<bean
+				class="org.springframework.jmx.export.assembler.MethodNameBasedMBeanInfoAssembler">
+				<property name="managedMethods" value="setEvuCategory,getEvuCategoryId,setEvuTemplateIds,getEvuTemplateIds" />
+			</bean>
+		</property>
+
+	</bean>
 </beans>
