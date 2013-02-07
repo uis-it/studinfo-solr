@@ -12,7 +12,9 @@ public class FsEksamensdatoSerializer extends TypeAdapter<FsEksamensdato>{
 
   @Override
   public void write(JsonWriter out, FsEksamensdato value) throws IOException {
-    out.value(value.toString());
+    if (value != null) {
+      out.value(value.toString());
+    }
   }
 
   @Override
