@@ -27,7 +27,7 @@
 		<property name="fsServiceStudInfo">
 			<ref bean="fsWsStudInfo" />
 		</property>
-		<property name="transformerUrl" value="classpath:fspreprocess.xsl" />
+		<property name="transformerUrl" value="classpath:fspreprocess-stable.xsl" />
 	</bean>
 
 	<jaxws:client id="fsWsStudInfo"
