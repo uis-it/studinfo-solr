@@ -14,6 +14,8 @@ public class FsEksamensdatoSerializer extends TypeAdapter<FsEksamensdato>{
   public void write(JsonWriter out, FsEksamensdato value) throws IOException {
     if (value != null) {
       out.value(value.toString());
+    } else {
+      out.nullValue();
     }
   }
 
