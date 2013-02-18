@@ -18,7 +18,7 @@
     <entry key="arbeidsformer" value="arbeidsformer_t"/>
     <entry key="cp_article_id" value="cp_article_id_l"/>
     <entry key="cp_category_id" value="cp_category_id_l"/>
-    <entry key="cp_text" value="cp_text_ht"/>
+    <entry key="cp_text" value="cp_text_t"/>
     <entry key="datoFra" value="datoFra_dt"/>
     <entry key="datoFristSoknad" value="datoFristSoknad_dt"/>
     <entry key="datoOpptak" value="datoOpptak_dt"/>
@@ -29,9 +29,9 @@
     <entry key="desentralUndervisning" value="desentralUndervisning_b"/>
     <entry key="eksamensordning" value="eksamensordning_json"/>
     <entry key="emnekode" value="kode_s"/>
-    <entry key="kvalifikOgJobbmuligheter" value="kvalifikOgJobbmuligheter_t"/>
     <entry key="fagansvarlig" value="fagansvarlig_json"/>
     <entry key="fagpersonListe" value="fagperson_mjson"/>
+    <entry key="fagplanTekst" value="fagplanTekst_t"/>
     <entry key="finansieringsprosent" value="finansieringsprosent_i"/>
     <entry key="fjernundervisning" value="fjernundervisning_b"/>
     <entry key="formelleForkunnskaper" value="formelleForkunnskaper_json"/>
@@ -47,6 +47,7 @@
     <entry key="kulltrinnplan" value="kulltrinnplan_b"/>
     <entry key="kurskategoriListe" value="kurskategori_ms"/>
     <entry key="kursid" value="kode_s"/>
+    <entry key="kvalifikOgJobbmuligheter" value="kvalifikOgJobbmuligheter_t"/>
     <entry key="laringsutbytte" value="laringsutbytte_t"/>
     <entry key="litteratur" value="litteratur_t"/>
     <entry key="nettbasertUndervisning" value="nettbasertUndervisning_b"/>

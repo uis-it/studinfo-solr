@@ -28,6 +28,7 @@
 			<ref bean="fsWsStudInfo" />
 		</property>
 		<property name="transformerUrl" value="classpath:fspreprocess-stable.xsl" />
+		<property name="xmlSourceParser" value="no.uis.service.fsimport.impl.SkippingAmpersandParser"/>
 	</bean>
 
 	<jaxws:client id="fsWsStudInfo"
@@ -91,6 +92,7 @@
 			<bean class="no.uis.service.fsimport.impl.AcceptAllStudieprogram" />
 		</property>
 	</bean>
+	
 	<bean id="studinfoSolr"
 		class="no.uis.service.ws.studinfosolr.impl.StudinfoSolrServiceImpl">
 		<property name="studinfoImport" ref="fsStudInfoImport" />
@@ -106,7 +108,7 @@
 		<property name="assembler">
 			<bean
 				class="org.springframework.jmx.export.assembler.MethodNameBasedMBeanInfoAssembler">
-				<property name="managedMethods" value="setEvuCategory,getEvuCategoryId,setEvuTemplateIds,getEvuTemplateIds" />
+				<property name="managedMethods" value="setEvuCategoryId,getEvuCategoryId,setEvuTemplateIdsFromString,getEvuTemplateIds" />
 			</bean>
 		</property>
 

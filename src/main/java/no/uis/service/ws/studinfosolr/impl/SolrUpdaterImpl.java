@@ -477,11 +477,29 @@ public class SolrUpdaterImpl implements SolrUpdater {
   public void setEvuCategoryId(int evuCategoryId) {
     this.evuCategoryId = evuCategoryId;
   }
-  
+
+  public int getEvuCategoryId() {
+    return evuCategoryId;
+  }
+
+  public int[] getEvuTemplateIds() {
+    return evuTemplateIds;
+  }
+
   public void setEvuTemplateIds(int[] ids) {
     this.evuTemplateIds = ids;
   }
 
+  public void setEvuTemplateIdsFromString(String csvString) {
+    String[] strArray = csvString.split("\\s*,\\s*");
+    int[] ids = new int[strArray.length];
+    int i = 0;
+    for (String s : strArray) {
+      ids[i++] = Integer.parseInt(s);
+    }
+    setEvuTemplateIds(ids);
+  }
+  
   public void setPurgeIndexBeforeUpdate(boolean purgeIndexBeforeUpdate) {
     this.purgeIndexBeforeUpdate = purgeIndexBeforeUpdate;
   }
