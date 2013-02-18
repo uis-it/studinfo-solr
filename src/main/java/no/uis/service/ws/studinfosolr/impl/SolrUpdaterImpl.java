@@ -9,8 +9,8 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.UUID;
 
@@ -96,7 +96,7 @@ public class SolrUpdaterImpl implements SolrUpdater {
   private StudinfoFilter<Studieprogram> studieprogramFilter = new AcceptAllStudieprogram();
 
   private static ThreadLocal<CatalogContext> context = new ThreadLocal<CatalogContext>();
-
+  
   @PostConstruct
   public void init() {
     GsonBuilder builder = new GsonBuilder();

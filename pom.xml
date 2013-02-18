@@ -27,7 +27,7 @@
     <xmlapis.version>1.4.01</xmlapis.version>
     <commons.logging.version>1.1.1</commons.logging.version>
     <commons.codec.version>1.7</commons.codec.version>
-    <fsimport.version>1.2.22-SNAPSHOT</fsimport.version>
+    <fsimport.version>1.2.22</fsimport.version>
   </properties>
 
   <scm>
