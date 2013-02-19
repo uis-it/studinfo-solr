@@ -6,10 +6,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import javax.management.Notification;
 
-import org.apache.log4j.Logger;
-import org.springframework.jmx.export.notification.NotificationPublisher;
-import org.springframework.jmx.export.notification.NotificationPublisherAware;
-
 import no.uis.service.fsimport.StudInfoImport;
 import no.uis.service.studinfo.data.FsSemester;
 import no.uis.service.studinfo.data.FsStudieinfo;
@@ -17,6 +13,16 @@ import no.uis.service.ws.studinfosolr.SolrUpdateException;
 import no.uis.service.ws.studinfosolr.SolrUpdater;
 import no.uis.service.ws.studinfosolr.StudinfoSolrService;
 
+import org.apache.log4j.Logger;
+import org.springframework.jmx.export.annotation.ManagedResource;
+import org.springframework.jmx.export.notification.NotificationPublisher;
+import org.springframework.jmx.export.notification.NotificationPublisherAware;
+
+@ManagedResource(
+  objectName="uis:service=ws-studinfo-solr,component=webservice",
+  description="StudinfoSolrService",
+  log=false
+)
 public class StudinfoSolrServiceImpl implements StudinfoSolrService, NotificationPublisherAware {
 
   private static Logger log = Logger.getLogger(StudinfoSolrServiceImpl.class);

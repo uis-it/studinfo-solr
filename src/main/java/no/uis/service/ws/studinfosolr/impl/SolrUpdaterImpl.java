@@ -3,6 +3,7 @@ package no.uis.service.ws.studinfosolr.impl;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.GregorianCalendar;
@@ -48,6 +49,10 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.util.DateUtil;
+import org.springframework.jmx.export.annotation.ManagedOperation;
+import org.springframework.jmx.export.annotation.ManagedOperationParameter;
+import org.springframework.jmx.export.annotation.ManagedOperationParameters;
+import org.springframework.jmx.export.annotation.ManagedResource;
 
 import com.corepublish.api.Accessor;
 import com.corepublish.api.Article;
@@ -67,6 +72,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
 
+@ManagedResource(
+  objectName="uis:service=ws-studinfo-solr,component=updater",
+  description="SolrUpdater",
+  log=false
+)
 public class SolrUpdaterImpl implements SolrUpdater {
 
   private static final TimeZone TIME_ZONE_UTC = TimeZone.getTimeZone("UTC");
@@ -474,30 +484,44 @@ public class SolrUpdaterImpl implements SolrUpdater {
     this.xmlAccessorHolder = holder;
   }
 
+  @ManagedOperation(description="Set Course category root Id")
+  @ManagedOperationParameters({
+    @ManagedOperationParameter(name="evuCategoryId", description="Category Id of EVU Courses Root")
+  })
   public void setEvuCategoryId(int evuCategoryId) {
     this.evuCategoryId = evuCategoryId;
   }
 
+  @ManagedOperation(description="Get Course category root Id")
   public int getEvuCategoryId() {
     return evuCategoryId;
   }
 
-  public int[] getEvuTemplateIds() {
+  private synchronized int[] _getEvuTemplateIds() {
     return evuTemplateIds;
   }
 
-  public void setEvuTemplateIds(int[] ids) {
+  private synchronized void _setEvuTemplateIds(int[] ids) {
     this.evuTemplateIds = ids;
   }
 
-  public void setEvuTemplateIdsFromString(String csvString) {
+  @ManagedOperation(description="Set Course Article Template IDs")
+  @ManagedOperationParameters({
+    @ManagedOperationParameter(name="csvString", description="comma-separated list of article template ids")
+  })
+  public void setEvuTemplateIds(String csvString) {
     String[] strArray = csvString.split("\\s*,\\s*");
     int[] ids = new int[strArray.length];
     int i = 0;
     for (String s : strArray) {
       ids[i++] = Integer.parseInt(s);
     }
-    setEvuTemplateIds(ids);
+    _setEvuTemplateIds(ids);
+  }
+
+  @ManagedOperation(description="Get Course Article Template IDs")
+  public String getEvuTemplateIds() {
+    return Arrays.toString(_getEvuTemplateIds());
   }
   
   public void setPurgeIndexBeforeUpdate(boolean purgeIndexBeforeUpdate) {
