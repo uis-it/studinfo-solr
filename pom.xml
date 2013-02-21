@@ -7,7 +7,7 @@
   </parent>
   <groupId>no.uis.service.ws</groupId>
   <artifactId>studinfo-solr</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>ws-studinfo-solr</name>
   <description>Update Solr with FS studinfo data</description>
@@ -30,7 +30,7 @@
 
   <scm>
     <connection>scm:git:git://source01.uis.no/soa-ws-studinfo-solr.git</connection>
-    <developerConnection>scm:git:git@152.94.3.85:soa-ws-studinfo-solr.git</developerConnection>
+    <developerConnection>scm:git:ssh://git@152.94.3.85/soa-ws-studinfo-solr.git</developerConnection>
     <url>http://source01.uis.no/git/?p=soa-ws-studinfo-solr.git</url>
   </scm>
 
@@ -352,4 +352,12 @@
       </plugins>
     </pluginManagement>
   </build>
+  <issueManagement>
+  	<system>JIRA</system>
+  	<url>http://apps01.uis.no/jira</url>
+  </issueManagement>
+  <ciManagement>
+  	<system>jenkins</system>
+  	<url>http://build01.uis.no/jenkins/job/ws-studinfo-solr/</url>
+  </ciManagement>
 </project>
