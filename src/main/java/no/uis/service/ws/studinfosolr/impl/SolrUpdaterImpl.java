@@ -2,8 +2,9 @@ package no.uis.service.ws.studinfosolr.impl;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.GregorianCalendar;
@@ -47,6 +48,7 @@ import no.uis.service.ws.studinfosolr.SolrUpdater;
 
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.util.DateUtil;
 import org.springframework.jmx.export.annotation.ManagedOperation;
@@ -472,7 +474,48 @@ public class SolrUpdaterImpl implements SolrUpdater {
     this.solrServers = solrServers;
   }
 
-  @ManagedOperation(description="Set ")
+  @ManagedOperation(description="get Server Map as String")
+  public String getSolrServersAsString() {
+    StringBuilder sb = new StringBuilder();
+    
+    for (Entry<String, SolrServer> entry : solrServers.entrySet()) {
+      sb.append(entry.getKey());
+      sb.append(" = ");
+      SolrServer server = entry.getValue();
+      if (server instanceof HttpSolrServer) {
+        sb.append(((HttpSolrServer)server).getBaseURL());
+      } else {
+        sb.append(server.toString());
+      }
+      sb.append("\n");
+    }
+    return sb.toString();
+  }
+  
+  @ManagedOperation(description="set the Solr server for a specific language. If the URL is null or empty, the solrserver for the given language is removed")
+  @ManagedOperationParameters({
+    @ManagedOperationParameter(name="lang", description="language code: B, E or N"),
+    @ManagedOperationParameter(name="url", description="URL to the solr core"),
+    @ManagedOperationParameter(name="username", description="optional username for the Solr core"),
+    @ManagedOperationParameter(name="password", description="optional password for the Solr core")
+  })
+  public void assignSolrServer(String lang, String url, String username, String password) throws MalformedURLException {
+    if (url == null || url.trim().isEmpty()) {
+      solrServers.remove(lang);
+    } else {
+      SolrServerFactory serverFactory = new SolrServerFactory(); 
+      serverFactory.setUrl(new URL(url));
+      if (username != null && !username.trim().isEmpty()) {
+        serverFactory.setUsername(username);
+      }
+      if (password != null && !password.trim().isEmpty()) {
+        serverFactory.setPassword(password);
+      }
+      solrServers.put(lang, serverFactory.getObject());
+    }
+  }
+  
+  @ManagedOperation(description="Set Cp Url")
   @ManagedOperationParameters({
     @ManagedOperationParameter(name="cpUrl", description="Corepublish URL: <url>|domainId")
   })
