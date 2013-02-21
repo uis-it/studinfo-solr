@@ -472,12 +472,27 @@ public class SolrUpdaterImpl implements SolrUpdater {
     this.solrServers = solrServers;
   }
 
-  public void setCpUrl(DomainUrl cpUrl) {
-    this.cpUrl = cpUrl;
+  @ManagedOperation(description="Set ")
+  @ManagedOperationParameters({
+    @ManagedOperationParameter(name="cpUrl", description="Corepublish URL: <url>|domainId")
+  })
+  public void setCpUrl(String cpUrl) {
+    this.cpUrl = DomainUrlAdapter.valueOf(cpUrl);
   }
 
+  @ManagedOperation(description="Get the corepublish URL")
+  public String getCpUrl() {
+    return this.cpUrl.toString();
+  }
+  
+  @ManagedOperation(description="Set siteId")
   public void setSiteId(int siteId) {
     this.siteId = siteId;
+  }
+  
+  @ManagedOperation(description="Get siteId")
+  public int getSiteId() {
+    return this.siteId;
   }
   
   public void setCpAccessorHolder(XmlAccessorHolder holder) {
@@ -521,7 +536,18 @@ public class SolrUpdaterImpl implements SolrUpdater {
 
   @ManagedOperation(description="Get Course Article Template IDs")
   public String getEvuTemplateIds() {
-    return Arrays.toString(_getEvuTemplateIds());
+    int[] ids = _getEvuTemplateIds();
+    if (ids == null) {
+      return null;
+    }
+    StringBuilder sb = new StringBuilder();
+    for (int i : ids) {
+      if (sb.length() > 0) {
+        sb.append(", ");
+      }
+      sb.append(i);
+    }
+    return sb.toString();
   }
   
   public void setPurgeIndexBeforeUpdate(boolean purgeIndexBeforeUpdate) {
@@ -710,5 +736,27 @@ public class SolrUpdaterImpl implements SolrUpdater {
   @PreDestroy
   public void destroy() throws Exception {
     xmlAccessorHolder.destroy();
+  }
+
+  private static class DomainUrlAdapter extends DomainUrl {
+
+    private static final long serialVersionUID = 1L;
+
+    public DomainUrlAdapter(String cpUrl, int domainId) {
+      super(cpUrl, domainId);
+    }
+    
+    private static DomainUrlAdapter valueOf(String domainUrl) {
+      String[] urlParts = domainUrl.split("\\|");
+      return new DomainUrlAdapter(urlParts[0], Integer.parseInt(urlParts[1]));
+    }
+    
+    public String toString() {
+      StringBuilder sb = new StringBuilder();
+      sb.append(this.getUrl());
+      sb.append('|');
+      sb.append(this.getDomainId());
+      return sb.toString();
+    }
   }
 }

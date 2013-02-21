@@ -69,14 +69,7 @@
 		<property name="purgeIndexBeforeUpdate" value="true" />
 		<property name="solrFieldMapping" ref="solrFieldMapping" />
 		<property name="typeAdapters" ref="gsonTypeAdapters" />
-		<property name="cpUrl">
-			<bean class="com.corepublish.util.DomainUrl">
-				<constructor-arg index="0" value="${cplib4j.url}">
-					<description><![CDATA[Should point to the corepublish URL like http://fronttest06.uis.no/corepublish]]></description>
-				</constructor-arg>
-				<constructor-arg index="1" value="${cplib4j.domainId}" />
-			</bean>
-		</property>
+		<property name="cpUrl" value="${cplib4j.url}|${cplib4j.domainId}"/>
 		<property name="siteId" value="${cplib4j.siteId}" />
 		<property name="cpAccessorHolder">
 			<bean class="com.corepublish.impl.xml.XmlAccessorHolder2" />
@@ -100,18 +93,6 @@
 	</bean>
 
 	<bean class="org.springframework.jmx.export.MBeanExporter">
-		<!--property name="beans">
-			<map>
-				<entry key="uis:service=ws-studinfo-solr,component=updater" value-ref="solrUpdater" />
-				<entry key="uis:service=ws-studinfo-solr,component=ws" value-ref="studinfoSolr" />
-			</map>
-		</property>
-		<property name="assembler">
-			<bean
-				class="org.springframework.jmx.export.assembler.MethodNameBasedMBeanInfoAssembler">
-				<property name="managedMethods" value="setEvuCategoryId,getEvuCategoryId,setEvuTemplateIdsFromString,getEvuTemplateIds" />
-			</bean>
-		</property-->
 		<property name="assembler">
 		 	<bean class="org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler">
 		 		<property name="attributeSource" ref="jmxAttributeSource"/>
