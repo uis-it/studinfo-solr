@@ -30,12 +30,7 @@
   <bean id="solrUpdater" class="no.uis.service.ws.studinfosolr.impl.SolrUpdaterImpl">
     <property name="solrServers" ref="solrServerMap"/>
     <property name="purgeIndexBeforeUpdate" value="true"/>
-    <property name="cpUrl">
-      <bean class="com.corepublish.util.DomainUrl">
-        <constructor-arg index="0" value="${cplib4j.url}"/>
-        <constructor-arg index="1" value="${cplib4j.domainId}"/>
-      </bean>
-    </property>
+    <property name="cpUrl" value="${cplib4j.url}|${cplib4j.domainId}"/>
     <property name="siteId" value="${cplib4j.siteId}"/>
     <property name="cpAccessorHolder">
       <!--bean class="no.uis.service.ws.studinfosolr.mock.XmlAccessorHolderFactoryBean"/-->
