@@ -29,6 +29,8 @@
     <entry key="desentralUndervisning" value="desentralUndervisning_b"/>
     <entry key="eksamensordning" value="eksamensordning_json"/>
     <entry key="emnekode" value="kode_s"/>
+    <entry key="emneidKode" value="emneidKode_s"/>
+    <entry key="emneidVersion" value="emneidVersion_i"/>
     <entry key="fagansvarlig" value="fagansvarlig_json"/>
     <entry key="fagpersonListe" value="fagperson_mjson"/>
     <entry key="fagplanTekst" value="fagplanTekst_t"/>

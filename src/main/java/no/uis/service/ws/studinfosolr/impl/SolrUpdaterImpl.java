@@ -357,6 +357,8 @@ public class SolrUpdaterImpl implements SolrUpdater {
         beanmap.put("kortsam", kortsam);
       }
     }
+    beanmap.put("emneidKode", emne.getEmneid().getEmnekode());
+    beanmap.put("emneidVersion", emne.getEmneid().getVersjonskode());
     
     updateDocuments(StudinfoType.EMNE, emne.getSprak(), beanmap, null, "/emne");
   }
