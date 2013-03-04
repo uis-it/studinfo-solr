@@ -35,7 +35,6 @@ import no.uis.service.fsimport.util.Studinfos;
 import no.uis.service.studinfo.data.Emne;
 import no.uis.service.studinfo.data.Emneid;
 import no.uis.service.studinfo.data.FsSemester;
-import no.uis.service.studinfo.data.FsStudieinfo;
 import no.uis.service.studinfo.data.FsYearSemester;
 import no.uis.service.studinfo.data.InngarIStudieprogram;
 import no.uis.service.studinfo.data.Kurs;
@@ -81,6 +80,8 @@ import com.google.gson.TypeAdapter;
 )
 public class SolrUpdaterImpl implements SolrUpdater {
 
+  private static final int COMMIT_WITHIN = 3000;
+
   private static final TimeZone TIME_ZONE_UTC = TimeZone.getTimeZone("UTC");
 
   private static final String CATEGORY_STUDINFO = "STUDINFO";
@@ -93,8 +94,6 @@ public class SolrUpdaterImpl implements SolrUpdater {
   
   private Map<String, String> solrFieldMapping;
 
-  private boolean purgeIndexBeforeUpdate;
-  
   private DomainUrl cpUrl;
   private int siteId; 
   private XmlAccessorHolder xmlAccessorHolder;
@@ -141,77 +140,72 @@ public class SolrUpdaterImpl implements SolrUpdater {
     this.studieprogramFilter = studieprogramFilter;
   }
 
+  
   @Override
-  public void pushStudieInfo(FsStudieinfo info, int year, FsSemester semester, String language) throws Exception {
-    
+  public void pushCourses(List<Kurs> courses, int year, FsSemester semester, String language) throws Exception {
     context.set(new CatalogContext(new FsYearSemester(year, semester)));
-    
     try {
-      if (info.isSetStudieprogram()) {
-        if (purgeIndexBeforeUpdate) {
-          cleanIndex(StudinfoType.STUDIEPROGRAM, language);
+      Map<String, CPArticleInfo> descriptionCache = new HashMap<String, CPArticleInfo>();
+      fillDescriptionCache(descriptionCache);
+      courseDescriptionCache.set(descriptionCache);
+      try {
+        for (Kurs kurs : courses) {
+          pushKursToSolr(kurs);
         }
-        pushPrograms(info.getStudieprogram(), language);
-      }
-      if(info.isSetEmne()) {
-        if (purgeIndexBeforeUpdate) {
-          cleanIndex(StudinfoType.EMNE, language);
-        }
-        pushSubjects(info.getEmne(), language);
-      }
-      if (info.isSetKurs()) {
-        if (purgeIndexBeforeUpdate) {
-          cleanIndex(StudinfoType.KURS, language);
-        }
-        pushCourses(info.getKurs(), language);
+      } finally {
+        courseDescriptionCache.remove();
       }
     } finally {
       context.remove();
     }
   }
 
-  private void pushPrograms(List<Studieprogram> programs, String language) throws Exception {
-    for (Studieprogram program : programs) {
-      if (studieprogramFilter.accept(program)) {
-        pushProgramToSolr(program);
-      } else {
-        log.info(String.format("Skipping \"%s\" due to filter %s", program.getStudieprogramkode(), studieprogramFilter.getClass().getName()));
-      }
-    }
-  }
-
-  private void pushSubjects(List<Emne> subjects, String language) throws Exception {
-    for (Emne emne : subjects) {
-      if (emneFilter.accept(emne)) {
-        pushEmneToSolr(emne);
-      } else {
-        String emneid = formatTokens(emne.getEmneid().getEmnekode(), emne.getEmneid().getVersjonskode());
-        log.info(String.format("Skipping \"%s\" due to filter %s", emneid, emneFilter.getClass().getName()));
-      }
-    }
-  }
-
-  private void pushCourses(List<Kurs> courses, String language) throws Exception {
-
-    Map<String, CPArticleInfo> descriptionCache = new HashMap<String, CPArticleInfo>();
-    fillDescriptionCache(descriptionCache);
-    courseDescriptionCache.set(descriptionCache);
+  @Override
+  public void pushSubjects(List<Emne> subjects, int year, FsSemester semester, String language) throws Exception {
+    context.set(new CatalogContext(new FsYearSemester(year, semester)));
+    
     try {
-      for (Kurs kurs : courses) {
-        pushKursToSolr(kurs);
+      for (Emne emne : subjects) {
+        if (emneFilter.accept(emne)) {
+          pushEmneToSolr(emne);
+        } else {
+          String emneid = formatTokens(emne.getEmneid().getEmnekode(), emne.getEmneid().getVersjonskode());
+          log.info(String.format("Skipping \"%s\" due to filter %s", emneid, emneFilter.getClass().getName()));
+        }
       }
     } finally {
-      courseDescriptionCache.remove();
+      context.remove();
     }
   }
 
-  private void cleanIndex(StudinfoType infoType, String language) throws SolrServerException, IOException {
-
-    SolrServer solrServer = getSolrServer(language, infoType);
-    String categoryQuery = "cat:"+CATEGORY_STUDINFO+" AND cat:"+infoType.toString();
-    solrServer.deleteByQuery(categoryQuery);
+  @Override
+  public void pushPrograms(List<Studieprogram> programs, int year, FsSemester semester, String language) throws Exception {
+    context.set(new CatalogContext(new FsYearSemester(year, semester)));
+    
+    try {
+      for (Studieprogram program : programs) {
+        if (studieprogramFilter.accept(program)) {
+          pushProgramToSolr(program);
+        } else {
+          log.info(String.format("Skipping \"%s\" due to filter %s", program.getStudieprogramkode(), studieprogramFilter.getClass().getName()));
+        }
+      }
+    } finally {
+      context.remove();
+    }
   }
 
+  @Override
+  @ManagedOperation(description="Delete documents of solr index (given by language) by solr query")
+  @ManagedOperationParameters({
+    @ManagedOperationParameter(name="language", description="one-letter language code: (B)okmål, (E)ngelsk or (N)ynorsk"),
+    @ManagedOperationParameter(name="query", description="Solr query for documents to delete")
+  })
+  public void deleteByQuery(String language, String query) throws Exception {
+    SolrServer solrServer = getSolrServer(language);
+    solrServer.deleteByQuery(query, COMMIT_WITHIN);
+  }
+  
   private void pushProgramToSolr(Studieprogram prog) throws Exception {
     
     // clean utdanningsplan
@@ -364,11 +358,11 @@ public class SolrUpdaterImpl implements SolrUpdater {
   }
 
   private void updateDocument(StudinfoType infoType, String lang, SolrInputDocument doc) throws SolrServerException, IOException {
-    SolrServer solrServer = getSolrServer(lang, infoType);
-    solrServer.add(doc, 3000);
+    SolrServer solrServer = getSolrServer(lang);
+    solrServer.add(doc, COMMIT_WITHIN);
   }
 
-  private SolrServer getSolrServer(String sprak, StudinfoType studinfoType) {
+  private SolrServer getSolrServer(String sprak) {
 
     return solrServers.get(sprak.substring(0, 1));
   }
@@ -595,10 +589,6 @@ public class SolrUpdaterImpl implements SolrUpdater {
     return sb.toString();
   }
   
-  public void setPurgeIndexBeforeUpdate(boolean purgeIndexBeforeUpdate) {
-    this.purgeIndexBeforeUpdate = purgeIndexBeforeUpdate;
-  }
-
   private void addValue(Map<String, Object> map, String propName, Object value, String path) {
     if (value == null) {
       return;

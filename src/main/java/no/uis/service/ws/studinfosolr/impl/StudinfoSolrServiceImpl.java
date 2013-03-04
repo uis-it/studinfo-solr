@@ -29,6 +29,7 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService, Notificatio
   private StudInfoImport studinfoImport;
   private SolrUpdater solrUpdater;
   private NotificationPublisher jmxPublisher;
+  private int[] faculties = {-1};
 
   private static AtomicLong sequence = new AtomicLong();
 
@@ -40,17 +41,33 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService, Notificatio
     this.solrUpdater = solrUpdater;
   }
 
+  public void setFaculties(String facultiesString) {
+    int[] newFaculties = null;
+    if (faculties != null && !facultiesString.trim().isEmpty()) {
+      String[] tokens = facultiesString.split("\\s*,\\s*");
+      newFaculties = new int[tokens.length];
+      for (int i = 0; i < tokens.length; i++) {
+        newFaculties[i] = Integer.parseInt(tokens[i]);
+      }
+    }
+    if (newFaculties == null) {
+      faculties = new int[] {-1};
+    } else {
+      faculties = newFaculties;
+    }
+  }
+  
   @Override
   public void updateSolrKurs(int year, String semester, String language) throws SolrUpdateException {
     long seq = sequence.incrementAndGet();
-    sendNotification(seq, year, semester, language, "KURS-start", null);
+    sendNotification(seq, null, year, semester, language, "KURS-start");
     try {
       FsSemester fsSemester = FsSemester.stringToUisSemester(semester);
       FsStudieinfo fsinfo = studinfoImport.fetchCourses(217, year, semester.toString(), language);
-      solrUpdater.pushStudieInfo(fsinfo, year, fsSemester, language);
-      sendNotification(seq, year, semester, language, "KURS-end", null);
+      solrUpdater.pushCourses(fsinfo.getKurs(), year, fsSemester, language);
+      sendNotification(seq, null, year, semester, language, "KURS-end");
     } catch(Exception e) {
-      sendNotification(seq, year, semester, language, "KURS-error", errorToString(e));
+      sendNotification(seq, e, year, semester, language, "KURS-error");
       log.error(String.format("updateSolrKurs: %d, %s, %s", year, semester, language), e);
       throw new SolrUpdateException(e);
     }
@@ -58,33 +75,47 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService, Notificatio
 
   @Override
   public void updateSolrEmne(int year, String semester, String language) throws SolrUpdateException {
+    for (int faculty : faculties) {
+      updateSolrEmne(faculty, year, semester, language);
+    }
+  }
+  
+  private void updateSolrEmne(int faculty, int year, String semester, String language) throws SolrUpdateException {
+
     long seq = sequence.incrementAndGet();
-    sendNotification(seq, year, semester, language, "EMNE-start", null);
+    sendNotification(seq, null, faculty, year, semester, language, "EMNE-start");
     try {
       FsSemester fsSemester = FsSemester.stringToUisSemester(semester);
-      FsStudieinfo fsinfo = studinfoImport.fetchSubjects(217, year, fsSemester.toString(), language);
-      solrUpdater.pushStudieInfo(fsinfo, year, fsSemester, language);
-      sendNotification(seq, year, semester, language, "EMNE-end", null);
+      FsStudieinfo fsinfo = studinfoImport.fetchSubjects(217, faculty, year, fsSemester.toString(), language);
+      solrUpdater.pushSubjects(fsinfo.getEmne(), year, fsSemester, language);
+      sendNotification(seq, null, faculty, year, semester, language, "EMNE-end");
     } catch(Exception e) {
-      sendNotification(seq, year, semester, language, "EMNE-error", errorToString(e));
-      log.error(String.format("updateSolrEmne: %d, %s, %s", year, semester, language), e);
+      sendNotification(seq, e, faculty, year, semester, language, "EMNE-error");
+      log.error(String.format("updateSolrEmne(%d): %d, %s, %s", faculty, year, semester, language), e);
       throw new SolrUpdateException(e);
     }
   }
 
   @Override
   public void updateSolrStudieprogram(int year, String semester, String language) throws SolrUpdateException {
+    for (int faculty : faculties) {
+      updateSolrStudieprogram(faculty, year, semester, language);
+    }
+  }
+  
+  private void updateSolrStudieprogram(int faculty, int year, String semester, String language) throws SolrUpdateException {
+
     long seq = sequence.incrementAndGet();
-    sendNotification(seq, year, semester, language, "PROGRAM-start", null);
+    sendNotification(seq, null, faculty, year, semester, language, "PROGRAM-start");
     try {
       FsSemester fsSemester = FsSemester.stringToUisSemester(semester);
 
-      FsStudieinfo fsinfo = studinfoImport.fetchStudyPrograms(217, year, fsSemester.toString(), true, language);
-      solrUpdater.pushStudieInfo(fsinfo, year, fsSemester, language);
-      sendNotification(seq, year, semester, language, "PROGRAM-end", null);
+      FsStudieinfo fsinfo = studinfoImport.fetchStudyPrograms(217, faculty, year, fsSemester.toString(), true, language);
+      solrUpdater.pushPrograms(fsinfo.getStudieprogram(), year, fsSemester, language);
+      sendNotification(seq, null, faculty, year, semester, language, "PROGRAM-end");
     } catch(Exception e) {
-      sendNotification(seq, year, semester, language, "PROGRAM-error", errorToString(e));
-      log.error(String.format("updateSolrStudieprogram: %d, %s, %s", year, semester, language), e);
+      sendNotification(seq, e, faculty, year, semester, language, "PROGRAM-error");
+      log.error(String.format("updateSolrStudieprogram (%d): %d, %s, %s", faculty, year, semester, language), e);
       throw new SolrUpdateException(e);
     }
   }
@@ -94,23 +125,29 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService, Notificatio
     this.jmxPublisher = notificationPublisher;
   }
   
-  private void sendNotification(long seqNo, int year, String semester, String language, String type, Object error) {
+  private void sendNotification(long seqNo, Throwable error, Object... args) {
     if (this.jmxPublisher == null) {
       return;
     }
-    
-    String jmxMessage = String.format("%s %d %s %s", type, year, semester, language);
-    Notification notification = new Notification("SolrUpdate", this, seqNo, jmxMessage);
+
+    StringBuilder sb = new StringBuilder();
+    for (Object arg : args) {
+      if (sb.length() > 0) {
+        sb.append(", ");
+      }
+      sb.append(arg);
+    }
+    Notification notification = new Notification("PDFUpdate", this, seqNo, sb.toString());
     if (error != null) {
-      notification.setUserData(error);
+      notification.setUserData(errorToString(error));
     }
     this.jmxPublisher.sendNotification(notification);
   }
-  
+
   private String errorToString(Throwable tr) {
     StringWriter sw = new StringWriter();
     tr.printStackTrace(new PrintWriter(sw));
-    
+
     return sw.toString();
   }
 }
