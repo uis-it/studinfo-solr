@@ -325,7 +325,7 @@ public class SolrUpdaterImpl implements SolrUpdater {
     // anbefalte forkunnskaper
     Map<String, Object> anbForkunn = Studinfos.anbefalteForkunnskaper(emne);
     if (anbForkunn != null) {
-      emne.addProperty("anbefalteForkunskaper", anbForkunn);
+      emne.addProperty("anbefalteForkunnskaper", anbForkunn);
     }
     
     // obligatorisk undervisning
