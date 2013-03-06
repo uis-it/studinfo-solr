@@ -5,9 +5,9 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -359,6 +359,7 @@ public class SolrUpdaterImpl implements SolrUpdater {
 
   private void updateDocument(StudinfoType infoType, String lang, SolrInputDocument doc) throws SolrServerException, IOException {
     SolrServer solrServer = getSolrServer(lang);
+    doc.addField("timestamp", solrDate(Calendar.getInstance()));
     solrServer.add(doc, COMMIT_WITHIN);
   }
 
@@ -645,17 +646,20 @@ public class SolrUpdaterImpl implements SolrUpdater {
   }
 
   private String xmlCalToSolrDateString(XMLGregorianCalendar value) {
-    GregorianCalendar gregorianCalendar = value.toGregorianCalendar(TIME_ZONE_UTC, null, null);
+    return solrDate(value.toGregorianCalendar(TIME_ZONE_UTC, null, null));
+  }
+
+  private String solrDate(Calendar cal) {
     StringBuilder out = new StringBuilder();
     try {
-      DateUtil.formatDate(gregorianCalendar.getTime(), gregorianCalendar, out);
+      DateUtil.formatDate(cal.getTime(), cal, out);
     } catch(IOException e) {
-      log.warn("xml cal: " + value.toXMLFormat());
+      log.warn("xml cal: " + cal.getTime());
     }
     
     return out.toString();
   }
-
+  
   private List<String> createStringArray(Object value) {
     Collection<?> coll = (Collection<?>)value;
     List<String> jsonArray = new ArrayList<String>(coll.size());
