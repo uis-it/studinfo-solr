@@ -359,7 +359,7 @@ public class SolrUpdaterImpl implements SolrUpdater {
 
   private void updateDocument(StudinfoType infoType, String lang, SolrInputDocument doc) throws SolrServerException, IOException {
     SolrServer solrServer = getSolrServer(lang);
-    doc.addField("timestamp", solrDate(Calendar.getInstance()));
+    doc.addField("timestamp", solrDate(Calendar.getInstance(TIME_ZONE_UTC)));
     solrServer.add(doc, COMMIT_WITHIN);
   }
 
