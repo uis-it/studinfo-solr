@@ -137,7 +137,7 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService, Notificatio
       }
       sb.append(arg);
     }
-    Notification notification = new Notification("PDFUpdate", this, seqNo, sb.toString());
+    Notification notification = new Notification("SolrUpdate", this, seqNo, sb.toString());
     if (error != null) {
       notification.setUserData(errorToString(error));
     }
