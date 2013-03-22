@@ -64,6 +64,7 @@
     <entry key="pInnhold" value="pInnhold_t"/>
     <entry key="pKortintr" value="pKortintr_t"/>
     <entry key="pProfkval" value="pProfkval_t"/>
+    <entry key="praksis" value="praksis_t"/>
     <entry key="properties" value="properties_json"/>
     <entry key="pStudkval" value="pStudkval_t"/>
     <entry key="rammeplanTekst" value="rammeplanTekst_t"/>
