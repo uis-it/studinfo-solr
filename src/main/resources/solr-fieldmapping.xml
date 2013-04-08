@@ -13,6 +13,10 @@
     </description>
     <entry key="absForkunnskaperFritekst" value="absForkunnskaperFritekst_t"/>
     <entry key="adminansvarlig" value="adminansvarlig_json"/>
+    <entry key="adminansvarlig_institusjon" value="adminansvarlig_institusjon_i"/>
+    <entry key="adminansvarlig_fakultetsnr" value="adminansvarlig_fakultetsnr_i"/>
+    <entry key="adminansvarlig_instituttnr" value="adminansvarlig_instituttnr_i"/>
+    <entry key="adminansvarlig_gruppenr" value="adminansvarlig_gruppenr_i"/>
     <entry key="antallForelesningstimer" value="antallForelesningstimer_i"/>
     <entry key="antallUndsemester" value="antallUndsemester_i"/>
     <entry key="arbeidsformer" value="arbeidsformer_t"/>
@@ -32,7 +36,12 @@
     <entry key="emneidKode" value="emneidKode_s"/>
     <entry key="emneidVersion" value="emneidVersion_i"/>
     <entry key="fagansvarlig" value="fagansvarlig_json"/>
+    <entry key="fagansvarlig_institusjon" value="fagansvarlig_institusjon_i"/>
+    <entry key="fagansvarlig_fakultetsnr" value="fagansvarlig_fakultetsnr_i"/>
+    <entry key="fagansvarlig_instituttnr" value="fagansvarlig_instituttnr_i"/>
+    <entry key="fagansvarlig_gruppenr" value="fagansvarlig_gruppenr_i"/>
     <entry key="fagpersonListe" value="fagperson_mjson"/>
+    <entry key="fagpersonListe_" value="fagperson_ms"/>
     <entry key="fagplanTekst" value="fagplanTekst_t"/>
     <entry key="finansieringsprosent" value="finansieringsprosent_i"/>
     <entry key="fjernundervisning" value="fjernundervisning_b"/>
@@ -41,6 +50,7 @@
     <entry key="heltidsprosent" value="heltidsprosent_i"/>
     <entry key="inngarIFag" value="inngarIFag_ms"/>
     <entry key="inngarIStudieprogram" value="inngarIStudieprogram_json"/>
+    <entry key="inngarIStudieprogram_" value="inngarIStudieprogram_ms"/>
     <entry key="innhold" value="innhold_t"/>
     <entry key="intro" value="intro_t"/>
     <entry key="kanTilbys" value="kanTilbys_b"/>
@@ -68,8 +78,10 @@
     <entry key="properties" value="properties_json"/>
     <entry key="pStudkval" value="pStudkval_t"/>
     <entry key="rammeplanTekst" value="rammeplanTekst_t"/>
+    <entry key="semester" value="semester_s"/>
     <entry key="skalAvholdes" value="skalAvholdes_b"/>
     <entry key="sprakListe" value="undsprak_json"/>
+    <entry key="sprakListe_" value="undpsrak_ms"/>
     <entry key="statusOblig" value="statusOblig_b"/>
     <entry key="statusPrivatist" value="statusPrivatist_b"/>
     <entry key="studentevaluering" value="studentevaluering_t"/>
@@ -83,6 +95,7 @@
     <entry key="varighettimer" value="varighettimer_i"/>
     <entry key="vektingsreduksjon" value="vektingsreduksjon_json"/>
     <entry key="vurdordning" value="vurdordning_json"/>
+    <entry key="year" value="year_i"/>
   </util:map>
   
 </beans>

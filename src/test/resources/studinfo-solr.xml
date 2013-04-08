@@ -19,12 +19,13 @@
   <bean id="fsStudInfoImport" class="no.uis.service.fsimport.impl.StudInfoImportImpl">
     <property name="fsServiceStudInfo">
       <bean class="no.uis.service.ws.studinfosolr.mock.StudinfoFactory">
-        <property name="emneSource" value="src/test/data/emner.xml"/>
-        <property name="programSource" value="src/test/data/programmer.xml"/>
-        <property name="kursSource" value="src/test/data/kurser.xml"/>
+        <property name="emneSource" value="d:\temp\fsdata\EMNE2013HØSTB_orig.xml"/>
+        <!--property name="emneSource" value="src/test/data/emner.xml"/-->
+        <!--property name="programSource" value="src/test/data/programmer.xml"/-->
+        <!--property name="kursSource" value="src/test/data/kurser.xml"/-->
       </bean>
     </property>
-    <property name="transformerUrl" value="classpath:fspreprocess.xsl"/>
+    <property name="transformerUrl" value="classpath:fspreprocess-stable.xsl"/>
   </bean>
   
   <bean id="solrUpdater" class="no.uis.service.ws.studinfosolr.impl.SolrUpdaterImpl">

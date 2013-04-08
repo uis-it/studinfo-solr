@@ -9,6 +9,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -34,6 +35,7 @@ import no.uis.service.fsimport.util.PropertyInfoUtils;
 import no.uis.service.fsimport.util.Studinfos;
 import no.uis.service.studinfo.data.Emne;
 import no.uis.service.studinfo.data.Emneid;
+import no.uis.service.studinfo.data.Fagperson;
 import no.uis.service.studinfo.data.FsSemester;
 import no.uis.service.studinfo.data.FsYearSemester;
 import no.uis.service.studinfo.data.InngarIStudieprogram;
@@ -41,6 +43,9 @@ import no.uis.service.studinfo.data.Kurs;
 import no.uis.service.studinfo.data.Kursid;
 import no.uis.service.studinfo.data.Kurskategori;
 import no.uis.service.studinfo.data.Obligoppgave;
+import no.uis.service.studinfo.data.Personnavn;
+import no.uis.service.studinfo.data.Sprak;
+import no.uis.service.studinfo.data.Sted;
 import no.uis.service.studinfo.data.Studieprogram;
 import no.uis.service.studinfo.data.Utdanningsplan;
 import no.uis.service.ws.studinfosolr.SolrUpdater;
@@ -89,6 +94,39 @@ public class SolrUpdaterImpl implements SolrUpdater {
   private static final char ID_TOKEN_SEPARATOR = '_';
   
   private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(SolrUpdaterImpl.class);
+  
+  private static final ToString SPRAK_TO_STRING = new ToString() {
+
+    @Override
+    public String toString(Object o) {
+      if (o instanceof Sprak) {
+        return ((Sprak)o).getSprakkode();
+      }
+      return null;
+    }
+  };
+
+  private static final ToString INNGAR_I_STUDIEPROGRAM_TO_STRING = new ToString() {
+
+    @Override
+    public String toString(Object o) {
+      if (o instanceof InngarIStudieprogram) {
+        return ((InngarIStudieprogram)o).getStudieprogramkode();
+      }
+      return null;
+    }
+  };
+
+  private static final ToString FAGPERSON_TO_STRING = new ToString() {
+
+    @Override
+    public String toString(Object o) {
+      if (o instanceof Fagperson) {
+        return ((Fagperson)o).getPersonid().toString();
+      }
+      return null;
+    }
+  };
 
   private Map<String, SolrServer> solrServers;
   
@@ -163,16 +201,18 @@ public class SolrUpdaterImpl implements SolrUpdater {
   @Override
   public void pushSubjects(List<Emne> subjects, int year, FsSemester semester, String language) throws Exception {
     context.set(new CatalogContext(new FsYearSemester(year, semester)));
-    
+    HashMap<Integer, Personnavn> fagpersons = new HashMap<Integer, Personnavn>();
     try {
       for (Emne emne : subjects) {
         if (emneFilter.accept(emne)) {
           pushEmneToSolr(emne);
+          addFagPersonsToMap(fagpersons, emne);
         } else {
           String emneid = formatTokens(emne.getEmneid().getEmnekode(), emne.getEmneid().getVersjonskode());
           log.info(String.format("Skipping \"%s\" due to filter %s", emneid, emneFilter.getClass().getName()));
         }
       }
+      pushFagpersonsToSolr(language, fagpersons);
     } finally {
       context.remove();
     }
@@ -217,27 +257,48 @@ public class SolrUpdaterImpl implements SolrUpdater {
     updateDocuments(StudinfoType.STUDIEPROGRAM, prog.getSprak(), beanmap, null, "/studieprogram");
   }
 
+  private void addFagPersonsToMap(HashMap<Integer, Personnavn> fagpersons, Emne emne) {
+    for (Fagperson fagPerson : emne.getFagpersonListe()) {
+      fagpersons.put(fagPerson.getPersonid().intValue(), fagPerson.getPersonnavn());
+    }
+  }
+  
+  private void pushFagpersonsToSolr(String language, HashMap<Integer, Personnavn> fagpersons) throws Exception {
+    String fPersonId = getSolrFieldName("/fagperson", "personid");
+    String fFornavn = getSolrFieldName("/fagperson", "fornavn");
+    String fEtternavn = getSolrFieldName("/fagperson", "etternavn");
+    for (Entry<Integer, Personnavn> entry : fagpersons.entrySet()) {
+      SolrInputDocument doc = new SolrInputDocument();
+      doc.addField("id", "fagperson_"+entry.getKey());
+      doc.addField("cat", "fagperson");
+      addFieldToDoc(doc, entry.getKey(), fPersonId);
+      addFieldToDoc(doc, entry.getValue().getFornavn(), fFornavn);
+      addFieldToDoc(doc, entry.getValue().getEtternavn(), fEtternavn);
+      updateDocument(language, doc);
+    }
+  }
+  
   private void updateDocuments(StudinfoType infoType, String infoLanguage, Map<String, ?> beanProps, String parentDocId, String path) throws Exception {
     SolrInputDocument doc = new SolrInputDocument();
     String docId = createId(infoType, beanProps, path);
     doc.addField("id", docId);
-    doc.addField("year_i", context.get().getCurrentYearSemester().getYear());
-    doc.addField("semester_s", context.get().getCurrentYearSemester().getSemester().toString());
     addCategories(doc, infoType);
+    addFieldToDoc(doc, context.get().getCurrentYearSemester().getYear(), getSolrFieldName(path, "year"));
+    addFieldToDoc(doc, context.get().getCurrentYearSemester().getSemester().toString(), getSolrFieldName(path, "semester"));
     for (Entry<String, ?> entry : beanProps.entrySet()) {
       String propName = getSolrFieldName(path, entry.getKey());
       if (propName != null) {
-        addFieldToDoc(path, doc, entry.getValue(), propName);
+        addFieldToDoc(doc, entry.getValue(), propName);
       }
     }
-    updateDocument(infoType, infoLanguage, doc);
+    updateDocument(infoLanguage, doc);
   }
 
-  private void addFieldToDoc(String path, SolrInputDocument doc, Object value, String solrFieldName) {
+  private void addFieldToDoc(SolrInputDocument doc, Object value, String solrFieldName) {
     if (value instanceof Collection) {
       Collection<?> coll = (Collection<?>)value;
       for (Object elem : coll) {
-        addFieldToDoc(path, doc, elem, solrFieldName);
+        addFieldToDoc(doc, elem, solrFieldName);
       }
     } else {
       String stringValue = String.valueOf(value);
@@ -357,7 +418,7 @@ public class SolrUpdaterImpl implements SolrUpdater {
     updateDocuments(StudinfoType.EMNE, emne.getSprak(), beanmap, null, "/emne");
   }
 
-  private void updateDocument(StudinfoType infoType, String lang, SolrInputDocument doc) throws SolrServerException, IOException {
+  private void updateDocument(String lang, SolrInputDocument doc) throws SolrServerException, IOException {
     SolrServer solrServer = getSolrServer(lang);
     doc.addField("timestamp", solrDate(Calendar.getInstance(TIME_ZONE_UTC)));
     solrServer.add(doc, COMMIT_WITHIN);
@@ -622,6 +683,7 @@ public class SolrUpdaterImpl implements SolrUpdater {
       Kursid kursid = (Kursid)value;
       map.put("kurskode", kursid.getKurskode());
       map.put("tidkode", kursid.getTidkode());
+    
     } else if (propName.equals("kurskategoriListe")) {
       @SuppressWarnings("unchecked")
       List<Kurskategori> kkList = (List<Kurskategori>)value;
@@ -634,15 +696,42 @@ public class SolrUpdaterImpl implements SolrUpdater {
     } else if (propName.equals("fagpersonListe")) {
       map.put(propName, createJsonArray(value));
       
-    } else if(propName.equals("inngarIFag")) {
-      map.put(propName, createStringArray(value));
+      map.put(propName+"_", createStringArray(value, new HashSet<String>(), FAGPERSON_TO_STRING));
       
+    } else if (value instanceof Sted) { // fagansvarlig, adminansvarlig
+      map.put(propName, gson.toJson(value));
+      addStedValue(map, propName+"_", (Sted)value);
+    
+    } else if(propName.equals("inngarIStudieprogram")) {
+      map.put(propName, gson.toJson(value));
+      
+      map.put(propName+"_", createStringArray(value, null, INNGAR_I_STUDIEPROGRAM_TO_STRING));
+    
+    } else if (propName.equals("sprakListe")) {
+      map.put("sprakListe", gson.toJson(value));
+      Collection<String> usprak = createStringArray(value, new HashSet<String>(), SPRAK_TO_STRING);
+
+      if (usprak.isEmpty()) {
+        usprak.add("NO");
+      }
+      map.put(propName+"_", usprak);
+      
+    } else if(propName.equals("inngarIFag")) {
+      map.put(propName, createStringArray(value, null, null));
+    
     } else if (path.startsWith("/kurs/dato")) {
       map.put(propName, xmlCalToSolrDateString((XMLGregorianCalendar)value));
       
     } else {
       map.put(propName, gson.toJson(value));
     }
+  }
+
+  private void addStedValue(Map<String, Object> map, String prefix, Sted sted) {
+    map.put(prefix+"institusjonsnr", sted.getInstitusjonsnr());
+    map.put(prefix+"fakultetsnr", sted.getFakultetsnr());
+    map.put(prefix+"instituttnr", sted.getInstituttnr());
+    map.put(prefix+"gruppenr", sted.getGruppenr());
   }
 
   private String xmlCalToSolrDateString(XMLGregorianCalendar value) {
@@ -660,13 +749,21 @@ public class SolrUpdaterImpl implements SolrUpdater {
     return out.toString();
   }
   
-  private List<String> createStringArray(Object value) {
-    Collection<?> coll = (Collection<?>)value;
-    List<String> jsonArray = new ArrayList<String>(coll.size());
-    for (Object o : coll) {
-      jsonArray.add(String.valueOf(o));
+  private Collection<String> createStringArray(Object value, Collection<String> target, ToString ts) {
+    if (!(value instanceof Collection)) {
+      return Collections.emptyList();
     }
-    return jsonArray;
+    Collection<?> coll = (Collection<?>)value;
+    if (target == null) {
+      target = new ArrayList<String>(coll.size());
+    }
+    for (Object o : coll) {
+      String sval = ts == null ? String.valueOf(o) : ts.toString(o);
+      if (sval != null) {
+        target.add(sval);
+      }
+    }
+    return target;
   }
   
   private List<String> createJsonArray(Object value) {
@@ -798,4 +895,9 @@ public class SolrUpdaterImpl implements SolrUpdater {
       return sb.toString();
     }
   }
+
+  private interface ToString {
+    String toString(Object o);
+  }
+  
 }

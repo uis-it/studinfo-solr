@@ -45,13 +45,14 @@ public class EmnerSolrTest extends AbstractSolrTestCase {
       String solrServerUrl = configProps.getProperty(String.format("solr.server.%s.url", lang));
       SolrServer solrServer;
       if (solrServerUrl != null) {
-        solrServer = new HttpSolrServer(solrServerUrl);
-      } else {
-        solrServer = new EmbeddedSolrServer(h.getCoreContainer(), h.getCore().getName());
+        if (solrServerUrl.equalsIgnoreCase("embedded")) {
+          solrServer = new EmbeddedSolrServer(h.getCoreContainer(), h.getCore().getName());
+        } else { 
+          solrServer = new HttpSolrServer(solrServerUrl);
+        }
+        solrServerMap.put(lang.toUpperCase(), solrServer);
       }
-      solrServerMap.put(lang.toUpperCase(), solrServer);
     }
-    
     this.testConfig = configProps;
     
     StaticApplicationContext bfParent = new StaticApplicationContext();
