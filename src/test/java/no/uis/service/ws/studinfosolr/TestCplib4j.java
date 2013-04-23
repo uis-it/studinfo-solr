@@ -38,7 +38,11 @@ public class TestCplib4j {
 
     String cpUrl = configProps.getProperty("cplib4j.url");
     int domainId = Integer.parseInt(configProps.getProperty("cplib4j.domainId"));
-    cpAccessor = (XmlAccessor)accessorHolder.getAccessor(new DomainUrl(cpUrl, domainId));
+    try {
+      cpAccessor = (XmlAccessor)accessorHolder.getAccessor(new DomainUrl(cpUrl, domainId));
+    } catch (Exception ex) {
+      Assume.assumeNoException(ex);
+    }
   }
   
   @After
