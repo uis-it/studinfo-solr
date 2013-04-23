@@ -7,7 +7,7 @@
   </parent>
   <groupId>no.uis.service.ws</groupId>
   <artifactId>studinfo-solr</artifactId>
-  <version>1.0.7-SNAPSHOT</version>
+  <version>1.0.7</version>
   <packaging>war</packaging>
   <name>ws-studinfo-solr</name>
   <description>Update Solr with FS studinfo data</description>
