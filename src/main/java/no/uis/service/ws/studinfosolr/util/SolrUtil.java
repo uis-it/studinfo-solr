@@ -2,6 +2,7 @@ package no.uis.service.ws.studinfosolr.util;
 
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -19,12 +20,15 @@ public class SolrUtil {
   }
 
   public static String xmlCalToSolrDateString(XMLGregorianCalendar value) {
-    solrDate(value.toGregorianCalendar(TIME_ZONE_UTC, null, null));
-    return null;
+    return solrDate(value.toGregorianCalendar(TIME_ZONE_UTC, Locale.ENGLISH, null));
   }
   
   public static String solrDateNow() {
-    return solrDate(Calendar.getInstance(TIME_ZONE_UTC));    
+    return solrDate(getDefaultCalendar());    
+  }
+
+  public static Calendar getDefaultCalendar() {
+    return Calendar.getInstance(TIME_ZONE_UTC, Locale.ENGLISH);
   }
   
   private static String solrDate(Calendar cal) {

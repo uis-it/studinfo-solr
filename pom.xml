@@ -27,6 +27,8 @@
     <commons.codec.version>1.7</commons.codec.version>
     <fsimport.version>2.0.0-SNAPSHOT</fsimport.version>
     <studinfo.commons.version>1.0.0-SNAPSHOT</studinfo.commons.version>
+    <idm.version>1.0.2</idm.version>
+    <jaxb.version>2.2.5</jaxb.version>
   </properties>
 
   <scm>
@@ -37,6 +39,11 @@
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-core</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-web</artifactId>
@@ -141,7 +148,17 @@
         <groupId>no.uis.service.ws</groupId>
         <artifactId>idm</artifactId>
         <classifier>lib</classifier>
-        <version>1.0.2</version>
+        <version>${idm.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.xml.bind</groupId>
+        <artifactId>jaxb-api</artifactId>
+        <version>${jaxb.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.sun.xml.bind</groupId>
+        <artifactId>jaxb-impl</artifactId>
+        <version>${jaxb.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

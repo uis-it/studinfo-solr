@@ -283,15 +283,17 @@ public class SolrUpdaterImpl implements SolrUpdater {
   }
 
   public static void addFieldToDoc(SolrInputDocument doc, Object value, String solrFieldName) {
-    if (value instanceof Collection) {
-      Collection<?> coll = (Collection<?>)value;
-      for (Object elem : coll) {
-        addFieldToDoc(doc, elem, solrFieldName);
+    if (value != null) {
+      if (value instanceof Collection) {
+        Collection<?> coll = (Collection<?>)value;
+        for (Object elem : coll) {
+          addFieldToDoc(doc, elem, solrFieldName);
+        }
+      } else {
+        String stringValue = String.valueOf(value);
+        
+        doc.addField(solrFieldName, stringValue);
       }
-    } else {
-      String stringValue = String.valueOf(value);
-      
-      doc.addField(solrFieldName, stringValue);
     }
   }
 

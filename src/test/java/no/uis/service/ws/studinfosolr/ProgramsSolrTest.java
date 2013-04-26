@@ -4,12 +4,20 @@ import static org.hamcrest.CoreMatchers.*;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import no.uis.service.component.fsimport.StudInfoImport;
+import no.uis.service.component.fsimport.impl.AbstractStudinfoImport;
 import no.uis.service.studinfo.data.FsSemester;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
@@ -28,35 +36,24 @@ import org.springframework.context.support.StaticApplicationContext;
 
 public class ProgramsSolrTest extends AbstractSolrTestCase {
 
+  private static final String LANGUAGE = "B";
+  private static final FsSemester SEMESTER = FsSemester.HOST;
+  private static final int YEAR = 2013;
+  private StudInfoImport studinfoImport;
   private AbstractApplicationContext appCtx;
   private Map<String, SolrServer> solrServerMap = new HashMap<String, SolrServer>();
-  private Properties testConfig;
 
   @Before
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    File configFile = new File(System.getProperty("user.home"), "ws-studinfo-solr.xml");
-    Assume.assumeTrue(configFile.canRead());
-    Properties configProps = new Properties();
-    configProps.loadFromXML(new FileInputStream(configFile));
-    String[] langs = configProps.getProperty("languages", "B").split("\\s+");
-    for (String lang : langs) {
-      String solrServerUrl = configProps.getProperty(String.format("solr.server.%s.url", lang));
-      SolrServer solrServer;
-      if (solrServerUrl != null) {
-        if (solrServerUrl.equalsIgnoreCase("embedded")) {
-          solrServer = new EmbeddedSolrServer(h.getCoreContainer(), h.getCore().getName());
-        } else {
-          solrServer = new HttpSolrServer(solrServerUrl);
-        }
-        solrServerMap.put(lang, solrServer);
-      }
-    }
-    this.testConfig = configProps;
+    SolrServer solrServer = new EmbeddedSolrServer(h.getCoreContainer(), h.getCore().getName());
+    solrServerMap.put(LANGUAGE, solrServer);
     
     StaticApplicationContext bfParent = new StaticApplicationContext();
     bfParent.getDefaultListableBeanFactory().registerSingleton("solrServerMap", solrServerMap);
+    bfParent.getDefaultListableBeanFactory().registerSingleton("fsStudInfoImport", getStudieprogramImport());
+    bfParent.getDefaultListableBeanFactory().registerSingleton("employeeNumberResolver", getEmployeeNumberResolver());
     bfParent.refresh();
     appCtx = new ClassPathXmlApplicationContext(new String[] {"studinfo-solr.xml"}, bfParent);
   }
@@ -69,29 +66,11 @@ public class ProgramsSolrTest extends AbstractSolrTestCase {
   }
   
   @Test
-  public void programBExists() throws Exception {
-    testProgram("B");
-  }
-  
-  @Test
-  public void programEExists() throws Exception {
-    testProgram("E");
-  }
-  
-  @Test
-  public void programNExists() throws Exception {
-    testProgram("N");
-  }
-  
-  private void testProgram(String lang) throws Exception {
-    Assume.assumeNotNull(solrServerMap.get(lang));
+  public void programExists() throws Exception {
 
-    int year = Integer.parseInt(testConfig.getProperty("year", "2013"));
-    FsSemester semester = FsSemester.stringToUisSemester(testConfig.getProperty("semester"));
-    
     StudinfoSolrService service = appCtx.getBean("studinfoSolrService", StudinfoSolrService.class);
     try {
-      service.updateSolrStudieprogram(year, semester.toString(), lang);
+      service.updateSolrStudieprogram(YEAR, SEMESTER.toString(), LANGUAGE);
     } catch (SolrUpdateException e) {
       if (e.getCause() instanceof AssumptionViolatedException) {
         throw (AssumptionViolatedException)e.getCause();
@@ -100,12 +79,12 @@ public class ProgramsSolrTest extends AbstractSolrTestCase {
       }
     }
     
-    solrServerMap.get(lang).commit();
+    solrServerMap.get(LANGUAGE).commit();
     SolrParams params = new SolrQuery("cat:STUDINFO AND cat:STUDIEPROGRAM");
-    QueryResponse response = solrServerMap.get(lang).query(params);
+    QueryResponse response = solrServerMap.get(LANGUAGE).query(params);
     int status = response.getStatus();
     assertThat(status, is(equalTo(0)));
-    assertThat(response.getResults().getNumFound(), is(not(equalTo(Long.valueOf(0L)))));
+    assertThat(response.getResults().getNumFound(), is(1L));
   }
   
   @Override
@@ -118,4 +97,43 @@ public class ProgramsSolrTest extends AbstractSolrTestCase {
     return "solrconfig-studinfo.xml";
   }
   
+  private StudInfoImport getStudieprogramImport() {
+    if (this.studinfoImport == null) {
+      studinfoImport = new AbstractStudinfoImport() {
+
+        @Override
+        protected Reader fsGetStudieprogram(int institution, int faculty, int year, String semester, boolean includeEP, String language) {
+          StringWriter sw = new StringWriter();
+          InputStream inStream = getClass().getResourceAsStream("/indokg5.xml");
+          try {
+            IOUtils.copy(inStream, sw, "UTF-8");
+          } catch(IOException e) {
+            throw new RuntimeException(e);
+          }
+          return new StringReader(sw.toString());
+        }
+        
+        @Override
+        protected Reader fsGetKurs(int institution, String language) {
+          return null;
+        }
+
+        @Override
+        protected Reader fsGetEmne(int institution, int faculty, int year, String semester, String language) {
+          return null;
+        }
+      };
+    }
+    return this.studinfoImport;
+  }
+
+  private EmployeeNumberResolver getEmployeeNumberResolver() {
+    return new EmployeeNumberResolver() {
+      
+      @Override
+      public String findEmployeeNumber(String fnr) {
+        return "1234567";
+      }
+    };
+  }
 }
