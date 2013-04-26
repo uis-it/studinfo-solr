@@ -14,7 +14,7 @@
 
   <import resource="classpath:solr-fieldmapping.xml"/>
   <import resource="classpath:solr-typemap.xml"/>
-  <import resource="classpath:idm.xml"/>
+  <!--import resource="classpath:idm.xml"/-->
   
   <bean id="solrUpdater" class="no.uis.service.ws.studinfosolr.impl.SolrUpdaterImpl">
     <property name="solrProxy" ref="solrProxy"/>
