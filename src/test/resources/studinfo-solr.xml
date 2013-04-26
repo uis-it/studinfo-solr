@@ -15,32 +15,54 @@
 
   <import resource="classpath:solr-fieldmapping.xml"/>
   <import resource="classpath:solr-typemap.xml"/>
-  
-  <bean id="fsStudInfoImport" class="no.uis.service.fsimport.impl.StudInfoImportImpl">
-    <property name="fsServiceStudInfo">
-      <bean class="no.uis.service.ws.studinfosolr.mock.StudinfoFactory">
-        <property name="emneSource" value="d:\temp\fsdata\EMNE2013HØSTB_orig.xml"/>
-        <!--property name="emneSource" value="src/test/data/emner.xml"/-->
-        <!--property name="programSource" value="src/test/data/programmer.xml"/-->
-        <!--property name="kursSource" value="src/test/data/kurser.xml"/-->
-      </bean>
-    </property>
-    <property name="transformerUrl" value="classpath:fspreprocess-stable.xsl"/>
-  </bean>
+  <import resource="classpath:idm.xml"/>
   
   <bean id="solrUpdater" class="no.uis.service.ws.studinfosolr.impl.SolrUpdaterImpl">
-    <property name="solrServers" ref="solrServerMap"/>
-    <property name="cpUrl" value="${cplib4j.url}|${cplib4j.domainId}"/>
-    <property name="siteId" value="${cplib4j.siteId}"/>
-    <property name="cpAccessorHolder">
-      <!--bean class="no.uis.service.ws.studinfosolr.mock.XmlAccessorHolderFactoryBean"/-->
-      <bean class="com.corepublish.impl.xml.XmlAccessorHolder2"/>
-    </property>
-    <property name="evuCategoryId" value="${cp.evu.root.category}"/>
-    <property name="evuTemplateIds" value="${cp.evu.templates}"/>
-    <property name="solrFieldMapping" ref="solrFieldMapping"/>
+    <property name="solrProxy" ref="solrProxy"/>
+    <property name="solrFieldnameResolver" ref="solrFieldNameResolver"/>
     <property name="typeAdapters" ref="gsonTypeAdapters"/>
+    <property name="courseListeners">
+      <list>
+        <ref bean="courseCPSupply"/>
+      </list>
+    </property>
+    <property name="subjectListeners">
+      <list>
+        <ref bean="fagpersonPushListener"/>
+      </list>
+    </property>
   </bean>
+  
+  <bean id="fagpersonPushListener" class="no.uis.service.ws.studinfosolr.impl.FagpersonPushListener">
+    <property name="solrFieldnameResolver" ref="solrFieldNameResolver"/>
+    <property name="solrProxy" ref="solrProxy"/>
+    <property name="employeeNumberResolver" ref="employeeNumberResolver"/>
+  </bean>
+  
+  <!--bean id="employeeNumberResolver" class="no.uis.service.ws.studinfosolr.impl.EmployeeNumberResolverImpl">
+    <property name="idmService" ref="idmWS"/>
+  </bean-->
+  
+  <bean id="solrFieldNameResolver" class="no.uis.service.ws.studinfosolr.impl.SolrFieldnameResolverImpl">
+    <property name="solrFieldMapping" ref="solrFieldMapping"/>
+  </bean>
+  
+  <bean id="solrProxy" class="no.uis.service.ws.studinfosolr.impl.SolrProxyImpl">
+    <property name="solrServers" ref="solrServerMap"/>
+  </bean>
+  
+  <bean id="courseCPSupply" class="no.uis.service.ws.studinfosolr.impl.CourseCorepublishSupply">
+    <property name="cpUrl" value="${cplib4j.url}|${cplib4j.domainId}"/>
+    <property name="siteId" value="${cplib4j.siteId}" />
+    <property name="cpAccessorHolder">
+      <bean class="com.corepublish.impl.xml.XmlAccessorHolder2" />
+    </property>
+    <property name="evuCategoryId" value="${cp.evu.root.category}" />
+    <property name="evuTemplateIds" value="${cp.evu.templates}">
+      <description><![CDATA[The property is a comma separated list of integers, The templateId of the category and article templates]]></description>
+    </property>
+  </bean>
+    
 
   <bean id="studinfoSolrService" class="no.uis.service.ws.studinfosolr.impl.StudinfoSolrServiceImpl">
     <property name="solrUpdater" ref="solrUpdater"/>

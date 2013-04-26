@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import javax.management.Notification;
 
-import no.uis.service.fsimport.StudInfoImport;
+import no.uis.service.component.fsimport.StudInfoImport;
 import no.uis.service.studinfo.data.FsSemester;
 import no.uis.service.studinfo.data.FsStudieinfo;
 import no.uis.service.ws.studinfosolr.SolrUpdateException;

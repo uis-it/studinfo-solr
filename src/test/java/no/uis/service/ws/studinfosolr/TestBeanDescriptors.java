@@ -6,8 +6,8 @@ import static org.junit.matchers.JUnitMatchers.*;
 
 import java.util.List;
 
-import no.uis.service.fsimport.util.PropertyInfo;
-import no.uis.service.fsimport.util.PropertyInfoUtils;
+import no.uis.service.component.fsimport.util.PropertyInfo;
+import no.uis.service.component.fsimport.util.PropertyInfoUtils;
 import no.uis.service.studinfo.data.Studieprogram;
 
 import org.junit.Test;
