@@ -20,14 +20,14 @@
     </entry>
     <entry>
       <key>
-        <value type="java.lang.Class">no.uis.service.studinfo.data.Fagperson</value>
+        <value type="java.lang.Class">no.uis.fsws.studinfo.data.Fagperson</value>
       </key>
       <description><![CDATA[This serializer skips the serialization of "personnummer", which we don't want in the index]]></description>
       <bean class="no.uis.service.ws.studinfosolr.json.FagpersonSerializer"/>
     </entry>
     <entry>
       <key>
-        <value type="java.lang.Class">no.uis.service.studinfo.data.FsEksamensdato</value>
+        <value type="java.lang.Class">no.uis.fsws.studinfo.data.FsEksamensdato</value>
       </key>
       <bean class="no.uis.service.ws.studinfosolr.json.FsEksamensdatoSerializer"/>
     </entry>

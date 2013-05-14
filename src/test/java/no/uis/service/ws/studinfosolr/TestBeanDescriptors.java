@@ -6,9 +6,9 @@ import static org.junit.matchers.JUnitMatchers.*;
 
 import java.util.List;
 
-import no.uis.service.component.fsimport.util.PropertyInfo;
-import no.uis.service.component.fsimport.util.PropertyInfoUtils;
-import no.uis.service.studinfo.data.Studieprogram;
+import no.uis.fsws.studinfo.data.Studieprogram;
+import no.uis.fsws.studinfo.util.PropertyInfo;
+import no.uis.fsws.studinfo.util.PropertyInfoUtils;
 
 import org.junit.Test;
 

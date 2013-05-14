@@ -6,17 +6,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.log4j.Logger;
-import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.common.SolrInputDocument;
-
-import no.uis.service.studinfo.data.Emne;
-import no.uis.service.studinfo.data.Fagperson;
-import no.uis.service.studinfo.data.Personnavn;
+import no.uis.fsws.studinfo.data.Emne;
+import no.uis.fsws.studinfo.data.Fagperson;
 import no.uis.service.ws.studinfosolr.EmployeeNumberResolver;
 import no.uis.service.ws.studinfosolr.SolrFieldnameResolver;
 import no.uis.service.ws.studinfosolr.SolrProxy;
 import no.uis.service.ws.studinfosolr.SolrUpdateListener;
+
+import org.apache.log4j.Logger;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.common.SolrInputDocument;
 
 public class FagpersonPushListener implements SolrUpdateListener<Emne> {
 

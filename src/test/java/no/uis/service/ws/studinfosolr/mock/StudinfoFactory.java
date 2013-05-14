@@ -3,7 +3,7 @@ package no.uis.service.ws.studinfosolr.mock;
 import java.io.File;
 import java.io.FileInputStream;
 
-import no.usit.fsws.wsdl.studinfo.StudInfoService;
+import no.usit.fsws.studinfo.StudInfoService;
 
 import org.apache.cxf.helpers.IOUtils;
 import org.junit.Assume;

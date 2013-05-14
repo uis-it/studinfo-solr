@@ -2,7 +2,7 @@ package no.uis.service.ws.studinfosolr.json;
 
 import java.io.IOException;
 
-import no.uis.service.studinfo.data.FsEksamensdato;
+import no.uis.fsws.studinfo.data.FsEksamensdato;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;

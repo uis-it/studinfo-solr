@@ -24,7 +24,7 @@
     <import resource="classpath:idm.xml"/>
 	<import resource="solr-servermap.xml" />
 
-	<bean id="fsStudInfoImport" class="no.uis.service.component.fsimport.impl.StudInfoImportImpl">
+	<bean id="fsStudInfoImport" class="no.uis.fsws.studinfo.impl.StudInfoImportImpl">
 		<property name="fsServiceStudInfo">
 			<ref bean="fsWsStudInfo" />
 		</property>
@@ -70,10 +70,10 @@
         <property name="solrProxy" ref="solrProxy"/>
 		<property name="typeAdapters" ref="gsonTypeAdapters" />
 		<property name="emneFilter">
-			<bean class="no.uis.service.studinfo.commons.AcceptAllEmne" />
+			<bean class="no.uis.studinfo.commons.AcceptAllEmne" />
 		</property>
 		<property name="studieprogramFilter">
-			<bean class="no.uis.service.studinfo.commons.AcceptAllStudieprogram" />
+			<bean class="no.uis.studinfo.commons.AcceptAllStudieprogram" />
 		</property>
         <property name="courseListeners">
           <list>

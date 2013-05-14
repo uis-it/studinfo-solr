@@ -2,8 +2,6 @@ package no.uis.service.ws.studinfosolr;
 
 import static org.hamcrest.CoreMatchers.*;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -11,23 +9,21 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
-import no.uis.service.component.fsimport.StudInfoImport;
-import no.uis.service.component.fsimport.impl.AbstractStudinfoImport;
-import no.uis.service.studinfo.data.FsSemester;
+import no.uis.fsws.studinfo.StudInfoImport;
+import no.uis.fsws.studinfo.data.FsSemester;
+import no.uis.fsws.studinfo.impl.AbstractStudinfoImport;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
-import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.util.AbstractSolrTestCase;
 import org.junit.After;
-import org.junit.Assume;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.internal.AssumptionViolatedException;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -43,6 +39,11 @@ public class ProgramsSolrTest extends AbstractSolrTestCase {
   private AbstractApplicationContext appCtx;
   private Map<String, SolrServer> solrServerMap = new HashMap<String, SolrServer>();
 
+  @BeforeClass
+  public static void initSolrTestHarness() throws Exception {
+    initCore("solrconfig-studinfo.xml", "schema-studinfo.xml", "src/test/resources/solr", "collection1");
+  }
+  
   @Before
   @Override
   public void setUp() throws Exception {
@@ -85,16 +86,6 @@ public class ProgramsSolrTest extends AbstractSolrTestCase {
     int status = response.getStatus();
     assertThat(status, is(equalTo(0)));
     assertThat(response.getResults().getNumFound(), is(1L));
-  }
-  
-  @Override
-  public String getSchemaFile() {
-    return "schema-studinfo.xml";
-  }
-
-  @Override
-  public String getSolrConfigFile() {
-    return "solrconfig-studinfo.xml";
   }
   
   private StudInfoImport getStudieprogramImport() {

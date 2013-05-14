@@ -10,9 +10,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import no.uis.service.component.fsimport.StudInfoImport;
-import no.uis.service.component.fsimport.impl.AbstractStudinfoImport;
-import no.uis.service.studinfo.data.FsSemester;
+import no.uis.fsws.studinfo.StudInfoImport;
+import no.uis.fsws.studinfo.data.FsSemester;
+import no.uis.fsws.studinfo.impl.AbstractStudinfoImport;
 import no.uis.service.ws.studinfosolr.util.SolrUtil;
 
 import org.apache.solr.client.solrj.SolrQuery;
@@ -25,6 +25,7 @@ import org.apache.solr.common.util.DateUtil;
 import org.apache.solr.util.AbstractSolrTestCase;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.internal.AssumptionViolatedException;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -41,6 +42,11 @@ public class KursSolrTest extends AbstractSolrTestCase {
   private Map<String, SolrServer> solrServerMap = new HashMap<String, SolrServer>();
   private StudInfoImport studinfoImport;
 
+  @BeforeClass
+  public static void initSolrTestHarness() throws Exception {
+    initCore("solrconfig-studinfo.xml", "schema-studinfo.xml", "src/test/resources/solr", "collection1");
+  }
+  
   @Before
   @Override
   public void setUp() throws Exception {
@@ -168,15 +174,5 @@ public class KursSolrTest extends AbstractSolrTestCase {
     Appendable out = new StringBuilder();
     DateUtil.formatDate(((Date)pubDato), SolrUtil.getDefaultCalendar(), out);
     assertThat(out.toString(), is("2012-03-01T00:00:00Z"));
-  }
-  
-  @Override
-  public String getSchemaFile() {
-    return "schema-studinfo.xml";
-  }
-
-  @Override
-  public String getSolrConfigFile() {
-    return "solrconfig-studinfo.xml";
   }
 }

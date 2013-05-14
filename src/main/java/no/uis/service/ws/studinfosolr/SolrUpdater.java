@@ -2,10 +2,10 @@ package no.uis.service.ws.studinfosolr;
 
 import java.util.List;
 
-import no.uis.service.studinfo.data.Emne;
-import no.uis.service.studinfo.data.FsSemester;
-import no.uis.service.studinfo.data.Kurs;
-import no.uis.service.studinfo.data.Studieprogram;
+import no.uis.fsws.studinfo.data.Emne;
+import no.uis.fsws.studinfo.data.FsSemester;
+import no.uis.fsws.studinfo.data.Kurs;
+import no.uis.fsws.studinfo.data.Studieprogram;
 
 public interface SolrUpdater {
 

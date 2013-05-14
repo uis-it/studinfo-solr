@@ -7,9 +7,9 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
-import no.uis.service.component.fsimport.StudInfoImport;
-import no.uis.service.component.fsimport.impl.AbstractStudinfoImport;
-import no.uis.service.studinfo.data.FsSemester;
+import no.uis.fsws.studinfo.StudInfoImport;
+import no.uis.fsws.studinfo.data.FsSemester;
+import no.uis.fsws.studinfo.impl.AbstractStudinfoImport;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
@@ -20,6 +20,7 @@ import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.util.AbstractSolrTestCase;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.internal.AssumptionViolatedException;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -35,6 +36,11 @@ public class EmnerSolrTest extends AbstractSolrTestCase {
   private static final FsSemester SEMESTER = FsSemester.HOST;
   private static final int YEAR = 2013;
 
+  @BeforeClass
+  public static void initSolrTestHarness() throws Exception {
+    initCore("solrconfig-studinfo.xml", "schema-studinfo.xml", "src/test/resources/solr", "collection1");
+  }
+  
   @Before
   @Override
   public void setUp() throws Exception {
@@ -107,16 +113,6 @@ public class EmnerSolrTest extends AbstractSolrTestCase {
     assertThat(fornavn, is(instanceOf(String.class)));
     assertThat((String)fornavn, is("Alan"));
     assertThat(doc1.containsKey("ansattnummer_s"), is(true));
-  }
-  
-  @Override
-  public String getSchemaFile() {
-    return "schema-studinfo.xml";
-  }
-
-  @Override
-  public String getSolrConfigFile() {
-    return "solrconfig-studinfo.xml";
   }
   
   private StudInfoImport getEmneStudinfoImport() {

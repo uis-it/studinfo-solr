@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import no.uis.service.studinfo.commons.Utils;
-import no.uis.service.studinfo.data.Kurs;
+import no.uis.fsws.studinfo.data.Kurs;
 import no.uis.service.ws.studinfosolr.SolrUpdateListener;
+import no.uis.studinfo.commons.Utils;
 
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedOperationParameter;
