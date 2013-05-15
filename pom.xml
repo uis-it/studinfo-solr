@@ -176,7 +176,6 @@
       <groupId>no.uis.service.ws</groupId>
       <artifactId>idm</artifactId>
       <classifier>lib</classifier>
-      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>
@@ -190,19 +189,16 @@
       <groupId>no.coretrek</groupId>
       <artifactId>lib-corepublish-api</artifactId>
       <version>1.0.0-b25</version>
-      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>no.coretrek</groupId>
       <artifactId>lib-corepublish-xml</artifactId>
       <version>1.0.0-b25</version>
-      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>no.coretrek</groupId>
       <artifactId>lib-corepublish-ehcache</artifactId>
       <version>1.0.0-b25</version>
-      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
