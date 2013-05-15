@@ -146,7 +146,7 @@ public class SolrUpdaterImpl implements SolrUpdater {
 
   private Object subjectSync = new Object();
 
-  private Map<String, SolrProxy> solrProxies;
+  private Map<SolrType, SolrProxy> solrProxies;
 
   private static ThreadLocal<StudinfoContext> context = new ThreadLocal<StudinfoContext>();
   
@@ -174,7 +174,7 @@ public class SolrUpdaterImpl implements SolrUpdater {
     this.solrFieldnameResolver = resolver;
   }
 
-  public void setSolrProxies(Map<String, SolrProxy> proxies) {
+  public void setSolrProxies(Map<SolrType, SolrProxy> proxies) {
     this.solrProxies = proxies;
   }
   

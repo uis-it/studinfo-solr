@@ -17,7 +17,11 @@
   <!--import resource="classpath:idm.xml"/-->
   
   <bean id="solrUpdater" class="no.uis.service.ws.studinfosolr.impl.SolrUpdaterImpl">
-    <property name="solrProxy" ref="solrProxy"/>
+    <property name="solrProxies">
+      <map>
+        <entry key="WWW" value-ref="solrProxy"/>
+      </map>
+    </property>
     <property name="solrFieldnameResolver" ref="solrFieldNameResolver"/>
     <property name="typeAdapters" ref="gsonTypeAdapters"/>
     <property name="courseListeners">
@@ -34,7 +38,11 @@
   
   <bean id="fagpersonPushListener" class="no.uis.service.ws.studinfosolr.impl.FagpersonPushListener">
     <property name="solrFieldnameResolver" ref="solrFieldNameResolver"/>
-    <property name="solrProxy" ref="solrProxy"/>
+    <property name="solrProxies">
+      <map>
+        <entry key="WWW" value-ref="solrProxy"/>
+      </map>
+    </property>
     <property name="employeeNumberResolver" ref="employeeNumberResolver"/>
   </bean>
   
