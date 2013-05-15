@@ -29,11 +29,11 @@
 			<ref bean="fsWsStudInfo" />
 		</property>
 		<property name="transformerUrl" value="classpath:fspreprocess-stable.xsl" />
-		<property name="xmlSourceParser" value="no.uis.service.fsimport.impl.SkippingAmpersandParser"/>
+		<property name="xmlSourceParser" value="no.uis.fsws.studinfo.impl.SkippingAmpersandParser"/>
 	</bean>
 
 	<jaxws:client id="fsWsStudInfo"
-		serviceClass="no.usit.fsws.wsdl.studinfo.StudInfoService" address="${fs.ws.studinfo.url}"
+		serviceClass="no.usit.fsws.studinfo.StudInfoService" address="${fs.ws.studinfo.url}"
 		username="${fs.ws.username}" password="${fs.ws.password}">
 		<jaxws:properties>
 			<entry key="mtom-enabled" value="false" />
@@ -66,7 +66,7 @@
 	</jaxws:endpoint>
 
 	<bean id="solrUpdater" class="no.uis.service.ws.studinfosolr.impl.SolrUpdaterImpl">
-        <property name="solrFieldnameResolver" ref="solrFieldResolver"/>
+        <property name="solrFieldnameResolver" ref="solrFieldnameResolver"/>
         <property name="solrProxies" ref="solrProxies"/>
 		<property name="typeAdapters" ref="gsonTypeAdapters" />
 		<property name="emneFilter">
@@ -87,12 +87,12 @@
         </property>
 	</bean>
 	
-    <bean id="solrFieldNameResolver" class="no.uis.service.ws.studinfosolr.impl.SolrFieldnameResolverImpl">
+    <bean id="solrFieldnameResolver" class="no.uis.service.ws.studinfosolr.impl.SolrFieldnameResolverImpl">
       <property name="solrFieldMapping" ref="solrFieldMapping"/>
     </bean>
 
     <bean id="fagpersonPushListener" class="no.uis.service.ws.studinfosolr.impl.FagpersonPushListener">
-      <property name="solrFieldnameResolver" ref="solrFieldNameResolver"/>
+      <property name="solrFieldnameResolver" ref="solrFieldnameResolver"/>
       <property name="solrProxies" ref="solrProxies"/>
       <property name="employeeNumberResolver" ref="employeeNumberResolver"/>
     </bean>

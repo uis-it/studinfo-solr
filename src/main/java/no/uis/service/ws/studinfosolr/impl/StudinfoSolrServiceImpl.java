@@ -61,14 +61,14 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService, Notificatio
   @Override
   public void updateSolrKurs(int year, String semester, String language, SolrType solrType) throws SolrUpdateException {
     long seq = sequence.incrementAndGet();
-    sendNotification(seq, null, year, semester, language, "KURS-start");
+    sendNotification(seq, null, solrType, year, semester, language, "KURS-start");
     try {
       FsSemester fsSemester = FsSemester.stringToUisSemester(semester);
       FsStudieinfo fsinfo = studinfoImport.fetchCourses(217, year, semester.toString(), language);
-      solrUpdater.pushCourses(fsinfo.getKurs(), year, fsSemester, language, solrType);
-      sendNotification(seq, null, year, semester, language, "KURS-end");
+      solrUpdater.pushCourses(fsinfo.getKurs(), year, fsSemester, language, solrType == null ? SolrType.WWW : solrType);
+      sendNotification(seq, null, solrType, year, semester, language, "KURS-end");
     } catch(Exception e) {
-      sendNotification(seq, e, year, semester, language, "KURS-error");
+      sendNotification(seq, e, solrType, year, semester, language, "KURS-error");
       log.error(String.format("updateSolrKurs: %d, %s, %s", year, semester, language), e);
       throw new SolrUpdateException(e);
     }
@@ -76,20 +76,22 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService, Notificatio
 
   @Override
   public void updateSolrEmne(int year, String semester, String language, SolrType solrType) throws SolrUpdateException {
+    final SolrType mySolrType = solrType == null ? SolrType.WWW : solrType;
+    
     for (int faculty : faculties) {
-      updateSolrEmne(faculty, year, semester, language, solrType);
+      updateSolrEmne(faculty, year, semester, language, mySolrType);
     }
   }
   
   private void updateSolrEmne(int faculty, int year, String semester, String language, SolrType solrType) throws SolrUpdateException {
 
     long seq = sequence.incrementAndGet();
-    sendNotification(seq, null, faculty, year, semester, language, "EMNE-start");
+    sendNotification(seq, null, solrType, faculty, year, semester, language, "EMNE-start");
     try {
       FsSemester fsSemester = FsSemester.stringToUisSemester(semester);
       FsStudieinfo fsinfo = studinfoImport.fetchSubjects(217, faculty, year, fsSemester.toString(), language);
       solrUpdater.pushSubjects(fsinfo.getEmne(), year, fsSemester, language, solrType);
-      sendNotification(seq, null, faculty, year, semester, language, "EMNE-end");
+      sendNotification(seq, null, solrType, faculty, year, semester, language, "EMNE-end");
     } catch(Exception e) {
       sendNotification(seq, e, faculty, year, semester, language, "EMNE-error");
       log.error(String.format("updateSolrEmne(%d): %d, %s, %s", faculty, year, semester, language), e);
@@ -99,21 +101,23 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService, Notificatio
 
   @Override
   public void updateSolrStudieprogram(int year, String semester, String language, SolrType solrType) throws SolrUpdateException {
+    final SolrType mySolrType = solrType == null ? SolrType.WWW : solrType;
+
     for (int faculty : faculties) {
-      updateSolrStudieprogram(faculty, year, semester, language, solrType);
+      updateSolrStudieprogram(faculty, year, semester, language, mySolrType);
     }
   }
   
   private void updateSolrStudieprogram(int faculty, int year, String semester, String language, SolrType solrType) throws SolrUpdateException {
 
     long seq = sequence.incrementAndGet();
-    sendNotification(seq, null, faculty, year, semester, language, "PROGRAM-start");
+    sendNotification(seq, null, solrType, faculty, year, semester, language, "PROGRAM-start");
     try {
       FsSemester fsSemester = FsSemester.stringToUisSemester(semester);
 
       FsStudieinfo fsinfo = studinfoImport.fetchStudyPrograms(217, faculty, year, fsSemester.toString(), true, language);
       solrUpdater.pushPrograms(fsinfo.getStudieprogram(), year, fsSemester, language, solrType);
-      sendNotification(seq, null, faculty, year, semester, language, "PROGRAM-end");
+      sendNotification(seq, null, solrType, faculty, year, semester, language, "PROGRAM-end");
     } catch(Exception e) {
       sendNotification(seq, e, faculty, year, semester, language, "PROGRAM-error");
       log.error(String.format("updateSolrStudieprogram (%d): %d, %s, %s", faculty, year, semester, language), e);
