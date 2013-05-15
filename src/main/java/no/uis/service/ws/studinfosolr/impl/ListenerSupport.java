@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import no.uis.service.ws.studinfosolr.SolrType;
 import no.uis.service.ws.studinfosolr.SolrUpdateListener;
 
 public class ListenerSupport<T> {
@@ -13,21 +14,21 @@ public class ListenerSupport<T> {
   public ListenerSupport() {
   }
 
-  public void fireBeforeSolrUpdate(T studinfoElement, Map<String, Object> beanmap) {
+  public void fireBeforeSolrUpdate(SolrType solrType, T studinfoElement, Map<String, Object> beanmap) {
     for (SolrUpdateListener<T> listener : getListeners()) {
-      listener.fireBeforeSolrUpdate(studinfoElement, beanmap);
+      listener.fireBeforeSolrUpdate(solrType, studinfoElement, beanmap);
     }
   }
 
-  public void fireBeforePushElements(List<T> elements) {
+  public void fireBeforePushElements(SolrType solrType, List<T> elements) {
     for (SolrUpdateListener<T> listener : getListeners()) {
-      listener.fireBeforePushElements(elements);
+      listener.fireBeforePushElements(solrType, elements);
     }
   }
 
-  public void fireAfterPushElements() {
+  public void fireAfterPushElements(SolrType solrType) {
     for (SolrUpdateListener<T> listener : getListeners()) {
-      listener.fireAfterPushElements();
+      listener.fireAfterPushElements(solrType);
     }
   }
 

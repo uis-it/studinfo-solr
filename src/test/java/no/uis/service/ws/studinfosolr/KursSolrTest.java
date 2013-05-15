@@ -151,7 +151,7 @@ public class KursSolrTest extends AbstractSolrTestCase {
     
     StudinfoSolrService service = appCtx.getBean("studinfoSolrService", StudinfoSolrService.class);
     try {
-      service.updateSolrKurs(YEAR, SEMESTER.toString(), LANGUAGE);
+      service.updateSolrKurs(YEAR, SEMESTER.toString(), LANGUAGE, SolrType.WWW);
     } catch(SolrUpdateException e) {
       if (e.getCause() instanceof AssumptionViolatedException) {
         throw (AssumptionViolatedException)e.getCause();

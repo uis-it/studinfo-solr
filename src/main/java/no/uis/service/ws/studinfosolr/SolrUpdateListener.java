@@ -5,12 +5,11 @@ import java.util.Map;
 
 public interface SolrUpdateListener<T> {
 
-  void fireBeforeSolrUpdate(T studinfoElement, Map<String, Object> beanmap);
+  void fireBeforeSolrUpdate(SolrType solrType, T studinfoElement, Map<String, Object> beanmap);
 
-  void fireBeforePushElements(List<T> elements);
+  void fireBeforePushElements(SolrType solrType, List<T> elements);
 
-  void fireAfterPushElements();
+  void fireAfterPushElements(SolrType solrType);
 
   void cleanup();
-
 }

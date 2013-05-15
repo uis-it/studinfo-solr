@@ -1,33 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:util="http://www.springframework.org/schema/util"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
-  <util:map id="solrServerMap">
-    <entry key="B">
-      <bean class="no.uis.service.ws.studinfosolr.impl.SolrServerFactory">
-        <property name="url" value="${solr.server.B.url}"/>
-        <!--property name="username" value="${solr.server.username}"/-->
-        <!--property name="password" value="${solr.server.password}"/-->
-      </bean>
-    </entry>
-    
-    <entry key="N">
-      <bean class="no.uis.service.ws.studinfosolr.impl.SolrServerFactory">
-        <property name="url" value="${solr.server.N.url}"/>
-        <!--property name="username" value="${solr.server.username}"/-->
-        <!--property name="password" value="${solr.server.password}"/-->
-      </bean>
-    </entry>
-    
-    <entry key="E">
-      <bean class="no.uis.service.ws.studinfosolr.impl.SolrServerFactory">
-        <property name="url" value="${solr.server.E.url}"/>
-        <!--property name="username" value="${solr.server.username}"/-->
-        <!--property name="password" value="${solr.server.password}"/-->
-      </bean>
-    </entry>
+  <util:map id="solrProxies">
+    <entry key="WWW" value-ref="solrProxy_WWW" />
+    <entry key="STUDENT" value-ref="solrProxy_STUDENT" />
   </util:map>
+
+  <bean id="solrProxy_WWW" class="no.uis.service.ws.studinfosolr.impl.SolrProxyImpl">
+    <property name="solrServers">
+      <map>
+        <entry key="B">
+          <bean class="no.uis.service.ws.studinfosolr.impl.SolrServerFactory">
+            <property name="url" value="${solr.server}/${solr.core.www}-nb" />
+            <!--property name="username" value="${solr.server.username}"/ -->
+            <!--property name="password" value="${solr.server.password}"/ -->
+          </bean>
+        </entry>
+
+        <entry key="N">
+          <bean class="no.uis.service.ws.studinfosolr.impl.SolrServerFactory">
+            <property name="url" value="${solr.server}/${solr.core.www}-nn" />
+          </bean>
+        </entry>
+
+        <entry key="E">
+          <bean class="no.uis.service.ws.studinfosolr.impl.SolrServerFactory">
+            <property name="url" value="${solr.server}/${solr.core.www}-en" />
+          </bean>
+        </entry>
+      </map>
+    </property>
+  </bean>
+
+  <bean id="solrProxy_STUDENT" class="no.uis.service.ws.studinfosolr.impl.SolrProxyImpl">
+    <property name="solrServers">
+      <map>
+        <entry key="B">
+          <bean class="no.uis.service.ws.studinfosolr.impl.SolrServerFactory">
+            <property name="url" value="${solr.server}/${solr.core.student}-nb" />
+          </bean>
+        </entry>
+
+        <entry key="N">
+          <bean class="no.uis.service.ws.studinfosolr.impl.SolrServerFactory">
+            <property name="url" value="${solr.server}/${solr.core.student}-nn" />
+          </bean>
+        </entry>
+
+        <entry key="E">
+          <bean class="no.uis.service.ws.studinfosolr.impl.SolrServerFactory">
+            <property name="url" value="${solr.server}/${solr.core.student}-en" />
+          </bean>
+        </entry>
+      </map>
+    </property>
+  </bean>
 </beans>

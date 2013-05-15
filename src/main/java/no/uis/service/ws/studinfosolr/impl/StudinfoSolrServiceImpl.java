@@ -9,6 +9,7 @@ import javax.management.Notification;
 import no.uis.fsws.studinfo.StudInfoImport;
 import no.uis.fsws.studinfo.data.FsSemester;
 import no.uis.fsws.studinfo.data.FsStudieinfo;
+import no.uis.service.ws.studinfosolr.SolrType;
 import no.uis.service.ws.studinfosolr.SolrUpdateException;
 import no.uis.service.ws.studinfosolr.SolrUpdater;
 import no.uis.service.ws.studinfosolr.StudinfoSolrService;
@@ -58,13 +59,13 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService, Notificatio
   }
   
   @Override
-  public void updateSolrKurs(int year, String semester, String language) throws SolrUpdateException {
+  public void updateSolrKurs(int year, String semester, String language, SolrType solrType) throws SolrUpdateException {
     long seq = sequence.incrementAndGet();
     sendNotification(seq, null, year, semester, language, "KURS-start");
     try {
       FsSemester fsSemester = FsSemester.stringToUisSemester(semester);
       FsStudieinfo fsinfo = studinfoImport.fetchCourses(217, year, semester.toString(), language);
-      solrUpdater.pushCourses(fsinfo.getKurs(), year, fsSemester, language);
+      solrUpdater.pushCourses(fsinfo.getKurs(), year, fsSemester, language, solrType);
       sendNotification(seq, null, year, semester, language, "KURS-end");
     } catch(Exception e) {
       sendNotification(seq, e, year, semester, language, "KURS-error");
@@ -74,20 +75,20 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService, Notificatio
   }
 
   @Override
-  public void updateSolrEmne(int year, String semester, String language) throws SolrUpdateException {
+  public void updateSolrEmne(int year, String semester, String language, SolrType solrType) throws SolrUpdateException {
     for (int faculty : faculties) {
-      updateSolrEmne(faculty, year, semester, language);
+      updateSolrEmne(faculty, year, semester, language, solrType);
     }
   }
   
-  private void updateSolrEmne(int faculty, int year, String semester, String language) throws SolrUpdateException {
+  private void updateSolrEmne(int faculty, int year, String semester, String language, SolrType solrType) throws SolrUpdateException {
 
     long seq = sequence.incrementAndGet();
     sendNotification(seq, null, faculty, year, semester, language, "EMNE-start");
     try {
       FsSemester fsSemester = FsSemester.stringToUisSemester(semester);
       FsStudieinfo fsinfo = studinfoImport.fetchSubjects(217, faculty, year, fsSemester.toString(), language);
-      solrUpdater.pushSubjects(fsinfo.getEmne(), year, fsSemester, language);
+      solrUpdater.pushSubjects(fsinfo.getEmne(), year, fsSemester, language, solrType);
       sendNotification(seq, null, faculty, year, semester, language, "EMNE-end");
     } catch(Exception e) {
       sendNotification(seq, e, faculty, year, semester, language, "EMNE-error");
@@ -97,13 +98,13 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService, Notificatio
   }
 
   @Override
-  public void updateSolrStudieprogram(int year, String semester, String language) throws SolrUpdateException {
+  public void updateSolrStudieprogram(int year, String semester, String language, SolrType solrType) throws SolrUpdateException {
     for (int faculty : faculties) {
-      updateSolrStudieprogram(faculty, year, semester, language);
+      updateSolrStudieprogram(faculty, year, semester, language, solrType);
     }
   }
   
-  private void updateSolrStudieprogram(int faculty, int year, String semester, String language) throws SolrUpdateException {
+  private void updateSolrStudieprogram(int faculty, int year, String semester, String language, SolrType solrType) throws SolrUpdateException {
 
     long seq = sequence.incrementAndGet();
     sendNotification(seq, null, faculty, year, semester, language, "PROGRAM-start");
@@ -111,7 +112,7 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService, Notificatio
       FsSemester fsSemester = FsSemester.stringToUisSemester(semester);
 
       FsStudieinfo fsinfo = studinfoImport.fetchStudyPrograms(217, faculty, year, fsSemester.toString(), true, language);
-      solrUpdater.pushPrograms(fsinfo.getStudieprogram(), year, fsSemester, language);
+      solrUpdater.pushPrograms(fsinfo.getStudieprogram(), year, fsSemester, language, solrType);
       sendNotification(seq, null, faculty, year, semester, language, "PROGRAM-end");
     } catch(Exception e) {
       sendNotification(seq, e, faculty, year, semester, language, "PROGRAM-error");

@@ -9,11 +9,11 @@ import no.uis.fsws.studinfo.data.Studieprogram;
 
 public interface SolrUpdater {
 
-  void pushCourses(List<Kurs> kurs, int year, FsSemester fsSemester, String language) throws Exception;
+  void pushCourses(List<Kurs> kurs, int year, FsSemester fsSemester, String language, SolrType solrType) throws Exception;
 
-  void pushSubjects(List<Emne> emne, int year, FsSemester fsSemester, String language) throws Exception;
+  void pushSubjects(List<Emne> emne, int year, FsSemester fsSemester, String language, SolrType solrType) throws Exception;
 
-  void pushPrograms(List<Studieprogram> studieprogram, int year, FsSemester fsSemester, String language) throws Exception;
+  void pushPrograms(List<Studieprogram> studieprogram, int year, FsSemester fsSemester, String language, SolrType solrType) throws Exception;
 
-  void deleteByQuery(String language, String query) throws Exception;
+  void deleteByQuery(String language, String query, SolrType solrType) throws Exception;
 }

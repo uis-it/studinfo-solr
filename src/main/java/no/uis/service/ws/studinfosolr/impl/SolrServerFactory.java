@@ -4,6 +4,7 @@ import java.net.URL;
 
 import org.apache.http.client.HttpClient;
 import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrServer;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.impl.XMLResponseParser;
 import org.springframework.beans.factory.FactoryBean;
@@ -11,11 +12,12 @@ import org.springframework.beans.factory.annotation.Required;
 
 public class SolrServerFactory implements FactoryBean<SolrServer> {
 
+  private static final int QUEUE_SIZE = 3;
+  private static final int THREAD_COUNT = 2;
   private URL url;
   private String username;
   private String password;
   private int timeout = 1000;
-  private boolean compression = true;
   
   @Required
   public void setUrl(URL url) {
@@ -34,10 +36,6 @@ public class SolrServerFactory implements FactoryBean<SolrServer> {
     this.timeout = timeout;
   }
   
-  public void setEnableCompression(boolean compression) {
-    this.compression = compression;
-  }
-  
   @Override
   public SolrServer getObject() {
     return createServer();
@@ -45,10 +43,9 @@ public class SolrServerFactory implements FactoryBean<SolrServer> {
 
   private SolrServer createServer() {
     HttpClient httpClient = (username == null ? null : new PreemptBasicAuthHttpClient(url, username, password));
-    HttpSolrServer server = new HttpSolrServer(url.toExternalForm(), httpClient, new XMLResponseParser());
+    ConcurrentUpdateSolrServer server = new ConcurrentUpdateSolrServer(url.toExternalForm(), httpClient, QUEUE_SIZE, THREAD_COUNT);
     
     server.setSoTimeout(timeout);
-    server.setAllowCompression(compression);
     
     return server;
   }

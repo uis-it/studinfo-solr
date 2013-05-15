@@ -78,7 +78,7 @@ public class EmnerSolrTest extends AbstractSolrTestCase {
     
     StudinfoSolrService service = appCtx.getBean("studinfoSolrService", StudinfoSolrService.class);
     try {
-      service.updateSolrEmne(YEAR, SEMESTER.toString(), LANGUAGE);
+      service.updateSolrEmne(YEAR, SEMESTER.toString(), LANGUAGE, SolrType.WWW);
     } catch(SolrUpdateException e) {
       if (e.getCause() instanceof AssumptionViolatedException) {
         throw (AssumptionViolatedException)e.getCause();

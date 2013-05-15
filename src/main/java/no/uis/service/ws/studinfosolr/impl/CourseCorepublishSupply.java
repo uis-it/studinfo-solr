@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import no.uis.fsws.studinfo.data.Kurs;
+import no.uis.service.ws.studinfosolr.SolrType;
 import no.uis.service.ws.studinfosolr.SolrUpdateListener;
 import no.uis.studinfo.commons.Utils;
 
@@ -46,7 +47,7 @@ public class CourseCorepublishSupply implements SolrUpdateListener<Kurs> {
 
 
   @Override
-  public void fireBeforeSolrUpdate(Kurs kurs, Map<String, Object> beanmap) {
+  public void fireBeforeSolrUpdate(SolrType solrType, Kurs kurs, Map<String, Object> beanmap) {
     String kurskode = beanmap.get("kursid").toString();
     CPArticleInfo articleInfo = descriptionCache.get(kurskode);
     if (articleInfo != null) {
@@ -57,12 +58,12 @@ public class CourseCorepublishSupply implements SolrUpdateListener<Kurs> {
   }
 
   @Override
-  public void fireBeforePushElements(List<Kurs> courses) {
+  public void fireBeforePushElements(SolrType solrType, List<Kurs> courses) {
     fillDescriptionCache();
   }
   
   @Override
-  public void fireAfterPushElements() {
+  public void fireAfterPushElements(SolrType solrType) {
     this.descriptionCache.clear();
   }
 

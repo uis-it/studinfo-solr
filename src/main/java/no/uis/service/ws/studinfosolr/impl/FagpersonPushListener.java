@@ -11,6 +11,7 @@ import no.uis.fsws.studinfo.data.Fagperson;
 import no.uis.service.ws.studinfosolr.EmployeeNumberResolver;
 import no.uis.service.ws.studinfosolr.SolrFieldnameResolver;
 import no.uis.service.ws.studinfosolr.SolrProxy;
+import no.uis.service.ws.studinfosolr.SolrType;
 import no.uis.service.ws.studinfosolr.SolrUpdateListener;
 
 import org.apache.log4j.Logger;
@@ -25,7 +26,7 @@ public class FagpersonPushListener implements SolrUpdateListener<Emne> {
 
   private SolrFieldnameResolver solrFieldnameResolver;
   
-  private SolrProxy solrProxy;
+  private Map<SolrType, SolrProxy> solrProxies;
 
   private String fPersonId;
 
@@ -41,8 +42,8 @@ public class FagpersonPushListener implements SolrUpdateListener<Emne> {
     this.solrFieldnameResolver = resolver;
   }
   
-  public void setSolrProxy(SolrProxy proxy) {
-    solrProxy = proxy;
+  public void setSolrProxies(Map<SolrType, SolrProxy> proxies) {
+    solrProxies = proxies;
   }
   
   public void setEmployeeNumberResolver(EmployeeNumberResolver resolver) {
@@ -50,14 +51,14 @@ public class FagpersonPushListener implements SolrUpdateListener<Emne> {
   }
   
   @Override
-  public void fireBeforeSolrUpdate(Emne emne, Map<String, Object> beanmap) {
+  public void fireBeforeSolrUpdate(SolrType solrType, Emne emne, Map<String, Object> beanmap) {
     for (Fagperson fagPerson : emne.getFagpersonListe()) {
       fagpersons.put(fagPerson.getPersonid().intValue(), fagPerson);
     }
   }
 
   @Override
-  public void fireBeforePushElements(List<Emne> elements) {
+  public void fireBeforePushElements(SolrType solrType, List<Emne> elements) {
     fagpersons.clear();
     fPersonId = solrFieldnameResolver.getSolrFieldName("/fagperson", "personid");
     fFornavn = solrFieldnameResolver.getSolrFieldName("/fagperson", "fornavn");
@@ -66,9 +67,9 @@ public class FagpersonPushListener implements SolrUpdateListener<Emne> {
   }
 
   @Override
-  public void fireAfterPushElements() {
+  public void fireAfterPushElements(SolrType solrType) {
     try {
-      pushFagpersonsToSolr(SolrUpdaterImpl.getContext().getLanguage(), fagpersons);
+      pushFagpersonsToSolr(solrType, SolrUpdaterImpl.getContext().getLanguage(), fagpersons);
     } catch(Exception e) {
       LOG.warn(null, e);
     }
@@ -79,7 +80,7 @@ public class FagpersonPushListener implements SolrUpdateListener<Emne> {
     fagpersons.clear();
   }
 
-  private void pushFagpersonsToSolr(String language, Map<Integer, Fagperson> fagpersons) throws Exception {
+  private void pushFagpersonsToSolr(SolrType solrType, String language, Map<Integer, Fagperson> fagpersons) throws Exception {
     for (Entry<Integer, Fagperson> entry : fagpersons.entrySet()) {
       SolrInputDocument doc = new SolrInputDocument();
       doc.addField("id", "fagperson_"+entry.getKey());
@@ -88,7 +89,7 @@ public class FagpersonPushListener implements SolrUpdateListener<Emne> {
       SolrUpdaterImpl.addFieldToDoc(doc, entry.getValue().getPersonnavn().getFornavn(), fFornavn);
       SolrUpdaterImpl.addFieldToDoc(doc, entry.getValue().getPersonnavn().getEtternavn(), fEtternavn);
       SolrUpdaterImpl.addFieldToDoc(doc, getAnsattnummer(entry.getValue().getFnr()), fAnsattnummer);
-      updateDocument(language, doc);
+      updateDocument(solrType, language, doc);
     }
   }
 
@@ -96,7 +97,17 @@ public class FagpersonPushListener implements SolrUpdateListener<Emne> {
     return employeeNumberResolver.findEmployeeNumber(fnr);
   }
 
-  private void updateDocument(String language, SolrInputDocument doc) throws SolrServerException, IOException {
-    solrProxy.updateDocument(language, doc);
+  private void updateDocument(SolrType solrType, String language, SolrInputDocument doc) throws SolrServerException, IOException {
+    getProxy(solrType).updateDocument(language, doc);
+  }
+  
+  private SolrProxy getProxy(SolrType type) {
+    if (solrProxies != null) {
+      SolrProxy proxy = solrProxies.get(type);
+      if (proxy != null) {
+        return proxy;
+      }
+    }
+    return SolrUpdaterImpl.DUMMY_PROXY;
   }
 }

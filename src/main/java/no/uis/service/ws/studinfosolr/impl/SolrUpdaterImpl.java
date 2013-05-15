@@ -37,6 +37,7 @@ import no.uis.fsws.studinfo.util.PropertyInfo;
 import no.uis.fsws.studinfo.util.PropertyInfoUtils;
 import no.uis.service.ws.studinfosolr.SolrFieldnameResolver;
 import no.uis.service.ws.studinfosolr.SolrProxy;
+import no.uis.service.ws.studinfosolr.SolrType;
 import no.uis.service.ws.studinfosolr.SolrUpdateListener;
 import no.uis.service.ws.studinfosolr.SolrUpdater;
 import no.uis.service.ws.studinfosolr.util.SolrUtil;
@@ -45,8 +46,8 @@ import no.uis.studinfo.commons.AcceptAllStudieprogram;
 import no.uis.studinfo.commons.StudinfoContext;
 import no.uis.studinfo.commons.StudinfoFilter;
 import no.uis.studinfo.commons.Studinfos;
-import no.uis.studinfo.commons.ToString;
 import no.uis.studinfo.commons.Utils;
+import no.uis.studinfo.convert.AbstractStringConverter;
 import no.uis.studinfo.convert.CollectionConverter;
 import no.uis.studinfo.convert.InngarIStudieprogramConverter;
 import no.uis.studinfo.convert.ObligoppgaveConverter;
@@ -57,7 +58,6 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.common.SolrInputDocument;
-import org.apache.solr.common.util.DateUtil;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedOperationParameter;
 import org.springframework.jmx.export.annotation.ManagedOperationParameters;
@@ -78,36 +78,51 @@ public class SolrUpdaterImpl implements SolrUpdater {
 
   private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(SolrUpdaterImpl.class);
   
-  private static final ToString SPRAK_TO_STRING = new ToString() {
+  private static final StringConverter SPRAK_TO_STRING = new AbstractStringConverter<Sprak>() {
 
     @Override
-    public String toString(Object o) {
-      if (o instanceof Sprak) {
-        return ((Sprak)o).getSprakkode();
-      }
-      return null;
+    public String convert(Sprak o) {
+      return o.getSprakkode();
     }
   };
 
-  private static final ToString INNGAR_I_STUDIEPROGRAM_TO_STRING = new ToString() {
+  private static final StringConverter INNGAR_I_STUDIEPROGRAM_TO_STRING = new AbstractStringConverter<InngarIStudieprogram>() {
 
     @Override
-    public String toString(Object o) {
-      if (o instanceof InngarIStudieprogram) {
-        return ((InngarIStudieprogram)o).getStudieprogramkode();
-      }
-      return null;
+    public String convert(InngarIStudieprogram o) {
+      return o.getStudieprogramkode();
     }
   };
 
-  private static final ToString FAGPERSON_TO_STRING = new ToString() {
+  private static final StringConverter FAGPERSON_TO_STRING = new AbstractStringConverter<Fagperson>() {
 
     @Override
-    public String toString(Object o) {
-      if (o instanceof Fagperson) {
-        return ((Fagperson)o).getPersonid().toString();
-      }
+    public String convert(Fagperson o) {
+      return o.getPersonid().toString();
+    }
+  };
+
+  public static final SolrProxy DUMMY_PROXY = new SolrProxy() {
+
+    @Override
+    public void deleteByQuery(String language, String query) throws SolrServerException, IOException {
+    }
+
+    @Override
+    public void updateDocument(String lang, SolrInputDocument doc) throws SolrServerException, IOException {
+    }
+
+    @Override
+    public Map<String, SolrServer> getSolrServers() {
       return null;
+    }
+
+    @Override
+    public void removeServer(String lang) {
+    }
+
+    @Override
+    public void setServer(String lang, SolrServer object) {
     }
   };
 
@@ -131,7 +146,7 @@ public class SolrUpdaterImpl implements SolrUpdater {
 
   private Object subjectSync = new Object();
 
-  private SolrProxy solrServerProxy;
+  private Map<String, SolrProxy> solrProxies;
 
   private static ThreadLocal<StudinfoContext> context = new ThreadLocal<StudinfoContext>();
   
@@ -159,8 +174,8 @@ public class SolrUpdaterImpl implements SolrUpdater {
     this.solrFieldnameResolver = resolver;
   }
 
-  public void setSolrProxy(SolrProxy proxy) {
-    this.solrServerProxy = proxy;
+  public void setSolrProxies(Map<String, SolrProxy> proxies) {
+    this.solrProxies = proxies;
   }
   
   public void setTypeAdapters(Map<Class<?>, TypeAdapter<?>> typeAdapters) {
@@ -188,15 +203,15 @@ public class SolrUpdaterImpl implements SolrUpdater {
   }
   
   @Override
-  public void pushCourses(List<Kurs> courses, int year, FsSemester semester, String language) throws Exception {
+  public void pushCourses(List<Kurs> courses, int year, FsSemester semester, String language, SolrType solrType) throws Exception {
     synchronized(courseSync) {
       context.set(new StudinfoContext(new FsYearSemester(year, semester), language));
       try {
-        courseListenerSupport.fireBeforePushElements(courses);
+        courseListenerSupport.fireBeforePushElements(solrType, courses);
         for (Kurs kurs : courses) {
-          pushKursToSolr(kurs);
+          pushKursToSolr(solrType, kurs);
         }
-        courseListenerSupport.fireAfterPushElements();
+        courseListenerSupport.fireAfterPushElements(solrType);
       } finally {
         context.remove();
       }
@@ -204,17 +219,17 @@ public class SolrUpdaterImpl implements SolrUpdater {
   }
 
   @Override
-  public void pushSubjects(List<Emne> subjects, int year, FsSemester semester, String language) throws Exception {
+  public void pushSubjects(List<Emne> subjects, int year, FsSemester semester, String language, SolrType solrType) throws Exception {
     synchronized(subjectSync ) {
       context.set(new StudinfoContext(new FsYearSemester(year, semester), language));
       try {
-        emneListenerSupport.fireBeforePushElements(subjects);
+        emneListenerSupport.fireBeforePushElements(solrType, subjects);
         for (Emne emne : subjects) {
           if (emneFilter.accept(emne)) {
-            pushEmneToSolr(emne);
+            pushEmneToSolr(solrType, emne);
           }
         }
-        emneListenerSupport.fireAfterPushElements();
+        emneListenerSupport.fireAfterPushElements(solrType);
       } finally {
         context.remove();
       }
@@ -222,17 +237,17 @@ public class SolrUpdaterImpl implements SolrUpdater {
   }
 
   @Override
-  public void pushPrograms(List<Studieprogram> programs, int year, FsSemester semester, String language) throws Exception {
+  public void pushPrograms(List<Studieprogram> programs, int year, FsSemester semester, String language, SolrType solrType) throws Exception {
     synchronized(programSync) {
       context.set(new StudinfoContext(new FsYearSemester(year, semester), language));
       try {
-        programListenerSupport.fireBeforePushElements(programs);
+        programListenerSupport.fireBeforePushElements(solrType, programs);
         for (Studieprogram program : programs) {
           if (studieprogramFilter.accept(program)) {
-            pushProgramToSolr(program);
+            pushProgramToSolr(solrType, program);
           }
         }
-        programListenerSupport.fireAfterPushElements();
+        programListenerSupport.fireAfterPushElements(solrType);
       } finally {
         context.remove();
       }
@@ -245,11 +260,11 @@ public class SolrUpdaterImpl implements SolrUpdater {
     @ManagedOperationParameter(name="language", description="one-letter language code: (B)okmål, (E)ngelsk or (N)ynorsk"),
     @ManagedOperationParameter(name="query", description="Solr query for documents to delete")
   })
-  public void deleteByQuery(String language, String query) throws Exception {
-    solrServerProxy.deleteByQuery(language, query);
+  public void deleteByQuery(String language, String query, SolrType solrType) throws Exception {
+    getProxy(solrType).deleteByQuery(language, query);
   }
   
-  private void pushProgramToSolr(Studieprogram prog) throws Exception {
+  private void pushProgramToSolr(SolrType solrType, Studieprogram prog) throws Exception {
     
     // clean utdanningsplan
     if (prog.isSetUtdanningsplan()) {
@@ -257,10 +272,10 @@ public class SolrUpdaterImpl implements SolrUpdater {
     }
 
     Map<String, Object> beanmap = getBeanMap(prog, "/studieprogram");
-    updateDocuments(StudinfoType.STUDIEPROGRAM, prog.getSprak(), beanmap, null, "/studieprogram");
+    updateDocuments(solrType, StudinfoType.STUDIEPROGRAM, prog.getSprak(), beanmap, null, "/studieprogram");
   }
 
-  private void updateDocuments(StudinfoType infoType, String infoLanguage, Map<String, ?> beanProps, String parentDocId, String path) throws Exception {
+  private void updateDocuments(SolrType solrType, StudinfoType infoType, String infoLanguage, Map<String, ?> beanProps, String parentDocId, String path) throws Exception {
     SolrInputDocument doc = new SolrInputDocument();
     String docId = createId(infoType, beanProps, path);
     doc.addField("id", docId);
@@ -273,11 +288,11 @@ public class SolrUpdaterImpl implements SolrUpdater {
         addFieldToDoc(doc, entry.getValue(), propName);
       }
     }
-    updateDocument(infoLanguage, doc);
+    updateDocument(solrType, infoLanguage, doc);
   }
 
-  private void updateDocument(String lang, SolrInputDocument doc) throws SolrServerException, IOException {
-    this.solrServerProxy.updateDocument(lang, doc);
+  private void updateDocument(SolrType solrType, String lang, SolrInputDocument doc) throws SolrServerException, IOException {
+    this.getProxy(solrType).updateDocument(lang, doc);
   }
 
   public static void addFieldToDoc(SolrInputDocument doc, Object value, String solrFieldName) {
@@ -331,15 +346,15 @@ public class SolrUpdaterImpl implements SolrUpdater {
     return UUID.randomUUID().toString();
   }
 
-  private void pushKursToSolr(Kurs kurs) throws Exception {
+  private void pushKursToSolr(SolrType solrType, Kurs kurs) throws Exception {
     Map<String, Object> beanmap = getBeanMap(kurs, "/kurs");
     String kurskode = Utils.formatTokens(beanmap.get("kurskode"), beanmap.get("tidkode"));
     beanmap.put("kursid", kurskode);
-    courseListenerSupport.fireBeforeSolrUpdate(kurs, beanmap);
-    updateDocuments(StudinfoType.KURS, kurs.getSprak(), beanmap, null, "/kurs");
+    courseListenerSupport.fireBeforeSolrUpdate(solrType, kurs, beanmap);
+    updateDocuments(solrType, StudinfoType.KURS, kurs.getSprak(), beanmap, null, "/kurs");
   }
 
-  private void pushEmneToSolr(Emne emne) throws Exception {
+  private void pushEmneToSolr(SolrType solrType, Emne emne) throws Exception {
     
     // vurdering
     Studinfos.cleanVurderingsordning(emne, context.get().getStartYearSemester());
@@ -382,8 +397,8 @@ public class SolrUpdaterImpl implements SolrUpdater {
     beanmap.put("emneidKode", emne.getEmneid().getEmnekode());
     beanmap.put("emneidVersion", emne.getEmneid().getVersjonskode());
     
-    emneListenerSupport.fireBeforeSolrUpdate(emne, beanmap);
-    updateDocuments(StudinfoType.EMNE, emne.getSprak(), beanmap, null, "/emne");
+    emneListenerSupport.fireBeforeSolrUpdate(solrType, emne, beanmap);
+    updateDocuments(solrType, StudinfoType.EMNE, emne.getSprak(), beanmap, null, "/emne");
   }
 
   private static void addCategories(SolrInputDocument doc, StudinfoType infoType) {
@@ -395,30 +410,33 @@ public class SolrUpdaterImpl implements SolrUpdater {
   public String getSolrServersAsString() {
     StringBuilder sb = new StringBuilder();
     
-    for (Entry<String, SolrServer> entry : solrServerProxy.getSolrServers().entrySet()) {
-      sb.append(entry.getKey());
-      sb.append(" = ");
-      SolrServer server = entry.getValue();
-      if (server instanceof HttpSolrServer) {
-        sb.append(((HttpSolrServer)server).getBaseURL());
-      } else {
-        sb.append(server.toString());
+    for (SolrType solrType : SolrType.values()) {
+      for (Entry<String, SolrServer> entry : getProxy(solrType).getSolrServers().entrySet()) {
+        sb.append(solrType).append(": ").append(entry.getKey());
+        sb.append(" = ");
+        SolrServer server = entry.getValue();
+        if (server instanceof HttpSolrServer) {
+          sb.append(((HttpSolrServer)server).getBaseURL());
+        } else {
+          sb.append(server.toString());
+        }
+        sb.append("\n");
       }
-      sb.append("\n");
     }
     return sb.toString();
   }
   
   @ManagedOperation(description="set the Solr server for a specific language. If the URL is null or empty, the solrserver for the given language is removed")
   @ManagedOperationParameters({
+    @ManagedOperationParameter(name="solrType", description="set of solr cores to use"),
     @ManagedOperationParameter(name="lang", description="language code: B, E or N"),
     @ManagedOperationParameter(name="url", description="URL to the solr core"),
     @ManagedOperationParameter(name="username", description="optional username for the Solr core"),
     @ManagedOperationParameter(name="password", description="optional password for the Solr core")
   })
-  public void assignSolrServer(String lang, String url, String username, String password) throws MalformedURLException {
+  public void assignSolrServer(SolrType solrType, String lang, String url, String username, String password) throws MalformedURLException {
     if (url == null || url.trim().isEmpty()) {
-      solrServerProxy.removeServer(lang);
+      getProxy(solrType).removeServer(lang);
     } else {
       SolrServerFactory serverFactory = new SolrServerFactory(); 
       serverFactory.setUrl(new URL(url));
@@ -428,7 +446,7 @@ public class SolrUpdaterImpl implements SolrUpdater {
       if (password != null && !password.trim().isEmpty()) {
         serverFactory.setPassword(password);
       }
-      solrServerProxy.setServer(lang, serverFactory.getObject());
+      getProxy(solrType).setServer(lang, serverFactory.getObject());
     }
   }
   
@@ -548,5 +566,15 @@ public class SolrUpdaterImpl implements SolrUpdater {
     courseListenerSupport.cleanup();
     emneListenerSupport.cleanup();
     programListenerSupport.cleanup();
+  }
+  
+  private SolrProxy getProxy(SolrType type) {
+    if (solrProxies != null) {
+      SolrProxy proxy = solrProxies.get(type);
+      if (proxy != null) {
+        return proxy;
+      }
+    }
+    return DUMMY_PROXY;
   }
 }

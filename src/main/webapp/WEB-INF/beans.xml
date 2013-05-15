@@ -67,7 +67,7 @@
 
 	<bean id="solrUpdater" class="no.uis.service.ws.studinfosolr.impl.SolrUpdaterImpl">
         <property name="solrFieldnameResolver" ref="solrFieldResolver"/>
-        <property name="solrProxy" ref="solrProxy"/>
+        <property name="solrProxies" ref="solrProxies"/>
 		<property name="typeAdapters" ref="gsonTypeAdapters" />
 		<property name="emneFilter">
 			<bean class="no.uis.studinfo.commons.AcceptAllEmne" />
@@ -91,13 +91,9 @@
       <property name="solrFieldMapping" ref="solrFieldMapping"/>
     </bean>
 
-    <bean id="solrProxy" class="no.uis.service.ws.studinfosolr.impl.SolrProxyImpl">
-      <property name="solrServers" ref="solrServerMap"/>
-    </bean>
-        
     <bean id="fagpersonPushListener" class="no.uis.service.ws.studinfosolr.impl.FagpersonPushListener">
       <property name="solrFieldnameResolver" ref="solrFieldNameResolver"/>
-      <property name="solrProxy" ref="solrProxy"/>
+      <property name="solrProxies" ref="solrProxies"/>
       <property name="employeeNumberResolver" ref="employeeNumberResolver"/>
     </bean>
     
