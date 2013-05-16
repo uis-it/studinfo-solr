@@ -56,6 +56,7 @@ import no.uis.studinfo.convert.StringConverterUtil;
 
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrServer;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.common.SolrInputDocument;
 import org.springframework.jmx.export.annotation.ManagedOperation;
@@ -420,8 +421,9 @@ public class SolrUpdaterImpl implements SolrUpdater {
         sb.append(solrType).append(": ").append(entry.getKey());
         sb.append(" = ");
         SolrServer server = entry.getValue();
-        if (server instanceof HttpSolrServer) {
-          sb.append(((HttpSolrServer)server).getBaseURL());
+        if (server instanceof SolrServerFactory.SolrServerInfo) {
+          sb.append(((SolrServerFactory.SolrServerInfo)server).getBaseURL());
+        } else if (server instanceof ConcurrentUpdateSolrServer) {
         } else {
           sb.append(server.toString());
         }

@@ -5,8 +5,6 @@ import java.net.URL;
 import org.apache.http.client.HttpClient;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrServer;
-import org.apache.solr.client.solrj.impl.HttpSolrServer;
-import org.apache.solr.client.solrj.impl.XMLResponseParser;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Required;
 
@@ -43,7 +41,7 @@ public class SolrServerFactory implements FactoryBean<SolrServer> {
 
   private SolrServer createServer() {
     HttpClient httpClient = (username == null ? null : new PreemptBasicAuthHttpClient(url, username, password));
-    ConcurrentUpdateSolrServer server = new ConcurrentUpdateSolrServer(url.toExternalForm(), httpClient, QUEUE_SIZE, THREAD_COUNT);
+    MySolrServer server = new MySolrServer(url.toExternalForm(), httpClient, QUEUE_SIZE, THREAD_COUNT);
     
     server.setSoTimeout(timeout);
     
@@ -59,5 +57,29 @@ public class SolrServerFactory implements FactoryBean<SolrServer> {
   public boolean isSingleton() {
     return false;
   }
+  
+  public interface SolrServerInfo {
+    String getBaseURL();
+  }
 
+  /**
+   * Previously we used HttpSolrServer which exposes the baseUrl.
+   * ConcurrentUpdateSolrServer does not. So we use a common interface to get this information.
+   * HttpSolrServer exposes the baseURL directly.
+   */
+  private static class MySolrServer extends ConcurrentUpdateSolrServer implements SolrServerInfo {
+
+    private static final long serialVersionUID = 1L;
+    private final String baseUrl;
+    
+    public MySolrServer(String baseUrl, HttpClient client, int queueSize, int threadCount) {
+      super(baseUrl, client, queueSize, threadCount);
+      this.baseUrl = baseUrl;
+    }
+    
+    @Override
+    public String getBaseURL() {
+      return this.baseUrl;
+    }
+  }
 }
