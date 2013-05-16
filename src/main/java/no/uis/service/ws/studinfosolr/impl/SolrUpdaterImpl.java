@@ -258,7 +258,8 @@ public class SolrUpdaterImpl implements SolrUpdater {
   @ManagedOperation(description="Delete documents of solr index (given by language) by solr query")
   @ManagedOperationParameters({
     @ManagedOperationParameter(name="language", description="one-letter language code: (B)okmål, (E)ngelsk or (N)ynorsk"),
-    @ManagedOperationParameter(name="query", description="Solr query for documents to delete")
+    @ManagedOperationParameter(name="query", description="Solr query for documents to delete"),
+    @ManagedOperationParameter(name="solrType", description="WWW of STUDENT")
   })
   public void deleteByQuery(String language, String query, SolrType solrType) throws Exception {
     getProxy(solrType).deleteByQuery(language, query);

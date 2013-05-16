@@ -59,7 +59,6 @@ public class FagpersonPushListener implements SolrUpdateListener<Emne> {
 
   @Override
   public void fireBeforePushElements(SolrType solrType, List<Emne> elements) {
-    fagpersons.clear();
     fPersonId = solrFieldnameResolver.getSolrFieldName("/fagperson", "personid");
     fFornavn = solrFieldnameResolver.getSolrFieldName("/fagperson", "fornavn");
     fEtternavn = solrFieldnameResolver.getSolrFieldName("/fagperson", "etternavn");
