@@ -254,13 +254,17 @@ public class SolrUpdaterImpl implements SolrUpdater {
     }
   }
 
-  @Override
   @ManagedOperation(description="Delete documents of solr index (given by language) by solr query")
   @ManagedOperationParameters({
     @ManagedOperationParameter(name="language", description="one-letter language code: (B)okmål, (E)ngelsk or (N)ynorsk"),
     @ManagedOperationParameter(name="query", description="Solr query for documents to delete"),
     @ManagedOperationParameter(name="solrType", description="WWW of STUDENT")
   })
+  public void deleteByQuery(String language, String query, String solrType) throws Exception {
+    this.deleteByQuery(language, query, SolrType.valueOf(solrType));
+  }
+  
+  @Override
   public void deleteByQuery(String language, String query, SolrType solrType) throws Exception {
     getProxy(solrType).deleteByQuery(language, query);
   }
@@ -435,7 +439,9 @@ public class SolrUpdaterImpl implements SolrUpdater {
     @ManagedOperationParameter(name="username", description="optional username for the Solr core"),
     @ManagedOperationParameter(name="password", description="optional password for the Solr core")
   })
-  public void assignSolrServer(SolrType solrType, String lang, String url, String username, String password) throws MalformedURLException {
+  public void assignSolrServer(String solrTypeString, String lang, String url, String username, String password) throws MalformedURLException {
+    
+    SolrType solrType = SolrType.valueOf(solrTypeString);
     if (url == null || url.trim().isEmpty()) {
       getProxy(solrType).removeServer(lang);
     } else {

@@ -31,7 +31,7 @@ import com.corepublish.util.DomainUrl;
 
 @ManagedResource(
   objectName="uis:service=ws-studinfo-solr,component=course.corepublish.supplier",
-  description="SolrUpdater",
+  description="Corepublish Data Supplier",
   log=false
 )
 public class CourseCorepublishSupply implements SolrUpdateListener<Kurs> {
@@ -44,7 +44,6 @@ public class CourseCorepublishSupply implements SolrUpdateListener<Kurs> {
   private int[] evuTemplateIds;
 
   private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(CourseCorepublishSupply.class);
-
 
   @Override
   public void fireBeforeSolrUpdate(SolrType solrType, Kurs kurs, Map<String, Object> beanmap) {
