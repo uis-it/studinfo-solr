@@ -27,7 +27,7 @@
     <commons.codec.version>1.7</commons.codec.version>
     <fsimport.version>2.0.0</fsimport.version>
     <studinfo.commons.version>1.0.1</studinfo.commons.version>
-    <idm.version>1.0.2</idm.version>
+    <idm.version>2.0.0-SNAPSHOT</idm.version>
     <jaxb.version>2.2.5</jaxb.version>
   </properties>
 

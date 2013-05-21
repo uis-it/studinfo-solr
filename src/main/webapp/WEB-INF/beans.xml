@@ -21,7 +21,7 @@
 
 	<import resource="classpath:solr-fieldmapping.xml" />
 	<import resource="classpath:solr-typemap.xml" />
-    <import resource="classpath:idm.xml"/>
+    <import resource="classpath:idm-config.xml"/>
 	<import resource="solr-servermap.xml" />
 
 	<bean id="fsStudInfoImport" class="no.uis.fsws.studinfo.impl.StudInfoImportImpl">

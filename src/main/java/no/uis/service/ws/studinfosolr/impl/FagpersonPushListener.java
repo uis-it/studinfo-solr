@@ -17,6 +17,7 @@ import no.uis.service.ws.studinfosolr.SolrUpdateListener;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
 public class FagpersonPushListener implements SolrUpdateListener<Emne> {
 
@@ -93,7 +94,12 @@ public class FagpersonPushListener implements SolrUpdateListener<Emne> {
   }
 
   private String getAnsattnummer(String fnr) {
-    return employeeNumberResolver.findEmployeeNumber(fnr);
+    try {
+      return employeeNumberResolver.findEmployeeNumber(fnr);
+    } catch(IncorrectResultSizeDataAccessException e) {
+      LOG.warn(e.getLocalizedMessage());
+      return null;
+    }
   }
 
   private void updateDocument(SolrType solrType, String language, SolrInputDocument doc) throws SolrServerException, IOException {
