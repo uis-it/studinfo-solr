@@ -1,139 +1,148 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxws="http://cxf.apache.org/jaxws"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:util="http://www.springframework.org/schema/util"
-	xmlns:http-conf="http://cxf.apache.org/transports/http/configuration"
-	xmlns:sec="http://cxf.apache.org/configuration/security"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxws="http://cxf.apache.org/jaxws"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:util="http://www.springframework.org/schema/util"
+  xmlns:http-conf="http://cxf.apache.org/transports/http/configuration"
+  xmlns:sec="http://cxf.apache.org/configuration/security"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
     http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
     http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd 
     http://cxf.apache.org/configuration/security http://cxf.apache.org/schemas/configuration/security.xsd
     http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd">
 
-	<context:property-placeholder
-		location="file:///${catalina.base}/conf/ws-studinfo-solr.xml" />
+  <util:properties id="config-props-idm" location="file:///${catalina.base}/conf/ws-studinfo-solr.xml"/>
+  
+  <context:property-placeholder properties-ref="config-props-idm" />
 
-	<context:annotation-config />
-	<bean
-		class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor" />
+  <context:annotation-config />
+  <bean
+    class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor" />
 
-	<import resource="classpath:solr-fieldmapping.xml" />
-	<import resource="classpath:solr-typemap.xml" />
-    <import resource="classpath:idm-config.xml"/>
-	<import resource="solr-servermap.xml" />
+  <import resource="classpath:solr-fieldmapping.xml" />
+  <import resource="classpath:solr-typemap.xml" />
+  <import resource="classpath:idm-config.xml" />
+  <import resource="solr-servermap.xml" />
 
-	<bean id="fsStudInfoImport" class="no.uis.fsws.studinfo.impl.StudInfoImportImpl">
-		<property name="fsServiceStudInfo">
-			<ref bean="fsWsStudInfo" />
-		</property>
-		<property name="transformerUrl" value="classpath:fspreprocess-stable.xsl" />
-		<property name="xmlSourceParser" value="no.uis.fsws.studinfo.impl.SkippingAmpersandParser"/>
-	</bean>
+  <bean id="fsStudInfoImport" class="no.uis.fsws.studinfo.impl.StudInfoImportImpl">
+    <property name="fsServiceStudInfo">
+      <ref bean="fsWsStudInfo" />
+    </property>
+    <property name="transformerUrl" value="classpath:fspreprocess-stable.xsl" />
+    <property name="xmlSourceParser"
+      value="no.uis.fsws.studinfo.impl.SkippingAmpersandParser" />
+  </bean>
 
-	<jaxws:client id="fsWsStudInfo"
-		serviceClass="no.usit.fsws.studinfo.StudInfoService" address="${fs.ws.studinfo.url}"
-		username="${fs.ws.username}" password="${fs.ws.password}">
-		<jaxws:properties>
-			<entry key="mtom-enabled" value="false" />
-		</jaxws:properties>
-	</jaxws:client>
+  <jaxws:client id="fsWsStudInfo" serviceClass="no.usit.fsws.studinfo.StudInfoService"
+    address="${fs.ws.studinfo.url}" username="${fs.ws.username}"
+    password="${fs.ws.password}">
+    <jaxws:properties>
+      <entry key="mtom-enabled" value="false" />
+    </jaxws:properties>
+  </jaxws:client>
 
-	<http-conf:conduit
-		name="{http://fsws.usit.no/wsdl/studinfo}StudInfoServicePort.http-conduit">
-		<http-conf:client ConnectionTimeout="${fs.ws.connection.timeout}"
-			ReceiveTimeout="${fs.ws.receive.timeout}" AllowChunking="false"
-			Connection="Keep-Alive" />
-		<http-conf:tlsClientParameters
-			disableCNCheck="true" />
-	</http-conf:conduit>
+  <http-conf:conduit
+    name="{http://fsws.usit.no/wsdl/studinfo}StudInfoServicePort.http-conduit">
+    <http-conf:client ConnectionTimeout="${fs.ws.connection.timeout}"
+      ReceiveTimeout="${fs.ws.receive.timeout}" AllowChunking="false"
+      Connection="Keep-Alive" />
+    <http-conf:tlsClientParameters
+      disableCNCheck="true" />
+  </http-conf:conduit>
 
 
-	<bean
-		class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor" />
+  <bean
+    class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor" />
 
-	<import resource="classpath:META-INF/cxf/cxf.xml" />
-	<import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
-	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+  <import resource="classpath:META-INF/cxf/cxf.xml" />
+  <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
+  <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
 
-	<jaxws:endpoint id="studinfoSolrService" implementor="#studinfoSolr"
-		address="/studinfosolr" xmlns:ns="http://studinfosolr.ws.service.uis.no/"
-		serviceName="ns:StudinfoSolrService" endpointName="ns:StudinfoSolrPort">
-		<jaxws:properties>
-			<entry key="mtom-enabled" value="true" />
-		</jaxws:properties>
-	</jaxws:endpoint>
+  <jaxws:endpoint id="studinfoSolrService" implementor="#studinfoSolr"
+    address="/studinfosolr" xmlns:ns="http://studinfosolr.ws.service.uis.no/"
+    serviceName="ns:StudinfoSolrService" endpointName="ns:StudinfoSolrPort">
+    <jaxws:properties>
+      <entry key="mtom-enabled" value="true" />
+    </jaxws:properties>
+  </jaxws:endpoint>
 
-	<bean id="solrUpdater" class="no.uis.service.ws.studinfosolr.impl.SolrUpdaterImpl">
-        <property name="solrFieldnameResolver" ref="solrFieldnameResolver"/>
-        <property name="solrProxies" ref="solrProxies"/>
-		<property name="typeAdapters" ref="gsonTypeAdapters" />
-		<property name="emneFilter">
-			<bean class="no.uis.studinfo.commons.AcceptAllEmne" />
-		</property>
-		<property name="studieprogramFilter">
-			<bean class="no.uis.studinfo.commons.AcceptAllStudieprogram" />
-		</property>
-        <property name="courseListeners">
-          <list>
-            <ref bean="courseCPSupply"/>
-          </list>
-        </property>
-        <property name="subjectListeners">
-          <list>
-            <ref bean="fagpersonPushListener"/>
-          </list>
-        </property>
-	</bean>
-	
-    <bean id="solrFieldnameResolver" class="no.uis.service.ws.studinfosolr.impl.SolrFieldnameResolverImpl">
-      <property name="solrFieldMapping" ref="solrFieldMapping"/>
-    </bean>
+  <bean id="solrUpdater" class="no.uis.service.ws.studinfosolr.impl.SolrUpdaterImpl">
+    <property name="solrFieldnameResolver" ref="solrFieldnameResolver" />
+    <property name="solrProxies" ref="solrProxies" />
+    <property name="typeAdapters" ref="gsonTypeAdapters" />
+    <property name="emneFilter">
+      <bean class="no.uis.studinfo.commons.AcceptAllEmne" />
+    </property>
+    <property name="studieprogramFilter">
+      <bean class="no.uis.studinfo.commons.AcceptAllStudieprogram" />
+    </property>
+    <property name="courseListeners">
+      <list>
+        <ref bean="courseCPSupply" />
+      </list>
+    </property>
+    <property name="subjectListeners">
+      <list>
+        <ref bean="fagpersonPushListener" />
+      </list>
+    </property>
+  </bean>
 
-    <bean id="fagpersonPushListener" class="no.uis.service.ws.studinfosolr.impl.FagpersonPushListener">
-      <property name="solrFieldnameResolver" ref="solrFieldnameResolver"/>
-      <property name="solrProxies" ref="solrProxies"/>
-      <property name="employeeNumberResolver" ref="employeeNumberResolver"/>
-    </bean>
-    
-    <bean id="employeeNumberResolver" class="no.uis.service.ws.studinfosolr.impl.EmployeeNumberResolverImpl">
-      <property name="idmService" ref="idmWS"/>
-    </bean>
-    
-    <bean id="courseCPSupply" class="no.uis.service.ws.studinfosolr.impl.CourseCorepublishSupply">
-		<property name="cpUrl" value="${cplib4j.url}|${cplib4j.domainId}"/>
-		<property name="siteId" value="${cplib4j.siteId}" />
-		<property name="cpAccessorHolder">
-			<bean class="com.corepublish.impl.xml.XmlAccessorHolder2" />
-		</property>
-		<property name="evuCategoryId" value="${cp.evu.root.category}" />
-		<property name="evuTemplateIds" value="${cp.evu.templates}">
-			<description><![CDATA[The property is a comma separated list of integers, The templateId of the category and article templates]]></description>
-		</property>
-    </bean>
-    
-	<bean id="studinfoSolr"
-		class="no.uis.service.ws.studinfosolr.impl.StudinfoSolrServiceImpl">
-		<property name="studinfoImport" ref="fsStudInfoImport" />
-		<property name="solrUpdater" ref="solrUpdater" />
-		<property name="faculties" value="${ws.solr.faculties}"/>
-	</bean>
+  <bean id="solrFieldnameResolver"
+    class="no.uis.service.ws.studinfosolr.impl.SolrFieldnameResolverImpl">
+    <property name="solrFieldMapping" ref="solrFieldMapping" />
+  </bean>
 
-	<bean class="org.springframework.jmx.export.MBeanExporter">
-		<property name="assembler">
-		 	<bean class="org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler">
-		 		<property name="attributeSource" ref="jmxAttributeSource"/>
-		 	</bean>
-		 </property>
-		<property name="namingStrategy">
-			<bean class="org.springframework.jmx.export.naming.MetadataNamingStrategy">
-				<property name="attributeSource" ref="jmxAttributeSource"/>
-			</bean>
-		</property>
-		<property name="autodetect" value="true"/>
-	</bean>
-	
-	<bean id="jmxAttributeSource" class="org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource"/>
-		
+  <bean id="fagpersonPushListener"
+    class="no.uis.service.ws.studinfosolr.impl.FagpersonPushListener">
+    <property name="solrFieldnameResolver" ref="solrFieldnameResolver" />
+    <property name="solrProxies" ref="solrProxies" />
+    <property name="employeeNumberResolver" ref="employeeNumberResolver" />
+  </bean>
+
+  <bean id="employeeNumberResolver"
+    class="no.uis.service.ws.studinfosolr.impl.EmployeeNumberResolverImpl">
+    <property name="idmService" ref="idmWS" />
+  </bean>
+
+  <bean id="courseCPSupply"
+    class="no.uis.service.ws.studinfosolr.impl.CourseCorepublishSupply">
+    <property name="cpUrl" value="${cplib4j.url}|${cplib4j.domainId}" />
+    <property name="siteId" value="${cplib4j.siteId}" />
+    <property name="cpAccessorHolder">
+      <bean class="com.corepublish.impl.xml.XmlAccessorHolder2" />
+    </property>
+    <property name="evuCategoryId" value="${cp.evu.root.category}" />
+    <property name="evuTemplateIds" value="${cp.evu.templates}">
+      <description><![CDATA[The property is a comma separated list of integers, The templateId of the category and article templates]]></description>
+    </property>
+  </bean>
+
+  <bean id="studinfoSolr"
+    class="no.uis.service.ws.studinfosolr.impl.StudinfoSolrServiceImpl">
+    <property name="studinfoImport" ref="fsStudInfoImport" />
+    <property name="solrUpdater" ref="solrUpdater" />
+    <property name="faculties" value="${ws.solr.faculties}" />
+  </bean>
+
+  <bean class="org.springframework.jmx.export.MBeanExporter">
+    <property name="assembler">
+      <bean
+        class="org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler">
+        <property name="attributeSource" ref="jmxAttributeSource" />
+      </bean>
+    </property>
+    <property name="namingStrategy">
+      <bean
+        class="org.springframework.jmx.export.naming.MetadataNamingStrategy">
+        <property name="attributeSource" ref="jmxAttributeSource" />
+      </bean>
+    </property>
+    <property name="autodetect" value="true" />
+  </bean>
+
+  <bean id="jmxAttributeSource"
+    class="org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource" />
+
 </beans>
