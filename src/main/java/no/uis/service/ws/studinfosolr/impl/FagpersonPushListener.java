@@ -88,16 +88,16 @@ public class FagpersonPushListener implements SolrUpdateListener<Emne> {
       SolrUpdaterImpl.addFieldToDoc(doc, entry.getKey(), fPersonId);
       SolrUpdaterImpl.addFieldToDoc(doc, entry.getValue().getPersonnavn().getFornavn(), fFornavn);
       SolrUpdaterImpl.addFieldToDoc(doc, entry.getValue().getPersonnavn().getEtternavn(), fEtternavn);
-      SolrUpdaterImpl.addFieldToDoc(doc, getAnsattnummer(entry.getValue().getFnr()), fAnsattnummer);
+      SolrUpdaterImpl.addFieldToDoc(doc, getAnsattnummer(entry.getValue()), fAnsattnummer);
       updateDocument(solrType, language, doc);
     }
   }
 
-  private String getAnsattnummer(String fnr) {
+  private String getAnsattnummer(Fagperson person) {
     try {
-      return employeeNumberResolver.findEmployeeNumber(fnr);
+      return employeeNumberResolver.findEmployeeNumber(person.getFnr());
     } catch(IncorrectResultSizeDataAccessException e) {
-      LOG.warn(e.getLocalizedMessage());
+      LOG.warn(person.getPersonnavn().getFornavn() + ' ' + person.getPersonnavn().getEtternavn(), e);
       return null;
     }
   }

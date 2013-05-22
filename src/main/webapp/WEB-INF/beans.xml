@@ -34,8 +34,10 @@
       value="no.uis.fsws.studinfo.impl.SkippingAmpersandParser" />
   </bean>
 
-  <jaxws:client id="fsWsStudInfo" serviceClass="no.usit.fsws.studinfo.StudInfoService"
-    address="${fs.ws.studinfo.url}" username="${fs.ws.username}"
+  <jaxws:client id="fsWsStudInfo" 
+    serviceClass="no.usit.fsws.studinfo.StudInfoService"
+    address="${fs.ws.studinfo.url}" 
+    username="${fs.ws.username}"
     password="${fs.ws.password}">
     <jaxws:properties>
       <entry key="mtom-enabled" value="false" />
@@ -59,9 +61,13 @@
   <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
   <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
 
-  <jaxws:endpoint id="studinfoSolrService" implementor="#studinfoSolr"
-    address="/studinfosolr" xmlns:ns="http://studinfosolr.ws.service.uis.no/"
-    serviceName="ns:StudinfoSolrService" endpointName="ns:StudinfoSolrPort">
+  <jaxws:endpoint 
+    id="studinfoSolrService" 
+    implementor="#studinfoSolr"
+    address="/studinfosolr" 
+    xmlns:ns="http://studinfosolr.ws.service.uis.no/"
+    serviceName="ns:StudinfoSolrService" 
+    endpointName="ns:StudinfoSolrPort">
     <jaxws:properties>
       <entry key="mtom-enabled" value="true" />
     </jaxws:properties>
