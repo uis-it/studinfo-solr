@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 
 import no.uis.fsws.studinfo.data.Emne;
 import no.uis.fsws.studinfo.data.Fagperson;
+import no.uis.fsws.studinfo.data.Personnavn;
 import no.uis.service.ws.studinfosolr.EmployeeNumberResolver;
 import no.uis.service.ws.studinfosolr.SolrFieldnameResolver;
 import no.uis.service.ws.studinfosolr.SolrProxy;
@@ -97,7 +98,14 @@ public class FagpersonPushListener implements SolrUpdateListener<Emne> {
     try {
       return employeeNumberResolver.findEmployeeNumber(person.getFnr());
     } catch(DataAccessException e) { // TODO dependency on Spring framework, is this good?
-      LOG.warn(person.getPersonnavn().getFornavn() + ' ' + person.getPersonnavn().getEtternavn(), e);
+      StringBuilder sb = new StringBuilder();
+      sb.append(e.getMessage());
+      sb.append(": ");
+      final Personnavn pn = person.getPersonnavn();
+      sb.append(pn.getFornavn());
+      sb.append(' ');
+      sb.append(pn.getEtternavn());
+      LOG.warn(sb.toString());
       return null;
     }
   }
