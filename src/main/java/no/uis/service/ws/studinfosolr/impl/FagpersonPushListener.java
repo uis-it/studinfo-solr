@@ -17,7 +17,7 @@ import no.uis.service.ws.studinfosolr.SolrUpdateListener;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import org.springframework.dao.DataAccessException;
 
 public class FagpersonPushListener implements SolrUpdateListener<Emne> {
 
@@ -96,7 +96,7 @@ public class FagpersonPushListener implements SolrUpdateListener<Emne> {
   private String getAnsattnummer(Fagperson person) {
     try {
       return employeeNumberResolver.findEmployeeNumber(person.getFnr());
-    } catch(IncorrectResultSizeDataAccessException e) {
+    } catch(DataAccessException e) { // TODO dependency on Spring framework, is this good?
       LOG.warn(person.getPersonnavn().getFornavn() + ' ' + person.getPersonnavn().getEtternavn(), e);
       return null;
     }
