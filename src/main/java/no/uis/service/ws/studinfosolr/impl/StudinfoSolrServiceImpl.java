@@ -30,7 +30,7 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService, Notificatio
   private StudInfoImport studinfoImport;
   private SolrUpdater solrUpdater;
   private NotificationPublisher jmxPublisher;
-  private int[] faculties = {-1};
+  private int[] defaultFaculties = {-1};
 
   private static AtomicLong sequence = new AtomicLong();
 
@@ -42,9 +42,9 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService, Notificatio
     this.solrUpdater = solrUpdater;
   }
 
-  public void setFaculties(String facultiesString) {
+  public void setDefaultFaculties(String facultiesString) {
     int[] newFaculties = null;
-    if (faculties != null && !facultiesString.trim().isEmpty()) {
+    if (defaultFaculties != null && !facultiesString.trim().isEmpty()) {
       String[] tokens = facultiesString.split("\\s*,\\s*");
       newFaculties = new int[tokens.length];
       for (int i = 0; i < tokens.length; i++) {
@@ -52,9 +52,9 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService, Notificatio
       }
     }
     if (newFaculties == null) {
-      faculties = new int[] {-1};
+      defaultFaculties = new int[] {-1};
     } else {
-      faculties = newFaculties;
+      defaultFaculties = newFaculties;
     }
   }
   
@@ -75,10 +75,11 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService, Notificatio
   }
 
   @Override
-  public void updateSolrEmne(int year, String semester, String language, SolrType solrType) throws SolrUpdateException {
+  public void updateSolrEmne(int[] faculties, int year, String semester, String language, SolrType solrType) throws SolrUpdateException {
     final SolrType mySolrType = solrType == null ? SolrType.WWW : solrType;
-    
-    for (int faculty : faculties) {
+
+    int[] fa = (faculties == null || faculties.length == 0) ? defaultFaculties : faculties;  
+    for (int faculty : fa) {
       updateSolrEmne(faculty, year, semester, language, mySolrType);
     }
   }
@@ -100,10 +101,11 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService, Notificatio
   }
 
   @Override
-  public void updateSolrStudieprogram(int year, String semester, String language, SolrType solrType) throws SolrUpdateException {
+  public void updateSolrStudieprogram(int[] faculties, int year, String semester, String language, SolrType solrType) throws SolrUpdateException {
     final SolrType mySolrType = solrType == null ? SolrType.WWW : solrType;
 
-    for (int faculty : faculties) {
+    int[] fa = (faculties == null || faculties.length == 0) ? defaultFaculties : faculties;  
+    for (int faculty : fa) {
       updateSolrStudieprogram(faculty, year, semester, language, mySolrType);
     }
   }

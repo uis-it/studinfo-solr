@@ -129,7 +129,7 @@
     class="no.uis.service.ws.studinfosolr.impl.StudinfoSolrServiceImpl">
     <property name="studinfoImport" ref="fsStudInfoImport" />
     <property name="solrUpdater" ref="solrUpdater" />
-    <property name="faculties" value="${ws.solr.faculties}" />
+    <property name="defaultFaculties" value="${ws.solr.faculties}" />
   </bean>
 
   <bean class="org.springframework.jmx.export.MBeanExporter">

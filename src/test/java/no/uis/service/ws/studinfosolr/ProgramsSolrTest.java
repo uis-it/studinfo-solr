@@ -71,7 +71,7 @@ public class ProgramsSolrTest extends AbstractSolrTestCase {
 
     StudinfoSolrService service = appCtx.getBean("studinfoSolrService", StudinfoSolrService.class);
     try {
-      service.updateSolrStudieprogram(YEAR, SEMESTER.toString(), LANGUAGE, SolrType.WWW);
+      service.updateSolrStudieprogram(null, YEAR, SEMESTER.toString(), LANGUAGE, SolrType.WWW);
     } catch (SolrUpdateException e) {
       if (e.getCause() instanceof AssumptionViolatedException) {
         throw (AssumptionViolatedException)e.getCause();
