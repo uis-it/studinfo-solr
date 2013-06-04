@@ -94,7 +94,7 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService, Notificatio
       solrUpdater.pushSubjects(fsinfo.getEmne(), year, fsSemester, language, solrType);
       sendNotification(seq, null, solrType, faculty, year, semester, language, "EMNE-end");
     } catch(Exception e) {
-      sendNotification(seq, e, faculty, year, semester, language, "EMNE-error");
+      sendNotification(seq, e, solrType, faculty, year, semester, language, "EMNE-error");
       log.error(String.format("updateSolrEmne(%d): %d, %s, %s", faculty, year, semester, language), e);
       throw new SolrUpdateException(e);
     }
@@ -121,7 +121,7 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService, Notificatio
       solrUpdater.pushPrograms(fsinfo.getStudieprogram(), year, fsSemester, language, solrType);
       sendNotification(seq, null, solrType, faculty, year, semester, language, "PROGRAM-end");
     } catch(Exception e) {
-      sendNotification(seq, e, faculty, year, semester, language, "PROGRAM-error");
+      sendNotification(seq, e, solrType, faculty, year, semester, language, "PROGRAM-error");
       log.error(String.format("updateSolrStudieprogram (%d): %d, %s, %s", faculty, year, semester, language), e);
       throw new SolrUpdateException(e);
     }
