@@ -46,12 +46,14 @@ import com.corepublish.impl.xml.XmlAccessorHolder;
 import com.corepublish.util.DomainUrl;
 
 @ManagedResource(
-  objectName="uis:service=ws-studinfo-solr,component=course.corepublish.supplier",
-  description="Corepublish Data Supplier",
-  log=false
+  objectName = "uis:service=ws-studinfo-solr,component=course.corepublish.supplier",
+  description = "Corepublish Data Supplier",
+  log = false
 )
 public class CourseCorepublishSupply implements SolrUpdateListener<Kurs> {
 
+  private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CourseCorepublishSupply.class);
+  
   private Map<String, CPArticleInfo> descriptionCache = new HashMap<String, CPArticleInfo>();
   private DomainUrl cpUrl;
   private int siteId; 
@@ -59,7 +61,6 @@ public class CourseCorepublishSupply implements SolrUpdateListener<Kurs> {
   private int evuCategoryId = 5793;
   private int[] evuTemplateIds;
 
-  private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(CourseCorepublishSupply.class);
 
   @Override
   public void fireBeforeSolrUpdate(SolrType solrType, Kurs kurs, Map<String, Object> beanmap) {
@@ -93,11 +94,11 @@ public class CourseCorepublishSupply implements SolrUpdateListener<Kurs> {
       try {
         cpAccessor = xmlAccessorHolder.getAccessor(cpUrl);
       } catch(Exception ex) {
-        log.info("Corepublish", ex);
+        LOG.info("Corepublish", ex);
       }
     }
     if (cpAccessor == null) {
-      log.warn("CorePublish access disabled");
+      LOG.warn("CorePublish access disabled");
       return;
     }
     ArticleQuery articleQuery = new DefaultArticleQuery().includeCategoryId(evuCategoryId, true).includeTemplateIds(evuTemplateIds);
@@ -132,7 +133,7 @@ public class CourseCorepublishSupply implements SolrUpdateListener<Kurs> {
           descriptionCache.put(cpinfo.getId(), cpinfo);
         }
       } catch(Exception ex) {
-        log.warn("Problem with article " + articleId, ex);
+        LOG.warn("Problem with article " + articleId, ex);
       }
     }
   }
@@ -212,25 +213,25 @@ public class CourseCorepublishSupply implements SolrUpdateListener<Kurs> {
     }
   }
   
-  @ManagedOperation(description="Set Cp Url")
+  @ManagedOperation(description = "Set Cp Url")
   @ManagedOperationParameters({
-    @ManagedOperationParameter(name="cpUrl", description="Corepublish URL: <url>|domainId")
+    @ManagedOperationParameter(name = "cpUrl", description = "Corepublish URL: <url>|domainId")
   })
   public void setCpUrl(String cpUrl) {
     this.cpUrl = DomainUrlAdapter.valueOf(cpUrl);
   }
 
-  @ManagedOperation(description="Get the corepublish URL")
+  @ManagedOperation(description = "Get the corepublish URL")
   public String getCpUrl() {
     return this.cpUrl.toString();
   }
   
-  @ManagedOperation(description="Set siteId")
+  @ManagedOperation(description = "Set siteId")
   public void setSiteId(int siteId) {
     this.siteId = siteId;
   }
   
-  @ManagedOperation(description="Get siteId")
+  @ManagedOperation(description = "Get siteId")
   public int getSiteId() {
     return this.siteId;
   }
@@ -239,15 +240,15 @@ public class CourseCorepublishSupply implements SolrUpdateListener<Kurs> {
     this.xmlAccessorHolder = holder;
   }
 
-  @ManagedOperation(description="Set Course category root Id")
+  @ManagedOperation(description = "Set Course category root Id")
   @ManagedOperationParameters({
-    @ManagedOperationParameter(name="evuCategoryId", description="Category Id of EVU Courses Root")
+    @ManagedOperationParameter(name = "evuCategoryId", description = "Category Id of EVU Courses Root")
   })
   public void setEvuCategoryId(int evuCategoryId) {
     this.evuCategoryId = evuCategoryId;
   }
 
-  @ManagedOperation(description="Get Course category root Id")
+  @ManagedOperation(description = "Get Course category root Id")
   public int getEvuCategoryId() {
     return evuCategoryId;
   }
@@ -260,9 +261,9 @@ public class CourseCorepublishSupply implements SolrUpdateListener<Kurs> {
     this.evuTemplateIds = ids;
   }
 
-  @ManagedOperation(description="Set Course Article Template IDs")
+  @ManagedOperation(description = "Set Course Article Template IDs")
   @ManagedOperationParameters({
-    @ManagedOperationParameter(name="csvString", description="comma-separated list of article template ids")
+    @ManagedOperationParameter(name = "csvString", description = "comma-separated list of article template ids")
   })
   public void setEvuTemplateIds(String csvString) {
     String[] strArray = csvString.split("\\s*,\\s*");
@@ -274,7 +275,7 @@ public class CourseCorepublishSupply implements SolrUpdateListener<Kurs> {
     _setEvuTemplateIds(ids);
   }
 
-  @ManagedOperation(description="Get Course Article Template IDs")
+  @ManagedOperation(description = "Get Course Article Template IDs")
   public String getEvuTemplateIds() {
     int[] ids = _getEvuTemplateIds();
     if (ids == null) {

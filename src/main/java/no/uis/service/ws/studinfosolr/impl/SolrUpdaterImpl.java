@@ -73,7 +73,6 @@ import no.uis.studinfo.convert.StringConverterUtil;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrServer;
-import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.common.SolrInputDocument;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedOperationParameter;
@@ -85,9 +84,9 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
 
 @ManagedResource(
-  objectName="uis:service=ws-studinfo-solr,component=updater",
-  description="SolrUpdater",
-  log=false
+  objectName = "uis:service=ws-studinfo-solr,component=updater",
+  description = "SolrUpdater",
+  log = false
 )
 public class SolrUpdaterImpl implements SolrUpdater {
 
@@ -122,7 +121,7 @@ public class SolrUpdaterImpl implements SolrUpdater {
 
   private static final String STUDIEPROGRAM_ROOT = "/studieprogram";
   
-  private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(SolrUpdaterImpl.class);
+  private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(SolrUpdaterImpl.class);
   
   private static final StringConverter SPRAK_TO_STRING = new AbstractStringConverter<Sprak>() {
 
@@ -279,11 +278,11 @@ public class SolrUpdaterImpl implements SolrUpdater {
     }
   }
 
-  @ManagedOperation(description="Delete documents of solr index (given by language) by solr query")
+  @ManagedOperation(description = "Delete documents of solr index (given by language) by solr query")
   @ManagedOperationParameters({
-    @ManagedOperationParameter(name="language", description="one-letter language code: (B)okmål, (E)ngelsk or (N)ynorsk"),
-    @ManagedOperationParameter(name="query", description="Solr query for documents to delete"),
-    @ManagedOperationParameter(name="solrType", description="WWW of STUDENT")
+    @ManagedOperationParameter(name = "language", description = "one-letter language code: (B)okmål, (E)ngelsk or (N)ynorsk"),
+    @ManagedOperationParameter(name = "query", description = "Solr query for documents to delete"),
+    @ManagedOperationParameter(name = "solrType", description = "WWW of STUDENT")
   })
   public void deleteByQuery(String language, String query, String solrType) throws Exception {
     this.deleteByQuery(language, query, SolrType.valueOf(solrType));
@@ -448,6 +447,7 @@ public class SolrUpdaterImpl implements SolrUpdater {
         if (server instanceof SolrServerFactory.SolrServerInfo) {
           sb.append(((SolrServerFactory.SolrServerInfo)server).getBaseURL());
         } else if (server instanceof ConcurrentUpdateSolrServer) {
+          sb.append("Unable to get server name");
         } else {
           sb.append(server.toString());
         }
@@ -589,7 +589,7 @@ public class SolrUpdaterImpl implements SolrUpdater {
         return mGet.invoke(fsType);
       }
     } catch(Exception ex) {
-      log.error("get " + pi.getPropName(), ex);
+      LOG.error("get " + pi.getPropName(), ex);
     }
     return null;
   }

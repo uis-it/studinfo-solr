@@ -24,7 +24,7 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
-public class FsEksamensdatoSerializer extends TypeAdapter<FsEksamensdato>{
+public class FsEksamensdatoSerializer extends TypeAdapter<FsEksamensdato> {
 
   @Override
   public void write(JsonWriter out, FsEksamensdato value) throws IOException {

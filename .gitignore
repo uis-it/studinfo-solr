@@ -7,3 +7,4 @@
 /.springBeans
 /src/test/data
 /src/main/tomcatconf
+/.checkstyle

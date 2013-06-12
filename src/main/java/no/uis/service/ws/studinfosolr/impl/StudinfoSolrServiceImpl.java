@@ -36,19 +36,20 @@ import org.springframework.jmx.export.notification.NotificationPublisher;
 import org.springframework.jmx.export.notification.NotificationPublisherAware;
 
 @ManagedResource(
-  objectName="uis:service=ws-studinfo-solr,component=webservice",
-  description="StudinfoSolrService",
-  log=false
+  objectName = "uis:service=ws-studinfo-solr,component=webservice",
+  description = "StudinfoSolrService",
+  log = false
 )
 public class StudinfoSolrServiceImpl implements StudinfoSolrService, NotificationPublisherAware {
 
   private static final Logger LOG = Logger.getLogger(StudinfoSolrServiceImpl.class);
+  private static final AtomicLong SEQUENCE = new AtomicLong();
+  
   private StudInfoImport studinfoImport;
   private SolrUpdater solrUpdater;
   private NotificationPublisher jmxPublisher;
   private int[] defaultFaculties = {-1};
 
-  private static AtomicLong sequence = new AtomicLong();
 
   public void setStudinfoImport(StudInfoImport studinfoImport) {
     this.studinfoImport = studinfoImport;
@@ -76,7 +77,7 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService, Notificatio
   
   @Override
   public void updateSolrKurs(int year, String semester, String language, SolrType solrType) throws SolrUpdateException {
-    long seq = sequence.incrementAndGet();
+    long seq = SEQUENCE.incrementAndGet();
     sendNotification(seq, null, solrType, year, semester, language, "KURS-start");
     try {
       FsSemester fsSemester = FsSemester.stringToUisSemester(semester);
@@ -101,7 +102,7 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService, Notificatio
   
   private void updateSolrEmne(int faculty, int year, String semester, String language, SolrType solrType) throws SolrUpdateException {
 
-    long seq = sequence.incrementAndGet();
+    long seq = SEQUENCE.incrementAndGet();
     sendNotification(seq, null, solrType, faculty, year, semester, language, "EMNE-start");
     try {
       FsSemester fsSemester = FsSemester.stringToUisSemester(semester);
@@ -126,7 +127,7 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService, Notificatio
   
   private void updateSolrStudieprogram(int faculty, int year, String semester, String language, SolrType solrType) throws SolrUpdateException {
 
-    long seq = sequence.incrementAndGet();
+    long seq = SEQUENCE.incrementAndGet();
     sendNotification(seq, null, solrType, faculty, year, semester, language, "PROGRAM-start");
     try {
       FsSemester fsSemester = FsSemester.stringToUisSemester(semester);

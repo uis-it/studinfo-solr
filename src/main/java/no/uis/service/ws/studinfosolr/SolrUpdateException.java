@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(
   name = "SolrUpdateException",
-  namespace ="http://studinfosolr.ws.service.uis.no/",
+  namespace = "http://studinfosolr.ws.service.uis.no/",
   propOrder = { "shortMessage", "messageDetail" }
 )
 public class SolrUpdateException extends RuntimeException {
