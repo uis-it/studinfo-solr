@@ -90,6 +90,8 @@ import com.google.gson.TypeAdapter;
 )
 public class SolrUpdaterImpl implements SolrUpdater {
 
+  public static final SolrProxy DUMMY_PROXY = new DefaultProxy();
+  
   private static final String KURS_ROOT = "/kurs";
 
   private static final String EMNE_ROOT = "/emne";
@@ -147,7 +149,6 @@ public class SolrUpdaterImpl implements SolrUpdater {
     }
   };
 
-  public static final SolrProxy DUMMY_PROXY = new DefaultProxy();
   
   private static ThreadLocal<StudinfoContext> context = new ThreadLocal<StudinfoContext>();
 

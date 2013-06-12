@@ -117,11 +117,11 @@ public class CourseCorepublishSupply implements SolrUpdateListener<Kurs> {
         String mainText = "";
         for (ArticleElement articleElement : elements) {
           String pName = articleElement.getProgrammaticName();
-          if (pName.equalsIgnoreCase("pluss_course_code")) {
+          if ("pluss_course_code".equalsIgnoreCase(pName)) {
             kursKode = getStringValue(articleElement, cpAccessor);
-          } else if (pName.equalsIgnoreCase("pluss_time_code")) {
+          } else if ("pluss_time_code".equalsIgnoreCase(pName)) {
             tidKode = getStringValue(articleElement, cpAccessor);
-          } else if (pName.equalsIgnoreCase("maintext")) {
+          } else if ("maintext".equalsIgnoreCase(pName)) {
             mainText = getStringValue(articleElement, cpAccessor);
           }
         }

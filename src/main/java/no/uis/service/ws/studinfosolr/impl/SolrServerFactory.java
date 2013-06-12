@@ -56,7 +56,7 @@ public class SolrServerFactory implements FactoryBean<SolrServer> {
   }
 
   private SolrServer createServer() {
-    HttpClient httpClient = (username == null ? null : new PreemptBasicAuthHttpClient(url, username, password));
+    HttpClient httpClient = username == null ? null : new PreemptBasicAuthHttpClient(url, username, password);
     MySolrServer server = new MySolrServer(url.toExternalForm(), httpClient, QUEUE_SIZE, THREAD_COUNT);
     
     server.setSoTimeout(timeout);
@@ -74,6 +74,9 @@ public class SolrServerFactory implements FactoryBean<SolrServer> {
     return false;
   }
   
+  /**
+   * Interface to get the server's base URL, which is not exposed by {@link ConcurrentUpdateSolrServer}.
+   */
   public interface SolrServerInfo {
     String getBaseURL();
   }
