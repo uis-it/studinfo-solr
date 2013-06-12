@@ -11,9 +11,21 @@
     </layout>
   </appender>
   
+  <appender name="EVENTLOG" class="org.apache.log4j.nt.NTEventLogAppender">
+    <param name="Source" value="studinfo-solr"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%-5p %t %c - %m%n"/>
+    </layout>
+  </appender>
+  
   <logger name="no.uis">
     <level value="INFO"/>
     <appender-ref ref="FILE"/>
+  </logger>
+  
+  <logger name="no.uis.service.ws.studinfosolr.impl.StudinfoSolrServiceImpl">
+    <level value="ALL"/>
+    <appender-ref ref="EVENTLOG"/>
   </logger>
   
   <root>

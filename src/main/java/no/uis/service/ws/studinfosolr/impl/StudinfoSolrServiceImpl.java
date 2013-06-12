@@ -26,7 +26,7 @@ import org.springframework.jmx.export.notification.NotificationPublisherAware;
 )
 public class StudinfoSolrServiceImpl implements StudinfoSolrService, NotificationPublisherAware {
 
-  private static Logger log = Logger.getLogger(StudinfoSolrServiceImpl.class);
+  private static final Logger LOG = Logger.getLogger(StudinfoSolrServiceImpl.class);
   private StudInfoImport studinfoImport;
   private SolrUpdater solrUpdater;
   private NotificationPublisher jmxPublisher;
@@ -69,7 +69,6 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService, Notificatio
       sendNotification(seq, null, solrType, year, semester, language, "KURS-end");
     } catch(Exception e) {
       sendNotification(seq, e, solrType, year, semester, language, "KURS-error");
-      log.error(String.format("updateSolrKurs: %d, %s, %s", year, semester, language), e);
       throw new SolrUpdateException(e);
     }
   }
@@ -95,7 +94,6 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService, Notificatio
       sendNotification(seq, null, solrType, faculty, year, semester, language, "EMNE-end");
     } catch(Exception e) {
       sendNotification(seq, e, solrType, faculty, year, semester, language, "EMNE-error");
-      log.error(String.format("updateSolrEmne(%d): %d, %s, %s", faculty, year, semester, language), e);
       throw new SolrUpdateException(e);
     }
   }
@@ -122,7 +120,6 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService, Notificatio
       sendNotification(seq, null, solrType, faculty, year, semester, language, "PROGRAM-end");
     } catch(Exception e) {
       sendNotification(seq, e, solrType, faculty, year, semester, language, "PROGRAM-error");
-      log.error(String.format("updateSolrStudieprogram (%d): %d, %s, %s", faculty, year, semester, language), e);
       throw new SolrUpdateException(e);
     }
   }
@@ -144,9 +141,13 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService, Notificatio
       }
       sb.append(arg);
     }
-    Notification notification = new Notification("SolrUpdate", this, seqNo, sb.toString());
+    final String msg = sb.toString();
+    Notification notification = new Notification("SolrUpdate", this, seqNo, msg);
     if (error != null) {
       notification.setUserData(errorToString(error));
+      LOG.error(msg, error);
+    } else {
+      LOG.info(msg);
     }
     this.jmxPublisher.sendNotification(notification);
   }
