@@ -1,3 +1,19 @@
+/*
+ Copyright 2012-2013 University of Stavanger, Norway
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
 package no.uis.service.ws.studinfosolr.impl;
 
 import java.io.IOException;
@@ -21,6 +37,8 @@ import org.apache.solr.common.SolrInputDocument;
 import org.springframework.dao.DataAccessException;
 
 public class FagpersonPushListener implements SolrUpdateListener<Emne> {
+
+  private static final String FAGPERSON_ROOT = "/fagperson";
 
   private static final Logger LOG = Logger.getLogger(FagpersonPushListener.class);
 
@@ -61,10 +79,10 @@ public class FagpersonPushListener implements SolrUpdateListener<Emne> {
 
   @Override
   public void fireBeforePushElements(SolrType solrType, List<Emne> elements) {
-    fPersonId = solrFieldnameResolver.getSolrFieldName("/fagperson", "personid");
-    fFornavn = solrFieldnameResolver.getSolrFieldName("/fagperson", "fornavn");
-    fEtternavn = solrFieldnameResolver.getSolrFieldName("/fagperson", "etternavn");
-    fAnsattnummer = solrFieldnameResolver.getSolrFieldName("/fagperson", "ansattnummer");
+    fPersonId = solrFieldnameResolver.getSolrFieldName(FAGPERSON_ROOT, "personid");
+    fFornavn = solrFieldnameResolver.getSolrFieldName(FAGPERSON_ROOT, "fornavn");
+    fEtternavn = solrFieldnameResolver.getSolrFieldName(FAGPERSON_ROOT, "etternavn");
+    fAnsattnummer = solrFieldnameResolver.getSolrFieldName(FAGPERSON_ROOT, "ansattnummer");
   }
 
   @Override

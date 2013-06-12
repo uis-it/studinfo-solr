@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 
 import no.usit.fsws.studinfo.StudInfoService;
 
+import org.apache.commons.codec.CharEncoding;
 import org.apache.cxf.helpers.IOUtils;
 import org.junit.Assume;
 
@@ -50,7 +51,7 @@ public class StudinfoFactory implements StudInfoService {
       String sprak)
   {
     try {
-      return IOUtils.toString(new FileInputStream(programSource), "UTF-8");
+      return IOUtils.toString(new FileInputStream(programSource), CharEncoding.UTF_8);
     } catch(Exception e) {
       Assume.assumeNoException(e);
     }
@@ -76,7 +77,7 @@ public class StudinfoFactory implements StudInfoService {
       String sprak)
   {
     try {
-      return IOUtils.toString(new FileInputStream(emneSource), "UTF-8");
+      return IOUtils.toString(new FileInputStream(emneSource), CharEncoding.UTF_8);
     } catch(Exception e) {
     	Assume.assumeNoException(e);
     }
@@ -133,7 +134,7 @@ public class StudinfoFactory implements StudInfoService {
       String sprak)
   {
     try {
-      return IOUtils.toString(new FileInputStream(kursSource), "UTF-8");
+      return IOUtils.toString(new FileInputStream(kursSource), CharEncoding.UTF_8);
     } catch(Exception e) {
       Assume.assumeNoException(e);
     }
