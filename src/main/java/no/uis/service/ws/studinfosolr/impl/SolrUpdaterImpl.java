@@ -266,7 +266,7 @@ public class SolrUpdaterImpl implements SolrUpdater {
   @ManagedOperationParameters({
     @ManagedOperationParameter(name = "language", description = "one-letter language code: (B)okmål, (E)ngelsk or (N)ynorsk"),
     @ManagedOperationParameter(name = "query", description = "Solr query for documents to delete"),
-    @ManagedOperationParameter(name = "solrType", description = "WWW of STUDENT")
+    @ManagedOperationParameter(name = "solrType", description = "WWW or STUDENT")
   })
   public void deleteByQuery(String language, String query, String solrType) throws Exception {
     this.deleteByQuery(language, query, SolrType.valueOf(solrType));
