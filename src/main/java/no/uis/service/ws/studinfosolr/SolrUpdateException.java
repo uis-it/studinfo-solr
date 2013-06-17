@@ -24,6 +24,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+/**
+ * Exception that serializes properly to XML.
+ */
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(
   name = "SolrUpdateException",

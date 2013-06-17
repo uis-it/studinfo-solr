@@ -37,6 +37,9 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
 import org.springframework.dao.DataAccessException;
 
+/**
+ * Collects a courses staff, supplementing it with the employee id and writes it as separate documents to Solr. 
+ */
 public class FagpersonPushListener implements SolrUpdateListener<Emne> {
 
   private static final String FAGPERSON_ROOT = "/fagperson";

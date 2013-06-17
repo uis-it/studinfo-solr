@@ -16,6 +16,10 @@
 
 package no.uis.service.ws.studinfosolr;
 
+/**
+ * Maps a bean property to a Solr field name. 
+ * The solr field names must be declared in solrconfig.xml.
+ */
 public interface SolrFieldnameResolver {
   String getSolrFieldName(String path, String propName);
 }

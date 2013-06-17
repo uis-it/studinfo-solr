@@ -26,6 +26,9 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.log4j.Logger;
 import org.apache.solr.common.util.DateUtil;
 
+/**
+ * Miscellaneous utility functions.
+ */
 public class SolrUtil {
 
   private static final TimeZone TIME_ZONE_UTC = TimeZone.getTimeZone("UTC");

@@ -19,6 +19,11 @@ package no.uis.service.ws.studinfosolr;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 
+/**
+ * Web service interface for Updating a Solr core with studinfo from FS.
+ * @author 2904630
+ *
+ */
 @WebService(targetNamespace = "http://studinfosolr.ws.service.uis.no/")
 public interface StudinfoSolrService {
   

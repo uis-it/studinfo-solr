@@ -26,6 +26,9 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
+/**
+ * A Json Type adapter for a <code>XMLGregorianCalendar</code>.
+ */
 public class CalendarSerializer extends TypeAdapter<XMLGregorianCalendar> {
 
   public static String convertToSolrString(XMLGregorianCalendar xcal) {

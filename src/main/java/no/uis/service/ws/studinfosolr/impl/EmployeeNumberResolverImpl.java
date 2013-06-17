@@ -21,6 +21,9 @@ import no.uis.idm.IdmWebService;
 import no.uis.idm.Person;
 import no.uis.service.ws.studinfosolr.EmployeeNumberResolver;
 
+/**
+ * Resolves the employee's employee number by using the supplied {@link IdmWebService}. 
+ */
 public class EmployeeNumberResolverImpl implements EmployeeNumberResolver {
 
   private IdmWebService idm;

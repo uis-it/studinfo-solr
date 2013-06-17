@@ -83,6 +83,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
 
+/**
+ * Default implementation of SolrUpdater.
+ */
 @ManagedResource(
   objectName = "uis:service=ws-studinfo-solr,component=updater",
   description = "SolrUpdater",
@@ -90,34 +93,14 @@ import com.google.gson.TypeAdapter;
 )
 public class SolrUpdaterImpl implements SolrUpdater {
 
+  /**
+   * Instance of of a SolrProxy that does nothing.  
+   */
   public static final SolrProxy DUMMY_PROXY = new DefaultProxy();
   
   private static final String KURS_ROOT = "/kurs";
 
   private static final String EMNE_ROOT = "/emne";
-
-  private static final class DefaultProxy implements SolrProxy {
-    @Override
-    public void deleteByQuery(String language, String query) throws SolrServerException, IOException {
-    }
-
-    @Override
-    public void updateDocument(String lang, SolrInputDocument doc) throws SolrServerException, IOException {
-    }
-
-    @Override
-    public Map<String, SolrServer> getSolrServers() {
-      return null;
-    }
-
-    @Override
-    public void removeServer(String lang) {
-    }
-
-    @Override
-    public void setServer(String lang, SolrServer object) {
-    }
-  }
 
   private static final String CATEGORY_STUDINFO = "STUDINFO";
 
@@ -605,5 +588,28 @@ public class SolrUpdaterImpl implements SolrUpdater {
       }
     }
     return DUMMY_PROXY;
+  }
+
+  private static final class DefaultProxy implements SolrProxy {
+    @Override
+    public void deleteByQuery(String language, String query) throws SolrServerException, IOException {
+    }
+
+    @Override
+    public void updateDocument(String lang, SolrInputDocument doc) throws SolrServerException, IOException {
+    }
+
+    @Override
+    public Map<String, SolrServer> getSolrServers() {
+      return null;
+    }
+
+    @Override
+    public void removeServer(String lang) {
+    }
+
+    @Override
+    public void setServer(String lang, SolrServer object) {
+    }
   }
 }

@@ -24,6 +24,10 @@ import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrServer;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Required;
 
+/**
+ * FactoryBean for a SolrServer.
+ * This implementation produces an implementation of {@link ConcurrentUpdateSolrServer}.
+ */
 public class SolrServerFactory implements FactoryBean<SolrServer> {
 
   private static final int QUEUE_SIZE = 3;

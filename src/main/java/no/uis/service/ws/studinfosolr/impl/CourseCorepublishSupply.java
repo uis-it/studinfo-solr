@@ -46,6 +46,9 @@ import com.corepublish.impl.defaultt.DefaultArticleQuery;
 import com.corepublish.impl.xml.XmlAccessorHolder;
 import com.corepublish.util.DomainUrl;
 
+/**
+ * Finds the CP article and category of courses (PLUSS kurs) from FS. 
+ */
 @ManagedResource(
   objectName = "uis:service=ws-studinfo-solr,component=course.corepublish.supplier",
   description = "Corepublish Data Supplier",

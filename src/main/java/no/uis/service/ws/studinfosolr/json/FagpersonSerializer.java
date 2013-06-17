@@ -27,6 +27,9 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
+/**
+ * A Json type adapter for {@link Fagperson}.
+ */
 public class FagpersonSerializer extends TypeAdapter<Fagperson> {
 
   @Override

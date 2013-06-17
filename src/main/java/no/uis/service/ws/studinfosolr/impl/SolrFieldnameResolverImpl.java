@@ -20,6 +20,9 @@ import java.util.Map;
 
 import no.uis.service.ws.studinfosolr.SolrFieldnameResolver;
 
+/**
+ * Default implementation of a SolrFieldnameResolver that uses a supplied Map.
+ */
 public class SolrFieldnameResolverImpl implements SolrFieldnameResolver {
 
   private Map<String, String> solrFieldMapping;

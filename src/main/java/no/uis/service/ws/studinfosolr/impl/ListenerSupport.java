@@ -24,14 +24,23 @@ import no.uis.service.ws.studinfosolr.SolrType;
 import no.uis.service.ws.studinfosolr.SolrUpdateListener;
 import no.uis.studinfo.commons.StudinfoContext;
 
+/**
+ * Support class for {@link SolrUpdateListener SolrUpdateListeners}.
+ * 
+ * @param <T>
+ *        either {@link no.uis.fsws.studinfo.data.Studieprogram Studieprogram}, {@link no.uis.fsws.studinfo.data.Emne Emne} or
+ *        {@link no.uis.fsws.studinfo.data.Kurs Kurs}
+ */
 public class ListenerSupport<T> {
-  
+
   private List<SolrUpdateListener<T>> listeners;
 
   public ListenerSupport() {
   }
 
-  public void fireBeforeSolrUpdate(ThreadLocal<StudinfoContext> context, SolrType solrType, T studinfoElement, Map<String, Object> beanmap) {
+  public void fireBeforeSolrUpdate(ThreadLocal<StudinfoContext> context, SolrType solrType, T studinfoElement,
+      Map<String, Object> beanmap)
+  {
     for (SolrUpdateListener<T> listener : getListeners()) {
       listener.fireBeforeSolrUpdate(context, solrType, studinfoElement, beanmap);
     }
@@ -56,7 +65,7 @@ public class ListenerSupport<T> {
   }
 
   private List<SolrUpdateListener<T>> getListeners() {
-    synchronized(this) {
+    synchronized (this) {
       if (listeners != null) {
         return listeners;
       } else {
@@ -64,10 +73,10 @@ public class ListenerSupport<T> {
       }
     }
   }
-  
+
   public void setListeners(List<SolrUpdateListener<T>> l) {
-    synchronized(this) {
-      this.listeners = l; 
+    synchronized (this) {
+      this.listeners = l;
     }
   }
 }

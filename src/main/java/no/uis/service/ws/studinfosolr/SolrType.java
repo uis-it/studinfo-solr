@@ -16,7 +16,17 @@
 
 package no.uis.service.ws.studinfosolr;
 
+/**
+ * Designates the set of solr servers.
+ */
 public enum SolrType {
+  /**
+   * The Sol servers for applicants.
+   */
   WWW,
+  
+  /**
+   * The Solr servers for existing students.
+   */
   STUDENT
 }

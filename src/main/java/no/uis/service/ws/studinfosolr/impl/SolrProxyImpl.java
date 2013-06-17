@@ -27,6 +27,9 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
 
+/**
+ * Default implementation of a SolrProxy. 
+ */
 public class SolrProxyImpl implements SolrProxy {
 
   private static final int COMMIT_WITHIN = 3000;

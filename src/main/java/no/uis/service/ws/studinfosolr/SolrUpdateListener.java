@@ -21,6 +21,10 @@ import java.util.Map;
 
 import no.uis.studinfo.commons.StudinfoContext;
 
+/**
+ * Interface for customizations in the import pipeline.
+ * @param <T>
+ */
 public interface SolrUpdateListener<T> {
 
   void fireBeforeSolrUpdate(ThreadLocal<StudinfoContext> context, SolrType solrType, T studinfoElement, Map<String, Object> beanmap);

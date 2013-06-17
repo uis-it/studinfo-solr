@@ -20,6 +20,10 @@ import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 
 import com.corepublish.util.DomainUrl;
 
+/**
+ * The original implementation didn't shutdown the MultiThreadedHttpConnectionManager properly.
+ * This implementation fixes this.
+ */
 public class XmlAccessorHolder2 extends XmlAccessorHolder {
 
   @Override

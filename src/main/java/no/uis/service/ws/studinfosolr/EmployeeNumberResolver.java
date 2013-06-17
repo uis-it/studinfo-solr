@@ -16,6 +16,9 @@
 
 package no.uis.service.ws.studinfosolr;
 
+/**
+ * Interface for finding the employee number for the given personal id number (f&oslash;dselsnummer).
+ */
 public interface EmployeeNumberResolver {
   String findEmployeeNumber(String fnr);
 }

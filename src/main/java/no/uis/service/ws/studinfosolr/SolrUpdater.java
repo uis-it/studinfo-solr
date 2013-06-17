@@ -23,6 +23,9 @@ import no.uis.fsws.studinfo.data.FsSemester;
 import no.uis.fsws.studinfo.data.Kurs;
 import no.uis.fsws.studinfo.data.Studieprogram;
 
+/**
+ * Interface for classes that talk to the Solr server. 
+ */
 public interface SolrUpdater {
 
   void pushCourses(List<Kurs> kurs, int year, FsSemester fsSemester, String language, SolrType solrType) throws Exception;

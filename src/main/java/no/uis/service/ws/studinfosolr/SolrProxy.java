@@ -23,6 +23,12 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
 
+/**
+ * Interface for a set of Solr servers.
+ * A set of solr servers consists of one Solr core per language.
+ * @author 2904630
+ *
+ */
 public interface SolrProxy {
 
   void deleteByQuery(String language, String query) throws SolrServerException, IOException;
