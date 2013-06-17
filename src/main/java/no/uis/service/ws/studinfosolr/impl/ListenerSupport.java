@@ -22,6 +22,7 @@ import java.util.Map;
 
 import no.uis.service.ws.studinfosolr.SolrType;
 import no.uis.service.ws.studinfosolr.SolrUpdateListener;
+import no.uis.studinfo.commons.StudinfoContext;
 
 public class ListenerSupport<T> {
   
@@ -30,21 +31,21 @@ public class ListenerSupport<T> {
   public ListenerSupport() {
   }
 
-  public void fireBeforeSolrUpdate(SolrType solrType, T studinfoElement, Map<String, Object> beanmap) {
+  public void fireBeforeSolrUpdate(ThreadLocal<StudinfoContext> context, SolrType solrType, T studinfoElement, Map<String, Object> beanmap) {
     for (SolrUpdateListener<T> listener : getListeners()) {
-      listener.fireBeforeSolrUpdate(solrType, studinfoElement, beanmap);
+      listener.fireBeforeSolrUpdate(context, solrType, studinfoElement, beanmap);
     }
   }
 
-  public void fireBeforePushElements(SolrType solrType, List<T> elements) {
+  public void fireBeforePushElements(ThreadLocal<StudinfoContext> context, SolrType solrType, List<T> elements) {
     for (SolrUpdateListener<T> listener : getListeners()) {
-      listener.fireBeforePushElements(solrType, elements);
+      listener.fireBeforePushElements(context, solrType, elements);
     }
   }
 
-  public void fireAfterPushElements(SolrType solrType) {
+  public void fireAfterPushElements(ThreadLocal<StudinfoContext> context, SolrType solrType) {
     for (SolrUpdateListener<T> listener : getListeners()) {
-      listener.fireAfterPushElements(solrType);
+      listener.fireAfterPushElements(context, solrType);
     }
   }
 

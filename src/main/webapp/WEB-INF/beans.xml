@@ -108,7 +108,7 @@
     <property name="employeeNumberResolver" ref="employeeNumberResolver" />
   </bean>
 
-  <bean id="cleanEmptyEmnekombinasjonListener" class="no.uis.service.ws.studinfosolr.impl.CleanEmptyEmnekombinasjonListener">
+  <bean id="cleanEmptyEmnekombinasjonListener" class="no.uis.service.ws.studinfosolr.impl.CleanUtdanningsplanListener">
   </bean>
   
   <bean id="employeeNumberResolver"

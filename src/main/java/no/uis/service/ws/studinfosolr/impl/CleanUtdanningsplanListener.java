@@ -21,28 +21,35 @@ import java.util.List;
 import java.util.Map;
 
 import no.uis.fsws.studinfo.data.Emnekombinasjon;
+import no.uis.fsws.studinfo.data.FsYearSemester;
 import no.uis.fsws.studinfo.data.KravSammensetting;
 import no.uis.fsws.studinfo.data.Studieprogram;
 import no.uis.service.ws.studinfosolr.SolrType;
 import no.uis.service.ws.studinfosolr.SolrUpdateListener;
+import no.uis.studinfo.commons.StudinfoContext;
+import no.uis.studinfo.commons.Studinfos;
 
 /**
  * Remove course combinations that don't have any courses (emner). 
  */
-public class CleanEmptyEmnekombinasjonListener implements SolrUpdateListener<Studieprogram> {
+public class CleanUtdanningsplanListener implements SolrUpdateListener<Studieprogram> {
 
   @Override
-  public void fireBeforeSolrUpdate(SolrType solrType, Studieprogram studinfoElement, Map<String, Object> beanmap) {
-    // TODO Auto-generated method stub
-    
+  public void fireBeforeSolrUpdate(ThreadLocal<StudinfoContext> context, SolrType solrType, Studieprogram studinfoElement, Map<String, Object> beanmap) {
   }
 
   @Override
-  public void fireBeforePushElements(SolrType solrType, List<Studieprogram> elements) {
+  public void fireBeforePushElements(ThreadLocal<StudinfoContext> context, SolrType solrType, List<Studieprogram> elements) {
+    
+    final FsYearSemester currentSemester = context.get().getStartYearSemester();
     for (Studieprogram prog : elements) {
-      final List<KravSammensetting> kravList = prog.getUtdanningsplan().getKravSammensetting();
+      if (prog.isSetUtdanningsplan()) {
+        Studinfos.cleanUtdanningsplan(prog.getUtdanningsplan(), prog.getStudieprogramkode(), currentSemester, Studinfos.numberOfSemesters(prog));
+        
+        final List<KravSammensetting> kravList = prog.getUtdanningsplan().getKravSammensetting();
       
-      cleanKravList(kravList);
+        cleanKravList(kravList);
+      }
     }
   }
 
@@ -90,13 +97,11 @@ public class CleanEmptyEmnekombinasjonListener implements SolrUpdateListener<Stu
   }
 
   @Override
-  public void fireAfterPushElements(SolrType solrType) {
+  public void fireAfterPushElements(ThreadLocal<StudinfoContext> context, SolrType solrType) {
   }
 
   @Override
   public void cleanup() {
-    // TODO Auto-generated method stub
-    
   }
 
 }

@@ -232,11 +232,11 @@ public class SolrUpdaterImpl implements SolrUpdater {
     synchronized(courseSync) {
       context.set(new StudinfoContext(new FsYearSemester(year, semester), language));
       try {
-        courseListenerSupport.fireBeforePushElements(solrType, courses);
+        courseListenerSupport.fireBeforePushElements(context, solrType, courses);
         for (Kurs kurs : courses) {
           pushKursToSolr(solrType, kurs);
         }
-        courseListenerSupport.fireAfterPushElements(solrType);
+        courseListenerSupport.fireAfterPushElements(context, solrType);
       } finally {
         context.remove();
       }
@@ -248,13 +248,13 @@ public class SolrUpdaterImpl implements SolrUpdater {
     synchronized(subjectSync) {
       context.set(new StudinfoContext(new FsYearSemester(year, semester), language));
       try {
-        emneListenerSupport.fireBeforePushElements(solrType, subjects);
+        emneListenerSupport.fireBeforePushElements(context, solrType, subjects);
         for (Emne emne : subjects) {
           if (emneFilter.accept(emne)) {
             pushEmneToSolr(solrType, emne);
           }
         }
-        emneListenerSupport.fireAfterPushElements(solrType);
+        emneListenerSupport.fireAfterPushElements(context, solrType);
       } finally {
         context.remove();
       }
@@ -266,13 +266,13 @@ public class SolrUpdaterImpl implements SolrUpdater {
     synchronized(programSync) {
       context.set(new StudinfoContext(new FsYearSemester(year, semester), language));
       try {
-        programListenerSupport.fireBeforePushElements(solrType, programs);
+        programListenerSupport.fireBeforePushElements(context, solrType, programs);
         for (Studieprogram program : programs) {
           if (studieprogramFilter.accept(program)) {
             pushProgramToSolr(solrType, program);
           }
         }
-        programListenerSupport.fireAfterPushElements(solrType);
+        programListenerSupport.fireAfterPushElements(context, solrType);
       } finally {
         context.remove();
       }
@@ -296,11 +296,6 @@ public class SolrUpdaterImpl implements SolrUpdater {
   
   private void pushProgramToSolr(SolrType solrType, Studieprogram prog) throws Exception {
     
-    // clean utdanningsplan
-    if (prog.isSetUtdanningsplan()) {
-      Studinfos.cleanUtdanningsplan(prog.getUtdanningsplan(), prog.getStudieprogramkode(), context.get().getStartYearSemester(), Studinfos.numberOfSemesters(prog));
-    }
-
     Map<String, Object> beanmap = getBeanMap(prog, STUDIEPROGRAM_ROOT);
     updateDocuments(solrType, StudinfoType.STUDIEPROGRAM, prog.getSprak(), beanmap, null, STUDIEPROGRAM_ROOT);
   }
@@ -380,7 +375,7 @@ public class SolrUpdaterImpl implements SolrUpdater {
     Map<String, Object> beanmap = getBeanMap(kurs, KURS_ROOT);
     String kurskode = Utils.formatTokens(beanmap.get("kurskode"), beanmap.get("tidkode"));
     beanmap.put("kursid", kurskode);
-    courseListenerSupport.fireBeforeSolrUpdate(solrType, kurs, beanmap);
+    courseListenerSupport.fireBeforeSolrUpdate(context, solrType, kurs, beanmap);
     updateDocuments(solrType, StudinfoType.KURS, kurs.getSprak(), beanmap, null, KURS_ROOT);
   }
 
@@ -427,7 +422,7 @@ public class SolrUpdaterImpl implements SolrUpdater {
     beanmap.put("emneidKode", emne.getEmneid().getEmnekode());
     beanmap.put("emneidVersion", emne.getEmneid().getVersjonskode());
     
-    emneListenerSupport.fireBeforeSolrUpdate(solrType, emne, beanmap);
+    emneListenerSupport.fireBeforeSolrUpdate(context, solrType, emne, beanmap);
     updateDocuments(solrType, StudinfoType.EMNE, emne.getSprak(), beanmap, null, EMNE_ROOT);
   }
 

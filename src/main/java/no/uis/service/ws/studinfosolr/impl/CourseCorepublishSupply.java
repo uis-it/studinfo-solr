@@ -23,6 +23,7 @@ import java.util.Map;
 import no.uis.fsws.studinfo.data.Kurs;
 import no.uis.service.ws.studinfosolr.SolrType;
 import no.uis.service.ws.studinfosolr.SolrUpdateListener;
+import no.uis.studinfo.commons.StudinfoContext;
 import no.uis.studinfo.commons.Utils;
 
 import org.springframework.jmx.export.annotation.ManagedOperation;
@@ -63,7 +64,7 @@ public class CourseCorepublishSupply implements SolrUpdateListener<Kurs> {
 
 
   @Override
-  public void fireBeforeSolrUpdate(SolrType solrType, Kurs kurs, Map<String, Object> beanmap) {
+  public void fireBeforeSolrUpdate(ThreadLocal<StudinfoContext> context, SolrType solrType, Kurs kurs, Map<String, Object> beanmap) {
     String kurskode = beanmap.get("kursid").toString();
     CPArticleInfo articleInfo = descriptionCache.get(kurskode);
     if (articleInfo != null) {
@@ -74,12 +75,12 @@ public class CourseCorepublishSupply implements SolrUpdateListener<Kurs> {
   }
 
   @Override
-  public void fireBeforePushElements(SolrType solrType, List<Kurs> courses) {
+  public void fireBeforePushElements(ThreadLocal<StudinfoContext> context, SolrType solrType, List<Kurs> courses) {
     fillDescriptionCache();
   }
   
   @Override
-  public void fireAfterPushElements(SolrType solrType) {
+  public void fireAfterPushElements(ThreadLocal<StudinfoContext> context, SolrType solrType) {
     this.descriptionCache.clear();
   }
 

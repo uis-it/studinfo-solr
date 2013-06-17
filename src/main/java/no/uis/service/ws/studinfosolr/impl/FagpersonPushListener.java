@@ -30,6 +30,7 @@ import no.uis.service.ws.studinfosolr.SolrFieldnameResolver;
 import no.uis.service.ws.studinfosolr.SolrProxy;
 import no.uis.service.ws.studinfosolr.SolrType;
 import no.uis.service.ws.studinfosolr.SolrUpdateListener;
+import no.uis.studinfo.commons.StudinfoContext;
 
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -71,14 +72,14 @@ public class FagpersonPushListener implements SolrUpdateListener<Emne> {
   }
   
   @Override
-  public void fireBeforeSolrUpdate(SolrType solrType, Emne emne, Map<String, Object> beanmap) {
+  public void fireBeforeSolrUpdate(ThreadLocal<StudinfoContext> context, SolrType solrType, Emne emne, Map<String, Object> beanmap) {
     for (Fagperson fagPerson : emne.getFagpersonListe()) {
       fagpersons.put(fagPerson.getPersonid().intValue(), fagPerson);
     }
   }
 
   @Override
-  public void fireBeforePushElements(SolrType solrType, List<Emne> elements) {
+  public void fireBeforePushElements(ThreadLocal<StudinfoContext> context, SolrType solrType, List<Emne> elements) {
     fPersonId = solrFieldnameResolver.getSolrFieldName(FAGPERSON_ROOT, "personid");
     fFornavn = solrFieldnameResolver.getSolrFieldName(FAGPERSON_ROOT, "fornavn");
     fEtternavn = solrFieldnameResolver.getSolrFieldName(FAGPERSON_ROOT, "etternavn");
@@ -86,7 +87,7 @@ public class FagpersonPushListener implements SolrUpdateListener<Emne> {
   }
 
   @Override
-  public void fireAfterPushElements(SolrType solrType) {
+  public void fireAfterPushElements(ThreadLocal<StudinfoContext> context, SolrType solrType) {
     try {
       pushFagpersonsToSolr(solrType, SolrUpdaterImpl.getContext().getLanguage(), fagpersons);
     } catch(Exception e) {
