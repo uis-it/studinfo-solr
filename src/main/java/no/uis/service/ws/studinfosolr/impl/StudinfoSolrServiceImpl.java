@@ -35,6 +35,9 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.jmx.export.notification.NotificationPublisher;
 import org.springframework.jmx.export.notification.NotificationPublisherAware;
 
+/**
+ * Implementation of {@link StudinfoSolrService}. 
+ */
 @ManagedResource(
   objectName = "uis:service=ws-studinfo-solr,component=webservice",
   description = "StudinfoSolrService",
@@ -49,7 +52,7 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService, Notificatio
   private SolrUpdater solrUpdater;
   private NotificationPublisher jmxPublisher;
   private int[] defaultFaculties = {-1};
-
+  private int institution = 217;
 
   public void setStudinfoImport(StudInfoImport studinfoImport) {
     this.studinfoImport = studinfoImport;
@@ -59,6 +62,10 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService, Notificatio
     this.solrUpdater = solrUpdater;
   }
 
+  public void setInstitution(int inst) {
+    this.institution = inst;
+  }
+  
   public void setDefaultFaculties(String facultiesString) {
     int[] newFaculties = null;
     if (defaultFaculties != null && !facultiesString.trim().isEmpty()) {
@@ -81,7 +88,7 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService, Notificatio
     sendNotification(seq, null, solrType, year, semester, language, "KURS-start");
     try {
       FsSemester fsSemester = FsSemester.stringToUisSemester(semester);
-      FsStudieinfo fsinfo = studinfoImport.fetchCourses(217, year, semester.toString(), language);
+      FsStudieinfo fsinfo = studinfoImport.fetchCourses(institution, year, semester.toString(), language);
       solrUpdater.pushCourses(fsinfo.getKurs(), year, fsSemester, language, solrType == null ? SolrType.WWW : solrType);
       sendNotification(seq, null, solrType, year, semester, language, "KURS-end");
     } catch(Exception e) {
@@ -106,7 +113,7 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService, Notificatio
     sendNotification(seq, null, solrType, faculty, year, semester, language, "EMNE-start");
     try {
       FsSemester fsSemester = FsSemester.stringToUisSemester(semester);
-      FsStudieinfo fsinfo = studinfoImport.fetchSubjects(217, faculty, year, fsSemester.toString(), language);
+      FsStudieinfo fsinfo = studinfoImport.fetchSubjects(institution, faculty, year, fsSemester.toString(), language);
       solrUpdater.pushSubjects(fsinfo.getEmne(), year, fsSemester, language, solrType);
       sendNotification(seq, null, solrType, faculty, year, semester, language, "EMNE-end");
     } catch(Exception e) {
@@ -132,7 +139,7 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService, Notificatio
     try {
       FsSemester fsSemester = FsSemester.stringToUisSemester(semester);
 
-      FsStudieinfo fsinfo = studinfoImport.fetchStudyPrograms(217, faculty, year, fsSemester.toString(), true, language);
+      FsStudieinfo fsinfo = studinfoImport.fetchStudyPrograms(institution, faculty, year, fsSemester.toString(), true, language);
       solrUpdater.pushPrograms(fsinfo.getStudieprogram(), year, fsSemester, language, solrType);
       sendNotification(seq, null, solrType, faculty, year, semester, language, "PROGRAM-end");
     } catch(Exception e) {

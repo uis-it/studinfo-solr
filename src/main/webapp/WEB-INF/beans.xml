@@ -17,8 +17,8 @@
   <context:property-placeholder properties-ref="config-props-idm" />
 
   <context:annotation-config />
-  <bean
-    class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor" />
+  <!--bean
+    class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor" /-->
 
   <import resource="classpath:solr-fieldmapping.xml" />
   <import resource="classpath:solr-typemap.xml" />
@@ -52,10 +52,6 @@
     <http-conf:tlsClientParameters
       disableCNCheck="true" />
   </http-conf:conduit>
-
-
-  <bean
-    class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor" />
 
   <import resource="classpath:META-INF/cxf/cxf.xml" />
   <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
@@ -93,6 +89,11 @@
         <ref bean="fagpersonPushListener" />
       </list>
     </property>
+    <property name="programListeners">
+      <list>
+        <ref bean="cleanEmptyEmnekombinasjonListener"/>
+      </list>
+    </property>
   </bean>
 
   <bean id="solrFieldnameResolver"
@@ -107,6 +108,9 @@
     <property name="employeeNumberResolver" ref="employeeNumberResolver" />
   </bean>
 
+  <bean id="cleanEmptyEmnekombinasjonListener" class="no.uis.service.ws.studinfosolr.impl.CleanEmptyEmnekombinasjonListener">
+  </bean>
+  
   <bean id="employeeNumberResolver"
     class="no.uis.service.ws.studinfosolr.impl.EmployeeNumberResolverImpl">
     <property name="idmService" ref="idmWS" />

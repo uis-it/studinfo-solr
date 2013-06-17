@@ -16,12 +16,12 @@
   <import resource="classpath:solr-typemap.xml"/>
   <!--import resource="classpath:idm.xml"/-->
   
+  <util:map id="solrProxies">
+    <entry key="WWW" value-ref="solrProxy"/>
+  </util:map>
+  
   <bean id="solrUpdater" class="no.uis.service.ws.studinfosolr.impl.SolrUpdaterImpl">
-    <property name="solrProxies">
-      <map>
-        <entry key="WWW" value-ref="solrProxy"/>
-      </map>
-    </property>
+    <property name="solrProxies" ref="solrProxies"/>
     <property name="solrFieldnameResolver" ref="solrFieldNameResolver"/>
     <property name="typeAdapters" ref="gsonTypeAdapters"/>
     <property name="courseListeners">
@@ -29,21 +29,25 @@
         <ref bean="courseCPSupply"/>
       </list>
     </property>
-    <property name="subjectListeners">
+    <!--property name="subjectListeners">
       <list>
         <ref bean="fagpersonPushListener"/>
+      </list>
+    </property-->
+    <property name="programListeners">
+      <list>
+        <ref bean="cleanEmptyEmnekombinasjonListener"/>
       </list>
     </property>
   </bean>
   
   <bean id="fagpersonPushListener" class="no.uis.service.ws.studinfosolr.impl.FagpersonPushListener">
     <property name="solrFieldnameResolver" ref="solrFieldNameResolver"/>
-    <property name="solrProxies">
-      <map>
-        <entry key="WWW" value-ref="solrProxy"/>
-      </map>
-    </property>
+    <property name="solrProxies" ref="solrProxies"/>
     <property name="employeeNumberResolver" ref="employeeNumberResolver"/>
+  </bean>
+  
+  <bean id="cleanEmptyEmnekombinasjonListener" class="no.uis.service.ws.studinfosolr.impl.CleanEmptyEmnekombinasjonListener">
   </bean>
   
   <!--bean id="employeeNumberResolver" class="no.uis.service.ws.studinfosolr.impl.EmployeeNumberResolverImpl">
