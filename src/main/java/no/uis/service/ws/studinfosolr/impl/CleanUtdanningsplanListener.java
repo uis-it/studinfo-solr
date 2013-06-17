@@ -24,31 +24,37 @@ import no.uis.fsws.studinfo.data.Emnekombinasjon;
 import no.uis.fsws.studinfo.data.FsYearSemester;
 import no.uis.fsws.studinfo.data.KravSammensetting;
 import no.uis.fsws.studinfo.data.Studieprogram;
+import no.uis.fsws.studinfo.data.Utdanningsplan;
 import no.uis.service.ws.studinfosolr.SolrType;
 import no.uis.service.ws.studinfosolr.SolrUpdateListener;
 import no.uis.studinfo.commons.StudinfoContext;
 import no.uis.studinfo.commons.Studinfos;
 
 /**
- * Remove course combinations that don't have any courses (emner). 
+ * Remove course combinations that don't have any courses (emner).
  */
 public class CleanUtdanningsplanListener implements SolrUpdateListener<Studieprogram> {
 
   @Override
-  public void fireBeforeSolrUpdate(ThreadLocal<StudinfoContext> context, SolrType solrType, Studieprogram studinfoElement, Map<String, Object> beanmap) {
+  public void fireBeforeSolrUpdate(ThreadLocal<StudinfoContext> context, SolrType solrType, Studieprogram studinfoElement,
+      Map<String, Object> beanmap)
+  {
   }
 
   @Override
   public void fireBeforePushElements(ThreadLocal<StudinfoContext> context, SolrType solrType, List<Studieprogram> elements) {
-    
+
     final FsYearSemester currentSemester = context.get().getStartYearSemester();
     for (Studieprogram prog : elements) {
       if (prog.isSetUtdanningsplan()) {
-        Studinfos.cleanUtdanningsplan(prog.getUtdanningsplan(), prog.getStudieprogramkode(), currentSemester, Studinfos.numberOfSemesters(prog));
         
-        final List<KravSammensetting> kravList = prog.getUtdanningsplan().getKravSammensetting();
-      
-        cleanKravList(kravList);
+        final Utdanningsplan uplan = prog.getUtdanningsplan();
+        Studinfos.cleanUtdanningsplan(uplan, prog.getStudieprogramkode(), currentSemester,
+          Studinfos.numberOfSemesters(prog));
+
+        if (uplan.isSetKravSammensetting()) {
+          cleanKravList(uplan.getKravSammensetting());
+        }
       }
     }
   }
@@ -64,7 +70,7 @@ public class CleanUtdanningsplanListener implements SolrUpdateListener<Studiepro
       boolean isEmpty = true;
       if (ek.isSetEmnekombinasjon()) {
         isEmpty = cleanEmnekombinajson(ek.getEmnekombinasjon());
-      } 
+      }
       if (isEmpty) {
         kravIter.remove();
       }
@@ -72,14 +78,13 @@ public class CleanUtdanningsplanListener implements SolrUpdateListener<Studiepro
   }
 
   /**
-   * 
    * @param ekList
    * @return true if the list doesn't contain any courses.
    */
   private boolean cleanEmnekombinajson(List<Emnekombinasjon> ekList) {
     final Iterator<Emnekombinasjon> ekIter = ekList.iterator();
     int nonEmpty = 0;
-    while(ekIter.hasNext()) {
+    while (ekIter.hasNext()) {
       final Emnekombinasjon ek = ekIter.next();
       if (ek.isSetEmne()) {
         nonEmpty++;
@@ -89,7 +94,7 @@ public class CleanUtdanningsplanListener implements SolrUpdateListener<Studiepro
         if (!cleanEmnekombinajson(ek.getEmnekombinasjon())) {
           nonEmpty++;
           continue;
-        } 
+        }
       }
       ekIter.remove();
     }
