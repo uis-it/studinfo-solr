@@ -19,6 +19,7 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.util.AbstractSolrTestCase;
 import org.junit.After;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -101,6 +102,7 @@ public class EmnerSolrTest extends AbstractSolrTestCase {
     assertThat(emnenavn, is(instanceOf(String.class)));
     assertThat((String)doc1.getFieldValue("emnenavn_s"), is("Algoritmer og datastrukturer"));
     
+    Assume.assumeTrue(appCtx.containsBean("employeeNumberResolver"));
     // Fagperson exists
     params = new SolrQuery("cat:fagperson");
     response = solrServerMap.get(LANGUAGE).query(params);
