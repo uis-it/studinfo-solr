@@ -30,8 +30,8 @@
       <ref bean="fsWsStudInfo" />
     </property>
     <property name="transformerUrl" value="classpath:fspreprocess-stable.xsl" />
-    <property name="xmlSourceParser"
-      value="no.uis.fsws.studinfo.impl.SkippingAmpersandParser" />
+    <property name="xmlSourceParser" value="no.uis.fsws.studinfo.impl.SkippingAmpersandParser" />
+    <property name="copyXML" value="true"/>
   </bean>
 
   <jaxws:client id="fsWsStudInfo" 
