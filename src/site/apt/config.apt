@@ -1,0 +1,31 @@
+Configuration
+
+  There is a {{{http://forge.uis.no/maven-site/fs-ws/studinfo-import/xref-test/no/uis/service/component/fsimport/TestClient.html}test case}} that demonstrates the use of the FS-WS client. To make it work you have to provide a properties file <<<fsimport-properties.xml>>> in XML format
+  and put it in <<<java.home>>>. 
+  
+  The following properties must be provided:
+  
+*--------------------------+-----------------------------------------------+
+ <<Parameter Name>>       | <<Description>>                               
+*--------------------------+-----------------------------------------------+ 
+ fs.ws.studinfo.url       | The endpoint URL for the Studinfo webservice. 
+*--------------------------+-----------------------------------------------+ 
+ fs.ws.username           | The username for the webservice           
+*--------------------------+-----------------------------------------------+ 
+ fs.ws.password           | The password for the webservice           
+*--------------------------+-----------------------------------------------+ 
+ fs.ws.connection.timeout | The connection timeout in milliseconds    
+*--------------------------+-----------------------------------------------+ 
+ fs.ws.receive.timeout    | The receive timeout in milliseconds. This should be set reasonably high, as requests can take a long time.
+*--------------------------+-----------------------------------------------+ 
+solr.server | http://search-test01.uis.no/solr 
+*--------------------------+-----------------------------------------------+ 
+ solr.core.www | core name of the core <<<www>>>  
+*--------------------------+-----------------------------------------------+ 
+ solr.core.student | core name of the core <<<student>>> 
+*--------------------------+-----------------------------------------------+ 
+ ws.solr.faculties | comma-separated list of FS codes for faculties. This is the default value, if no value is given in the SOAP call. 
+*--------------------------+-----------------------------------------------+ 
+
+With the current beans.xml, the Solr URL is composed in the following manner:
+For core <<<www>>> and language bokmål (nb): <<<solr.server>>>/<<<solr.core.www>>>-nb 

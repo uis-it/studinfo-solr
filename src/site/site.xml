@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/DECORATION/1.3.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/DECORATION/1.3.0 http://maven.apache.org/xsd/decoration-1.3.0.xsd"
+  name="FS-Import Client">
+  
+  <version position="left" />
+  <bannerLeft>
+    <name>${project.groupId}:${project.artifactId}</name>
+  </bannerLeft>
+  <bannerRight>
+    <src>../../uis-parent-pom/images/uis_logo.gif</src>
+    <alt>UiS</alt>
+    <href>http://www.uis.no</href>
+  </bannerRight>
+
+  <body>
+    <menu name="Overview">
+      <item name="Configuration" href="config.html" />
+    </menu>
+    <menu ref="reports" />
+
+  </body>
+</project>
