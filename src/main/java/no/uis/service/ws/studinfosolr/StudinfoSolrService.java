@@ -21,7 +21,7 @@ import javax.jws.WebService;
 
 /**
  * Web service interface for Updating a Solr core with studinfo from FS.
- * @author 2904630
+ * CHECKSTYLE:OFF
  *
  */
 @WebService(targetNamespace = "http://studinfosolr.ws.service.uis.no/")

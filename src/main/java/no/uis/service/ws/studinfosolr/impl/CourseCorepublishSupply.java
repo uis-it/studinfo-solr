@@ -62,7 +62,7 @@ public class CourseCorepublishSupply implements SolrUpdateListener<Kurs> {
   private DomainUrl cpUrl;
   private int siteId; 
   private XmlAccessorHolder xmlAccessorHolder;
-  private int evuCategoryId = 5793;
+  private int evuCategoryId;
   private int[] evuTemplateIds;
 
 
@@ -257,11 +257,11 @@ public class CourseCorepublishSupply implements SolrUpdateListener<Kurs> {
     return evuCategoryId;
   }
 
-  private synchronized int[] _getEvuTemplateIds() {
+  private synchronized int[] getEvuTemplateIdArray() {
     return evuTemplateIds;
   }
 
-  private synchronized void _setEvuTemplateIds(int[] ids) {
+  private synchronized void setEvuTemplateIdArray(int[] ids) {
     this.evuTemplateIds = ids;
   }
 
@@ -276,12 +276,12 @@ public class CourseCorepublishSupply implements SolrUpdateListener<Kurs> {
     for (String s : strArray) {
       ids[i++] = Integer.parseInt(s);
     }
-    _setEvuTemplateIds(ids);
+    setEvuTemplateIdArray(ids);
   }
 
   @ManagedOperation(description = "Get Course Article Template IDs")
   public String getEvuTemplateIds() {
-    int[] ids = _getEvuTemplateIds();
+    int[] ids = getEvuTemplateIdArray();
     if (ids == null) {
       return null;
     }

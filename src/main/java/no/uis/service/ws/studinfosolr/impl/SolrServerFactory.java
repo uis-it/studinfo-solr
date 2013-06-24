@@ -35,7 +35,7 @@ public class SolrServerFactory implements FactoryBean<SolrServer> {
   private URL url;
   private String username;
   private String password;
-  private int timeout = 1000;
+  private int timeout;
   
   @Required
   public void setUrl(URL url) {
@@ -63,7 +63,9 @@ public class SolrServerFactory implements FactoryBean<SolrServer> {
     HttpClient httpClient = username == null ? null : new PreemptBasicAuthHttpClient(url, username, password);
     MySolrServer server = new MySolrServer(url.toExternalForm(), httpClient, QUEUE_SIZE, THREAD_COUNT);
     
-    server.setSoTimeout(timeout);
+    if (timeout > 0) {
+      server.setSoTimeout(timeout);
+    }
     
     return server;
   }

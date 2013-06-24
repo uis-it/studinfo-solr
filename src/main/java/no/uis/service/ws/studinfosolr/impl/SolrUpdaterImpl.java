@@ -98,6 +98,10 @@ public class SolrUpdaterImpl implements SolrUpdater {
    */
   public static final SolrProxy DUMMY_PROXY = new DefaultProxy();
   
+  private static final String TIDKODE = "tidkode";
+
+  private static final String KURSKODE = "kurskode";
+  
   private static final String KURS_ROOT = "/kurs";
 
   private static final String EMNE_ROOT = "/emne";
@@ -283,13 +287,16 @@ public class SolrUpdaterImpl implements SolrUpdater {
     updateDocuments(solrType, StudinfoType.STUDIEPROGRAM, prog.getSprak(), beanmap, null, STUDIEPROGRAM_ROOT);
   }
 
-  private void updateDocuments(SolrType solrType, StudinfoType infoType, String infoLanguage, Map<String, ?> beanProps, String parentDocId, String path) throws Exception {
+  private void updateDocuments(SolrType solrType, StudinfoType infoType, String infoLanguage, Map<String, ?> beanProps,
+      String parentDocId, String path) throws Exception
+  {
     SolrInputDocument doc = new SolrInputDocument();
     String docId = createId(infoType, beanProps, path);
     doc.addField("id", docId);
     addCategories(doc, infoType);
     addFieldToDoc(doc, context.get().getCurrentYearSemester().getYear(), solrFieldnameResolver.getSolrFieldName(path, "year"));
-    addFieldToDoc(doc, context.get().getCurrentYearSemester().getSemester().toString(), solrFieldnameResolver.getSolrFieldName(path, "semester"));
+    addFieldToDoc(doc, context.get().getCurrentYearSemester().getSemester().toString(),
+      solrFieldnameResolver.getSolrFieldName(path, "semester"));
     for (Entry<String, ?> entry : beanProps.entrySet()) {
       String propName = solrFieldnameResolver.getSolrFieldName(path, entry.getKey());
       if (propName != null) {
@@ -334,29 +341,28 @@ public class SolrUpdaterImpl implements SolrUpdater {
   }
 
   private String createId(StudinfoType infoType, Map<String, ?> beanmap, String path) {
-    switch(infoType) {
-      case STUDIEPROGRAM:
-        if (path.equals(STUDIEPROGRAM_ROOT)) {
-          return Utils.formatTokens(infoType, beanmap.get("studieprogramkode"), context.get().getCurrentYearSemester().getYear(), context.get().getCurrentYearSemester().getSemester());
-        }
-        break;
-      case EMNE:
-        if (path.equals(EMNE_ROOT)) {
-          return Utils.formatTokens(infoType, beanmap.get("emneid"), context.get().getCurrentYearSemester().getYear(), context.get().getCurrentYearSemester().getSemester());
-        }
-        break;
-      case KURS:
-        if (path.equals(KURS_ROOT)) {
-          return Utils.formatTokens(infoType, beanmap.get("kurskode"), beanmap.get("tidkode"));
-        }
-        break;
+    String id = null;
+    if (infoType.equals(StudinfoType.STUDIEPROGRAM) && STUDIEPROGRAM_ROOT.equals(path)) {
+      id = Utils.formatTokens(infoType, beanmap.get("studieprogramkode"), context.get().getCurrentYearSemester().getYear(),
+        context.get().getCurrentYearSemester().getSemester());
+
+    } else if (infoType.equals(StudinfoType.EMNE) && EMNE_ROOT.equals(path)) {
+      id = Utils.formatTokens(infoType, beanmap.get("emneid"), context.get().getCurrentYearSemester().getYear(), 
+        context.get().getCurrentYearSemester().getSemester());
+
+   } else if (infoType.equals(StudinfoType.KURS) && KURS_ROOT.equals(path)) {
+      id = Utils.formatTokens(infoType, beanmap.get(KURSKODE), beanmap.get(TIDKODE));
+    
+    } else {
+      id = UUID.randomUUID().toString();
     }
-    return UUID.randomUUID().toString();
+    
+    return id;
   }
 
   private void pushKursToSolr(SolrType solrType, Kurs kurs) throws Exception {
     Map<String, Object> beanmap = getBeanMap(kurs, KURS_ROOT);
-    String kurskode = Utils.formatTokens(beanmap.get("kurskode"), beanmap.get("tidkode"));
+    String kurskode = Utils.formatTokens(beanmap.get(KURSKODE), beanmap.get(TIDKODE));
     beanmap.put("kursid", kurskode);
     courseListenerSupport.fireBeforeSolrUpdate(context, solrType, kurs, beanmap);
     updateDocuments(solrType, StudinfoType.KURS, kurs.getSprak(), beanmap, null, KURS_ROOT);
@@ -436,7 +442,9 @@ public class SolrUpdaterImpl implements SolrUpdater {
     return sb.toString();
   }
   
-  @ManagedOperation(description = "set the Solr server for a specific language. If the URL is null or empty, the solrserver for the given language is removed")
+  @ManagedOperation(
+    description = "set the Solr server for a specific language. If the URL is null or empty, the solrserver for the given language is removed"
+    )
   @ManagedOperationParameters({
     @ManagedOperationParameter(name = "solrType", description = "set of solr cores to use"),
     @ManagedOperationParameter(name = "lang", description = "language code: B, E or N"),
@@ -492,8 +500,8 @@ public class SolrUpdaterImpl implements SolrUpdater {
       
     } else if (value instanceof Kursid) {
       Kursid kursid = (Kursid)value;
-      map.put("kurskode", kursid.getKurskode());
-      map.put("tidkode", kursid.getTidkode());
+      map.put(KURSKODE, kursid.getKurskode());
+      map.put(TIDKODE, kursid.getTidkode());
     
     } else if ("kurskategoriListe".equals(propName)) {
       @SuppressWarnings("unchecked")
