@@ -31,7 +31,7 @@
     <servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>
     <init-param>
       <param-name>static-resources-list</param-name>
-      <param-value>/(\w)+.txt</param-value>
+      <param-value>/(\w)+.(txt|css)</param-value>
     </init-param>
     <init-param>
       <param-name>service-list-stylesheet</param-name>

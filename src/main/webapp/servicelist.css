@@ -1,6 +1,6 @@
 @CHARSET "UTF-8";
 .heading {
-	font-size: large;
+	font-size: x-large;
 }
 .field {
 	font-weight: normal;
@@ -11,20 +11,21 @@
 .porttypename {
 	font-weight: bold;
 }
-UL {
+ul {
 	margin-top: 0;
 }
-LI {
+li {
 	font-weight: normal;
 }
-TABLE {
-	border: solid;
-	border-collapse: collapse;
-	border-width: 2px;
+table {
+	border-width: 0px;
+	margin-left: 3em;
 }
-TD {
-	border: solid;
-	border-width: 1px;
+td {
+	border-width: 0px;
 	vertical-align: text-top;
-	padding: 5px;
+	padding-top: 1em;
+	padding-left: 2em;
+	padding-bottom: 0em;
+	padding-right: 0em;
 }
