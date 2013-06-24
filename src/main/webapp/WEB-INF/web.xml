@@ -33,6 +33,10 @@
       <param-name>static-resources-list</param-name>
       <param-value>/(\w)+.txt</param-value>
     </init-param>
+    <init-param>
+      <param-name>service-list-stylesheet</param-name>
+      <param-value>servicelist.css</param-value>
+    </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
 
