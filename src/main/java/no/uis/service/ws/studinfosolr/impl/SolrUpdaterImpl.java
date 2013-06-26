@@ -74,14 +74,18 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrServer;
 import org.apache.solr.common.SolrInputDocument;
+import org.apache.xerces.dom.ElementImpl;
+import org.apache.xerces.dom.ElementNSImpl;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedOperationParameter;
 import org.springframework.jmx.export.annotation.ManagedOperationParameters;
 import org.springframework.jmx.export.annotation.ManagedResource;
+import org.w3c.dom.Node;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
+import com.google.gson.internal.bind.TypeAdapters;
 
 /**
  * Default implementation of SolrUpdater.
@@ -173,6 +177,8 @@ public class SolrUpdaterImpl implements SolrUpdater {
       for (Map.Entry<Class<?>, TypeAdapter<?>> adapter : typeAdapters.entrySet()) {
         builder.registerTypeAdapter(adapter.getKey(), adapter.getValue());
       }
+      // for <any/> element
+      builder.registerTypeAdapterFactory(TypeAdapters.newTypeHierarchyFactory(ElementImpl.class, new XmlElementAdapter()));
     }
     gson = builder.create();
     StringConverterUtil.registerConverter(new InngarIStudieprogramConverter(), InngarIStudieprogram.class);
@@ -486,8 +492,8 @@ public class SolrUpdaterImpl implements SolrUpdater {
     } else if(value instanceof Utdanningsplan) {
       Utdanningsplan uplan = (Utdanningsplan)value;
 
-      if (uplan.isSetPlaninformasjon()) {
-        uplan.unsetPlaninformasjon();
+      if (uplan.isSetPlaninformasjonListe()) {
+        uplan.setPlaninformasjonListe(null);
       }
       map.put(propName, gson.toJson(value));
       
@@ -515,7 +521,7 @@ public class SolrUpdaterImpl implements SolrUpdater {
     } else if ("fagpersonListe".equals(propName)) {
       map.put(propName, createJsonArray(value));
       
-      map.put(propName+'_', Utils.createStringArray(value, new HashSet<String>(), FAGPERSON_TO_STRING));
+      map.put("fagpersonidListe", Utils.createStringArray(value, new HashSet<String>(), FAGPERSON_TO_STRING));
       
     } else if (value instanceof Sted) { // fagansvarlig, adminansvarlig
       map.put(propName, gson.toJson(value));

@@ -52,8 +52,8 @@ public class CleanUtdanningsplanListener implements SolrUpdateListener<Studiepro
         Studinfos.cleanUtdanningsplan(uplan, prog.getStudieprogramkode(), currentSemester,
           Studinfos.numberOfSemesters(prog));
 
-        if (uplan.isSetKravSammensetting()) {
-          cleanKravList(uplan.getKravSammensetting());
+        if (uplan.isSetKravSammensettingListe()) {
+          cleanKravList(uplan.getKravSammensettingListe());
         }
       }
     }
@@ -64,12 +64,12 @@ public class CleanUtdanningsplanListener implements SolrUpdateListener<Studiepro
     while (kravIter.hasNext()) {
       KravSammensetting krav = kravIter.next();
       final Emnekombinasjon ek = krav.getEmnekombinasjon();
-      if (ek.isSetEmne()) {
+      if (ek.isSetEmneListe()) {
         continue;
       }
       boolean isEmpty = true;
-      if (ek.isSetEmnekombinasjon()) {
-        isEmpty = cleanEmnekombinajson(ek.getEmnekombinasjon());
+      if (ek.isSetEmnekombinasjonListe()) {
+        isEmpty = cleanEmnekombinajson(ek.getEmnekombinasjonListe());
       }
       if (isEmpty) {
         kravIter.remove();
@@ -86,12 +86,12 @@ public class CleanUtdanningsplanListener implements SolrUpdateListener<Studiepro
     int nonEmpty = 0;
     while (ekIter.hasNext()) {
       final Emnekombinasjon ek = ekIter.next();
-      if (ek.isSetEmne()) {
+      if (ek.isSetEmneListe()) {
         nonEmpty++;
         continue;
       }
-      if (ek.isSetEmnekombinasjon()) {
-        if (!cleanEmnekombinajson(ek.getEmnekombinasjon())) {
+      if (ek.isSetEmnekombinasjonListe()) {
+        if (!cleanEmnekombinajson(ek.getEmnekombinasjonListe())) {
           nonEmpty++;
           continue;
         }

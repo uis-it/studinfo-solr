@@ -41,7 +41,7 @@
     <entry key="fagansvarlig_instituttnr" value="fagansvarlig_instituttnr_i"/>
     <entry key="fagansvarlig_gruppenr" value="fagansvarlig_gruppenr_i"/>
     <entry key="fagpersonListe" value="fagperson_mjson"/>
-    <entry key="fagpersonListe_" value="fagperson_ms"/>
+    <entry key="fagpersonidListe" value="fagpersonid_ms"/>
     <entry key="fagplanTekst" value="fagplanTekst_t"/>
     <entry key="finansieringsprosent" value="finansieringsprosent_i"/>
     <entry key="fjernundervisning" value="fjernundervisning_b"/>
