@@ -29,6 +29,7 @@
     <studinfo.commons.version>2.0.0-SNAPSHOT</studinfo.commons.version>
     <idm.version>2.0.1</idm.version>
     <jaxb.version>2.2.5</jaxb.version>
+    <gson.version>2.2.4</gson.version>
   </properties>
 
   <scm>
@@ -234,7 +235,7 @@
     <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
-      <version>2.2.2</version>
+      <version>${gson.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.solr</groupId>
