@@ -95,7 +95,7 @@ public class ProgramsSolrTest extends AbstractSolrTestCase {
         @Override
         protected Reader fsGetStudieprogram(int institution, int faculty, int year, String semester, boolean includeEP, String language) {
           StringWriter sw = new StringWriter();
-          InputStream inStream = getClass().getResourceAsStream("/indokg5.xml");
+          InputStream inStream = getClass().getResourceAsStream("/studieprogram.xml");
           try {
             IOUtils.copy(inStream, sw, "UTF-8");
           } catch(IOException e) {

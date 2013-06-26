@@ -75,12 +75,10 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrServer;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.xerces.dom.ElementImpl;
-import org.apache.xerces.dom.ElementNSImpl;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedOperationParameter;
 import org.springframework.jmx.export.annotation.ManagedOperationParameters;
 import org.springframework.jmx.export.annotation.ManagedResource;
-import org.w3c.dom.Node;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
