@@ -133,6 +133,22 @@ public class KursSolrTest extends AbstractSolrTestCase {
         {
           return null;
         }
+
+        @Override
+        protected Reader fsGetEmne(int institution, String emnekode, String versjonskode, int year, String semester,
+            String language)
+        {
+          // TODO Auto-generated method stub
+          return null;
+        }
+
+        @Override
+        protected Reader fsGetStudieprogram(String studieprogramkode, int year, String semester, boolean includeEP,
+            String language)
+        {
+          // TODO Auto-generated method stub
+          return null;
+        }
         
       };
     }
