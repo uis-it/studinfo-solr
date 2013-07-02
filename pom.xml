@@ -11,7 +11,7 @@
   <packaging>war</packaging>
   <name>ws-studinfo-solr</name>
   <description>Update Solr with FS studinfo data</description>
-  <url>http://forge.uis.no/projects/studinfo-solr</url>
+  <url>https://github.com/uis-it/studinfo-solr</url>
 
   <inceptionYear>2012</inceptionYear>
 
@@ -33,9 +33,9 @@
   </properties>
 
   <scm>
-    <connection>scm:git:git://forge.uis.no/studinfo/studinfo-solr.git</connection>
-    <developerConnection>scm:git:ssh://git@forge.uis.no/studinfo/studinfo-solr.git</developerConnection>
-    <url>http://forge.uis.no/projects/studinfo-solr/repository</url>
+    <connection>scm:git:git://github.com/uis-it/studinfo-solr.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/uis-it/studinfo-solr.git</developerConnection>
+    <url>https://github.com/uis-it/studinfo-solr</url>
   </scm>
 
   <dependencyManagement>
@@ -390,8 +390,8 @@
     </pluginManagement>
   </build>
   <issueManagement>
-  	<system>JIRA</system>
-  	<url>http://apps01.uis.no/jira</url>
+  	<system>Github</system>
+  	<url>https://github.com/uis-it/studinfo-solr/issues</url>
   </issueManagement>
   <ciManagement>
   	<system>jenkins</system>
