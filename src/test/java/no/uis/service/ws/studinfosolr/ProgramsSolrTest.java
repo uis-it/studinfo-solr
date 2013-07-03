@@ -7,14 +7,18 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import lombok.SneakyThrows;
+
 import no.uis.fsws.studinfo.StudInfoImport;
 import no.uis.fsws.studinfo.data.FsSemester;
-import no.uis.fsws.studinfo.impl.AbstractStudinfoImport;
+import no.uis.fsws.studinfo.impl.EmptyStudinfoImport;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.input.XmlStreamReader;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
@@ -90,44 +94,13 @@ public class ProgramsSolrTest extends AbstractSolrTestCase {
   
   private StudInfoImport getStudieprogramImport() {
     if (this.studinfoImport == null) {
-      studinfoImport = new AbstractStudinfoImport() {
+      studinfoImport = new EmptyStudinfoImport() {
 
         @Override
+        @SneakyThrows
         protected Reader fsGetStudieprogram(int institution, int faculty, int year, String semester, boolean includeEP, String language) {
-          StringWriter sw = new StringWriter();
-          InputStream inStream = getClass().getResourceAsStream("/studieprogram.xml");
-          try {
-            IOUtils.copy(inStream, sw, "UTF-8");
-          } catch(IOException e) {
-            throw new RuntimeException(e);
-          }
-          return new StringReader(sw.toString());
-        }
-        
-        @Override
-        protected Reader fsGetKurs(int institution, String language) {
-          return null;
-        }
-
-        @Override
-        protected Reader fsGetEmne(int institution, int faculty, int year, String semester, String language) {
-          return null;
-        }
-
-        @Override
-        protected Reader fsGetEmne(int institution, String emnekode, String versjonskode, int year, String semester,
-            String language)
-        {
-          // TODO Auto-generated method stub
-          return null;
-        }
-
-        @Override
-        protected Reader fsGetStudieprogram(String studieprogramkode, int year, String semester, boolean includeEP,
-            String language)
-        {
-          // TODO Auto-generated method stub
-          return null;
+          URL progUrl = getClass().getResource("/studieprogram.xml");
+          return new XmlStreamReader(progUrl);
         }
       };
     }

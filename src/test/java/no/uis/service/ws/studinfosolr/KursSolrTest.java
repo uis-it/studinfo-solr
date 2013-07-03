@@ -12,7 +12,7 @@ import java.util.Map;
 
 import no.uis.fsws.studinfo.StudInfoImport;
 import no.uis.fsws.studinfo.data.FsSemester;
-import no.uis.fsws.studinfo.impl.AbstractStudinfoImport;
+import no.uis.fsws.studinfo.impl.EmptyStudinfoImport;
 import no.uis.service.ws.studinfosolr.util.SolrUtil;
 
 import org.apache.solr.client.solrj.SolrQuery;
@@ -72,7 +72,7 @@ public class KursSolrTest extends AbstractSolrTestCase {
   
   private StudInfoImport getKursStudinfoImport() {
     if (studinfoImport == null) {
-      studinfoImport = new AbstractStudinfoImport() {
+      studinfoImport = new EmptyStudinfoImport() {
 
         @Override
         protected Reader fsGetKurs(int institution, String language) {
@@ -85,22 +85,22 @@ public class KursSolrTest extends AbstractSolrTestCase {
           sb.append("      <tidkode>2012-2013</tidkode>");
           sb.append("    </kursid>");
           sb.append("    <kursnavn>Digitale verkt\u00f8y og unders\u00f8kende arbeidsformer i matematikk</kursnavn>");
-          sb.append("    <sted type=\"fagansvarlig\">");
+          sb.append("    <fagansvarlig>");
           sb.append("      <institusjonsnr>217</institusjonsnr>");
           sb.append("      <fakultetsnr>3</fakultetsnr>");
           sb.append("      <instituttnr>6</instituttnr>");
           sb.append("      <gruppenr>0</gruppenr>");
           sb.append("      <navn>UiS Pluss: Etter- og videreutdanning</navn>");
           sb.append("      <avdnavn>Ledelse og stab</avdnavn>");
-          sb.append("    </sted>");
-          sb.append("    <sted type=\"adminansvarlig\">");
+          sb.append("    </fagansvarlig>");
+          sb.append("    <adminansvarlig>");
           sb.append("      <institusjonsnr>217</institusjonsnr>");
           sb.append("      <fakultetsnr>3</fakultetsnr>");
           sb.append("      <instituttnr>6</instituttnr>");
           sb.append("      <gruppenr>0</gruppenr>");
           sb.append("      <navn>UiS Pluss: Etter- og videreutdanning</navn>");
           sb.append("      <avdnavn>Ledelse og stab</avdnavn>");
-          sb.append("    </sted>");
+          sb.append("    </adminansvarlig>");
           sb.append("    <dato-opptak-fra>2012-03-01</dato-opptak-fra>");
           sb.append("    <dato-opptak-til>2012-06-15</dato-opptak-til>");
           sb.append("    <dato-frist-soknad>2012-06-15</dato-frist-soknad>");
@@ -121,35 +121,6 @@ public class KursSolrTest extends AbstractSolrTestCase {
           
           return new StringReader(sb.toString());
         }
-
-        @Override
-        protected Reader fsGetEmne(int institution, int faculty, int year, String semester, String language) {
-          return null;
-        }
-
-        @Override
-        protected Reader fsGetStudieprogram(int institution, int faculty, int year, String semester, boolean includeEP,
-            String language)
-        {
-          return null;
-        }
-
-        @Override
-        protected Reader fsGetEmne(int institution, String emnekode, String versjonskode, int year, String semester,
-            String language)
-        {
-          // TODO Auto-generated method stub
-          return null;
-        }
-
-        @Override
-        protected Reader fsGetStudieprogram(String studieprogramkode, int year, String semester, boolean includeEP,
-            String language)
-        {
-          // TODO Auto-generated method stub
-          return null;
-        }
-        
       };
     }
     return studinfoImport;

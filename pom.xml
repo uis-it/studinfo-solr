@@ -30,6 +30,7 @@
     <idm.version>2.0.1</idm.version>
     <jaxb.version>2.2.5</jaxb.version>
     <gson.version>2.2.4</gson.version>
+    <lombok.version>0.11.8</lombok.version>
   </properties>
 
   <scm>
@@ -156,6 +157,11 @@
         <artifactId>jaxb-impl</artifactId>
         <version>${jaxb.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>${lombok.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -260,6 +266,11 @@
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 
