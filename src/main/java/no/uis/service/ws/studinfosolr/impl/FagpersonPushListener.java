@@ -22,15 +22,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import no.uis.fsws.studinfo.data.Emne;
-import no.uis.fsws.studinfo.data.Fagperson;
-import no.uis.fsws.studinfo.data.Personnavn;
 import no.uis.service.ws.studinfosolr.EmployeeNumberResolver;
 import no.uis.service.ws.studinfosolr.SolrFieldnameResolver;
 import no.uis.service.ws.studinfosolr.SolrProxy;
 import no.uis.service.ws.studinfosolr.SolrType;
 import no.uis.service.ws.studinfosolr.SolrUpdateListener;
 import no.uis.studinfo.commons.StudinfoContext;
+import no.usit.fsws.schemas.studinfo.Emne;
+import no.usit.fsws.schemas.studinfo.Fagperson;
+import no.usit.fsws.schemas.studinfo.Personnavn;
 
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrServerException;

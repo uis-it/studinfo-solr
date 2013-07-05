@@ -25,8 +25,8 @@
     <xmlapis.version>1.4.01</xmlapis.version>
     <commons.logging.version>1.1.1</commons.logging.version>
     <commons.codec.version>1.7</commons.codec.version>
-    <fsimport.version>3.0.0-SNAPSHOT</fsimport.version>
     <studinfo.commons.version>2.0.0-SNAPSHOT</studinfo.commons.version>
+    <fswsproxy.version>1.0.0-SNAPSHOT</fswsproxy.version>
     <idm.version>2.0.1</idm.version>
     <jaxb.version>2.2.5</jaxb.version>
     <gson.version>2.2.4</gson.version>
@@ -133,8 +133,9 @@
       </dependency>
       <dependency>
         <groupId>no.uis.fsws</groupId>
-        <artifactId>studinfo-import</artifactId>
-        <version>${fsimport.version}</version>
+        <artifactId>fsws-proxy</artifactId>
+        <classifier>api</classifier>
+        <version>${fswsproxy.version}</version>
       </dependency>
       <dependency>
         <groupId>no.uis.studinfo</groupId>
@@ -167,12 +168,25 @@
 
   <dependencies>
     <dependency>
-      <groupId>no.uis.fsws</groupId>
-      <artifactId>studinfo-import</artifactId>
-    </dependency>
-    <dependency>
       <groupId>no.uis.studinfo</groupId>
       <artifactId>studinfo-commons</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>fsws-client</artifactId>
+          <groupId>no.uis.fsws</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>no.uis.fsws</groupId>
+      <artifactId>fsws-proxy</artifactId>
+      <classifier>api</classifier>
+      <exclusions>
+        <exclusion>
+          <artifactId>fsws-client</artifactId>
+          <groupId>no.uis.fsws</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>no.uis.service.ws</groupId>

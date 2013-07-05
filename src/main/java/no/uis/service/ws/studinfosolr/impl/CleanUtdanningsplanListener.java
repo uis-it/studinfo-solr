@@ -20,15 +20,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import no.uis.fsws.studinfo.data.Emnekombinasjon;
 import no.uis.fsws.studinfo.data.FsYearSemester;
-import no.uis.fsws.studinfo.data.KravSammensetting;
-import no.uis.fsws.studinfo.data.Studieprogram;
-import no.uis.fsws.studinfo.data.Utdanningsplan;
 import no.uis.service.ws.studinfosolr.SolrType;
 import no.uis.service.ws.studinfosolr.SolrUpdateListener;
 import no.uis.studinfo.commons.StudinfoContext;
 import no.uis.studinfo.commons.Studinfos;
+import no.usit.fsws.schemas.studinfo.Emnekombinasjon;
+import no.usit.fsws.schemas.studinfo.KravSammensetting;
+import no.usit.fsws.schemas.studinfo.Studieprogram;
+import no.usit.fsws.schemas.studinfo.Utdanningsplan;
 
 /**
  * Remove course combinations that don't have any courses (emner).

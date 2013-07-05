@@ -24,11 +24,11 @@ import javax.management.Notification;
 
 import no.uis.fsws.studinfo.StudInfoImport;
 import no.uis.fsws.studinfo.data.FsSemester;
-import no.uis.fsws.studinfo.data.FsStudieinfo;
 import no.uis.service.ws.studinfosolr.SolrType;
 import no.uis.service.ws.studinfosolr.SolrUpdateException;
 import no.uis.service.ws.studinfosolr.SolrUpdater;
 import no.uis.service.ws.studinfosolr.StudinfoSolrService;
+import no.usit.fsws.schemas.studinfo.FsStudieinfo;
 
 import org.apache.log4j.Logger;
 import org.springframework.jmx.export.annotation.ManagedResource;

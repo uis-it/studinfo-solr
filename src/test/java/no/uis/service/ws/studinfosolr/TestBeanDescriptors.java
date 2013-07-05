@@ -1,14 +1,16 @@
 package no.uis.service.ws.studinfosolr;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
-import static org.junit.matchers.JUnitMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.hasItem;
 
 import java.util.List;
 
-import no.uis.fsws.studinfo.data.Studieprogram;
 import no.uis.fsws.studinfo.util.PropertyInfo;
 import no.uis.fsws.studinfo.util.PropertyInfoUtils;
+import no.usit.fsws.schemas.studinfo.Studieprogram;
 
 import org.junit.Test;
 

@@ -18,10 +18,10 @@ package no.uis.service.ws.studinfosolr.json;
 
 import java.io.IOException;
 
-import org.apache.commons.lang.NotImplementedException;
+import no.usit.fsws.schemas.studinfo.Fagperson;
+import no.usit.fsws.schemas.studinfo.Personnavn;
 
-import no.uis.fsws.studinfo.data.Fagperson;
-import no.uis.fsws.studinfo.data.Personnavn;
+import org.apache.commons.lang.NotImplementedException;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;

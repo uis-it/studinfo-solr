@@ -18,10 +18,10 @@ package no.uis.service.ws.studinfosolr;
 
 import java.util.List;
 
-import no.uis.fsws.studinfo.data.Emne;
 import no.uis.fsws.studinfo.data.FsSemester;
-import no.uis.fsws.studinfo.data.Kurs;
-import no.uis.fsws.studinfo.data.Studieprogram;
+import no.usit.fsws.schemas.studinfo.Emne;
+import no.usit.fsws.schemas.studinfo.Kurs;
+import no.usit.fsws.schemas.studinfo.Studieprogram;
 
 /**
  * Interface for classes that talk to the Solr server. 
