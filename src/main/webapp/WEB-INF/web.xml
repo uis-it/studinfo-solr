@@ -16,6 +16,11 @@
     <param-value>WEB-INF/log4j.xml</param-value>
   </context-param>
 
+  <context-param>
+    <param-name>webAppRootKey</param-name>
+    <param-value>webapp.root.${project.build.finalName}</param-value>
+  </context-param>
+  
   <listener>
     <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
   </listener>
