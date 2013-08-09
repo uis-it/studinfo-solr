@@ -26,7 +26,9 @@ import no.uis.service.ws.studinfosolr.SolrUpdateListener;
 import no.uis.studinfo.commons.StudinfoContext;
 import no.uis.studinfo.commons.Studinfos;
 import no.usit.fsws.schemas.studinfo.Emnekombinasjon;
+import no.usit.fsws.schemas.studinfo.EmnekombinasjonListe;
 import no.usit.fsws.schemas.studinfo.KravSammensetting;
+import no.usit.fsws.schemas.studinfo.KravSammensettingListe;
 import no.usit.fsws.schemas.studinfo.Studieprogram;
 import no.usit.fsws.schemas.studinfo.Utdanningsplan;
 
@@ -59,8 +61,8 @@ public class CleanUtdanningsplanListener implements SolrUpdateListener<Studiepro
     }
   }
 
-  public void cleanKravList(final List<KravSammensetting> kravList) {
-    Iterator<KravSammensetting> kravIter = kravList.iterator();
+  public void cleanKravList(final KravSammensettingListe kravSammensettingListe) {
+    Iterator<KravSammensetting> kravIter = kravSammensettingListe.getKravSammensetting().iterator();
     while (kravIter.hasNext()) {
       KravSammensetting krav = kravIter.next();
       final Emnekombinasjon ek = krav.getEmnekombinasjon();
@@ -78,11 +80,11 @@ public class CleanUtdanningsplanListener implements SolrUpdateListener<Studiepro
   }
 
   /**
-   * @param ekList
+   * @param emnekombinasjonListe
    * @return true if the list doesn't contain any courses.
    */
-  private boolean cleanEmnekombinajson(List<Emnekombinasjon> ekList) {
-    final Iterator<Emnekombinasjon> ekIter = ekList.iterator();
+  private boolean cleanEmnekombinajson(EmnekombinasjonListe emnekombinasjonListe) {
+    final Iterator<Emnekombinasjon> ekIter = emnekombinasjonListe.getEmnekombinasjon().iterator();
     int nonEmpty = 0;
     while (ekIter.hasNext()) {
       final Emnekombinasjon ek = ekIter.next();
