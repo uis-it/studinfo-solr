@@ -25,7 +25,7 @@
   <import resource="classpath:idm-config.xml" />
   <import resource="solr-servermap.xml" />
 
-  <bean id="fsStudInfoImport" class="no.uis.fsws.studinfo.impl.StudInfoImportImpl">
+  <bean id="fsStudInfoImport" class="no.uis.fsws.proxy.StudInfoImportImpl">
     <property name="fsServiceStudInfo">
       <ref bean="fsWsStudInfo" />
     </property>

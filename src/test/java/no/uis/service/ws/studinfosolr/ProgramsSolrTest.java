@@ -13,9 +13,9 @@ import java.util.Map;
 
 import lombok.SneakyThrows;
 
-import no.uis.fsws.studinfo.StudInfoImport;
+import no.uis.fsws.proxy.EmptyStudinfoImport;
+import no.uis.fsws.proxy.StudInfoImport;
 import no.uis.fsws.studinfo.data.FsSemester;
-import no.uis.fsws.studinfo.impl.EmptyStudinfoImport;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.XmlStreamReader;

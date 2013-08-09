@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import javax.management.Notification;
 
-import no.uis.fsws.studinfo.StudInfoImport;
+import no.uis.fsws.proxy.StudInfoImport;
 import no.uis.fsws.studinfo.data.FsSemester;
 import no.uis.service.ws.studinfosolr.SolrType;
 import no.uis.service.ws.studinfosolr.SolrUpdateException;

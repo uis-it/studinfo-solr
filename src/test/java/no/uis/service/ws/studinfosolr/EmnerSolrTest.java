@@ -7,9 +7,9 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
-import no.uis.fsws.studinfo.StudInfoImport;
+import no.uis.fsws.proxy.EmptyStudinfoImport;
+import no.uis.fsws.proxy.StudInfoImport;
 import no.uis.fsws.studinfo.data.FsSemester;
-import no.uis.fsws.studinfo.impl.EmptyStudinfoImport;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;

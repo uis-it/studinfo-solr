@@ -34,7 +34,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import no.uis.fsws.studinfo.StudInfoImport.StudinfoType;
+import no.uis.fsws.proxy.StudInfoImport.StudinfoType;
 import no.uis.fsws.studinfo.data.FsSemester;
 import no.uis.fsws.studinfo.data.FsYearSemester;
 import no.uis.fsws.studinfo.util.PropertyInfo;
