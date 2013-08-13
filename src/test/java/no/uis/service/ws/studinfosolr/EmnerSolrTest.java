@@ -4,12 +4,25 @@ import static org.hamcrest.CoreMatchers.*;
 
 import java.io.Reader;
 import java.io.StringReader;
+import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import no.uis.fsws.proxy.EmptyStudinfoImport;
 import no.uis.fsws.proxy.StudInfoImport;
 import no.uis.fsws.studinfo.data.FsSemester;
+import no.uis.service.ws.studinfosolr.mock.EmptyStudinfoProxy;
+import no.usit.fsws.schemas.studinfo.Emne;
+import no.usit.fsws.schemas.studinfo.Emneid;
+import no.usit.fsws.schemas.studinfo.Obligoppgave;
+import no.usit.fsws.schemas.studinfo.Obligund;
+import no.usit.fsws.schemas.studinfo.Sprakkode;
+import no.usit.fsws.schemas.studinfo.StudinfoProxy;
+import no.usit.fsws.schemas.studinfo.Terminkode;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
@@ -27,12 +40,13 @@ import org.junit.internal.AssumptionViolatedException;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.StaticApplicationContext;
+import org.springframework.expression.spel.ast.OpPlus;
 
 public class EmnerSolrTest extends AbstractSolrTestCase {
 
   private AbstractApplicationContext appCtx;
   private Map<String, SolrServer> solrServerMap = new HashMap<String, SolrServer>();
-  private StudInfoImport studinfoImport;
+  private StudinfoProxy studinfoImport;
   private static final String LANGUAGE = "B";
   private static final FsSemester SEMESTER = FsSemester.HOST;
   private static final int YEAR = 2013;
@@ -117,38 +131,47 @@ public class EmnerSolrTest extends AbstractSolrTestCase {
     assertThat(doc1.containsKey("ansattnummer_s"), is(true));
   }
   
-  private StudInfoImport getEmneStudinfoImport() {
+  private StudinfoProxy getEmneStudinfoImport() {
     
     if (this.studinfoImport == null) {
-      studinfoImport = new EmptyStudinfoImport() {
+      studinfoImport = new EmptyStudinfoProxy() {
 
         @Override
-        protected Reader fsGetEmne(int institution, int faculty, int year, String semester, String language) {
-          StringBuilder sb = new StringBuilder();
-          // This is not a real "Emne", just a short version of DAT200_1
-          sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-          sb.append("<fs-studieinfo xmlns=\"http://fsws.usit.no/schemas/studinfo\">\n");
-          sb.append("  <emne sprak=\"BOKM\u00c5L\">\n");
-          sb.append("    <emneid>\n");
-          sb.append("      <institusjonsnr>217</institusjonsnr>\n");
-          sb.append("      <emnekode>DAT200</emnekode>\n");
-          sb.append("      <versjonskode>1</versjonskode>\n");
-          sb.append("    </emneid>\n");
-          sb.append("    <emnenavn>Algoritmer og datastrukturer</emnenavn>\n");
-          sb.append("    <emnenavn_en>Algorithms and Datastructures</emnenavn_en>\n");
-          sb.append("    <studiepoeng>10</studiepoeng>\n");
-          sb.append("    <status-privatist>N</status-privatist>\n");
-          sb.append("    <studieniva>LN</studieniva>\n");
-          sb.append("    <nuskode>654122</nuskode>\n");
-          sb.append("    <enkeltemneopptak>N</enkeltemneopptak>\n");
-          sb.append("    <studierettkrav>J</studierettkrav>\n");
-          sb.append("    <status_oblig>J</status_oblig>\n");
-          sb.append("    <obligund>\n");
-          sb.append("      <obligoppgave nr=\"OBL1\">Innleveringsoppgaver</obligoppgave>\n");
-          sb.append("    </obligund>\n");
-          sb.append("    <undervisningssemester>H\u00f8st</undervisningssemester>\n");
-          sb.append("    <antall-undsemester>1</antall-undsemester>\n");
-          sb.append("    <antall-forelesningstimer>4</antall-forelesningstimer>\n");
+        public List<Emne> getEmnerForOrgenhet(XMLGregorianCalendar arstall, Terminkode terminkode, Sprakkode sprak,
+            int institusjonsnr, Integer fakultetsnr, Integer instituttnr, Integer gruppenr)
+        {
+          Emne em = new Emne();
+          em.setSprak("BOKM\u00c5L");
+          
+          Emneid emid = new Emneid();
+          emid.setEmnekode("DAT200");
+          emid.setInstitusjonsnr(BigInteger.valueOf(217L));
+          emid.setVersjonskode("1");
+          em.setEmneid(emid);
+          em.setEmnenavn("Algoritmer og datastrukturer");
+          em.setEmnenavnEn("Algorithms and Datastructures");
+          em.setStudiepoeng(BigInteger.valueOf(10L));
+          em.setStatusPrivatist(Boolean.FALSE);
+          em.setStudieniva("N");
+          em.setNuskode("654122");
+          em.setEnkeltemneopptak(Boolean.FALSE);
+          em.setStudierettkrav(Boolean.TRUE);
+          em.setStatusOblig(Boolean.TRUE);
+          Obligund obligund = new Obligund();
+          Obligoppgave obligoppgave = new Obligoppgave();
+          obligoppgave.setNr("OBL1");
+          obligoppgave.setValue("Innleveringsoppgaver");
+          obligund.getObligoppgave().add(obligoppgave);
+          em.setObligund(obligund);
+          em.setUndervisningssemester("H\u00f8ST");
+          em.setAntallUndsemester(BigInteger.valueOf(1L));
+          em.setAntallForelesningstimer(BigInteger.valueOf(4L));
+          
+          return Arrays.asList(em);
+        }
+        
+      };
+      /*
           sb.append("    <undsemester>\n");
           sb.append("      <semester nr=\"1\">H\u00f8st</semester>\n");
           sb.append("      <forstegang>2012H</forstegang>\n");
@@ -359,6 +382,7 @@ public class EmnerSolrTest extends AbstractSolrTestCase {
           return new StringReader(sb.toString());
         }
       };
+       */
     }
     return this.studinfoImport;
   }
