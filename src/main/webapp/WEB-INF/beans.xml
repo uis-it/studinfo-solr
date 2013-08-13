@@ -25,17 +25,8 @@
   <import resource="classpath:idm-config.xml" />
   <import resource="solr-servermap.xml" />
 
-  <bean id="fsStudInfoImport" class="no.uis.fsws.proxy.StudInfoImportImpl">
-    <property name="fsServiceStudInfo">
-      <ref bean="fsWsStudInfo" />
-    </property>
-    <property name="transformerUrl" value="classpath:fspreprocess-stable.xsl" />
-    <property name="xmlSourceParser" value="no.uis.fsws.studinfo.impl.SkippingAmpersandParser" />
-    <property name="copyXML" value="true"/>
-  </bean>
-
-  <jaxws:client id="fsWsStudInfo" 
-    serviceClass="no.usit.fsws.studinfo.StudInfoService"
+  <jaxws:client id="fsStudInfoImport" 
+    serviceClass="no.usit.fsws.schemas.studinfo.StudinfoProxy"
     address="${fs.ws.studinfo.url}" 
     username="${fs.ws.username}"
     password="${fs.ws.password}">
@@ -54,7 +45,6 @@
   </http-conf:conduit>
 
   <import resource="classpath:META-INF/cxf/cxf.xml" />
-  <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
   <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
 
   <jaxws:endpoint 

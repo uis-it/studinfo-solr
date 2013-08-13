@@ -18,9 +18,15 @@ package no.uis.service.ws.studinfosolr.impl;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.management.Notification;
+import javax.xml.datatype.DatatypeConstants;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+
+import lombok.SneakyThrows;
 
 import no.uis.fsws.proxy.StudInfoImport;
 import no.uis.fsws.studinfo.data.FsSemester;
@@ -28,7 +34,13 @@ import no.uis.service.ws.studinfosolr.SolrType;
 import no.uis.service.ws.studinfosolr.SolrUpdateException;
 import no.uis.service.ws.studinfosolr.SolrUpdater;
 import no.uis.service.ws.studinfosolr.StudinfoSolrService;
+import no.usit.fsws.schemas.studinfo.Emne;
 import no.usit.fsws.schemas.studinfo.FsStudieinfo;
+import no.usit.fsws.schemas.studinfo.Kurs;
+import no.usit.fsws.schemas.studinfo.Sprakkode;
+import no.usit.fsws.schemas.studinfo.Studieprogram;
+import no.usit.fsws.schemas.studinfo.StudinfoProxy;
+import no.usit.fsws.schemas.studinfo.Terminkode;
 
 import org.apache.log4j.Logger;
 import org.springframework.jmx.export.annotation.ManagedResource;
@@ -48,13 +60,14 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService, Notificatio
   private static final Logger LOG = Logger.getLogger(StudinfoSolrServiceImpl.class);
   private static final AtomicLong SEQUENCE = new AtomicLong();
   
-  private StudInfoImport studinfoImport;
+  private StudinfoProxy studinfoImport;
   private SolrUpdater solrUpdater;
   private NotificationPublisher jmxPublisher;
   private int[] defaultFaculties = {-1};
   private int institution = 217;
+  private DatatypeFactory dtFactory;
 
-  public void setStudinfoImport(StudInfoImport studinfoImport) {
+  public void setStudinfoImport(StudinfoProxy studinfoImport) {
     this.studinfoImport = studinfoImport;
   }
 
@@ -88,8 +101,19 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService, Notificatio
     sendNotification(seq, null, solrType, year, semester, language, "KURS-start");
     try {
       FsSemester fsSemester = FsSemester.stringToUisSemester(semester);
-      FsStudieinfo fsinfo = studinfoImport.fetchCourses(institution, year, semester.toString(), language);
-      solrUpdater.pushCourses(fsinfo.getKurs(), year, fsSemester, language, solrType == null ? SolrType.WWW : solrType);
+      
+      XMLGregorianCalendar arstall = createXmlCalendar(year, null, null);
+      
+      Terminkode terminkode = Terminkode.valueOf(semester);
+      Sprakkode sprak = Sprakkode.valueOf(language);
+      int institusjonsnr = 217;
+      Integer fakultetsnr = null;
+      Integer instituttnr = null;
+      Integer gruppenr = null;
+      List<Kurs> kursList = studinfoImport.getKurs(arstall, terminkode, sprak, institusjonsnr, fakultetsnr, instituttnr, gruppenr);
+      if (!kursList.isEmpty()) {
+        solrUpdater.pushCourses(kursList, year, fsSemester, language, solrType == null ? SolrType.WWW : solrType);
+      }
       sendNotification(seq, null, solrType, year, semester, language, "KURS-end");
     } catch(Exception e) {
       sendNotification(seq, e, solrType, year, semester, language, "KURS-error");
@@ -113,8 +137,12 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService, Notificatio
     sendNotification(seq, null, solrType, faculty, year, semester, language, "EMNE-start");
     try {
       FsSemester fsSemester = FsSemester.stringToUisSemester(semester);
-      FsStudieinfo fsinfo = studinfoImport.fetchSubjects(institution, faculty, year, fsSemester.toString(), language);
-      solrUpdater.pushSubjects(fsinfo.getEmne(), year, fsSemester, language, solrType);
+      XMLGregorianCalendar arstall = createXmlCalendar(year, null, null);
+      Terminkode terminkode = Terminkode.valueOf(semester);
+      Sprakkode sprak = Sprakkode.valueOf(language);
+      int institusjonsnr = 217;
+      List<Emne> emneList = studinfoImport.getEmnerForOrgenhet(arstall, terminkode, sprak, institusjonsnr, faculty, null, null);
+      solrUpdater.pushSubjects(emneList, year, fsSemester, language, solrType);
       sendNotification(seq, null, solrType, faculty, year, semester, language, "EMNE-end");
     } catch(Exception e) {
       sendNotification(seq, e, solrType, faculty, year, semester, language, "EMNE-error");
@@ -139,8 +167,12 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService, Notificatio
     try {
       FsSemester fsSemester = FsSemester.stringToUisSemester(semester);
 
-      FsStudieinfo fsinfo = studinfoImport.fetchStudyPrograms(institution, faculty, year, fsSemester.toString(), true, language);
-      solrUpdater.pushPrograms(fsinfo.getStudieprogram(), year, fsSemester, language, solrType);
+      XMLGregorianCalendar arstall = createXmlCalendar(year, null, null);
+      Terminkode terminkode = Terminkode.valueOf(semester);
+      Sprakkode sprak = Sprakkode.valueOf(language);
+      int institusjonsnr = 217;
+      List<Studieprogram> progList = studinfoImport.getStudieprogrammerForOrgenhet(arstall, terminkode, sprak, institusjonsnr, faculty, null, null, true);
+      solrUpdater.pushPrograms(progList, year, fsSemester, language, solrType);
       sendNotification(seq, null, solrType, faculty, year, semester, language, "PROGRAM-end");
     } catch(Exception e) {
       sendNotification(seq, e, solrType, faculty, year, semester, language, "PROGRAM-error");
@@ -181,5 +213,22 @@ public class StudinfoSolrServiceImpl implements StudinfoSolrService, Notificatio
     tr.printStackTrace(new PrintWriter(sw));
 
     return sw.toString();
+  }
+  
+  @SneakyThrows
+  private synchronized DatatypeFactory getDatatypeFactory() {
+    if (dtFactory == null) {
+      dtFactory = DatatypeFactory.newInstance();
+    }
+    return dtFactory;
+  }
+  
+  private XMLGregorianCalendar createXmlCalendar(Integer year, Integer month, Integer day) {
+    
+    int y = year != null ? year.intValue() : DatatypeConstants.FIELD_UNDEFINED;
+    int m = month != null ? month.intValue() : DatatypeConstants.FIELD_UNDEFINED;
+    int d = day != null ? day.intValue() : DatatypeConstants.FIELD_UNDEFINED;
+
+    return getDatatypeFactory().newXMLGregorianCalendarDate(y, m, d, DatatypeConstants.FIELD_UNDEFINED);
   }
 }
