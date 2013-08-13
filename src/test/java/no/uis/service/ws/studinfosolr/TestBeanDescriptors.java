@@ -6,6 +6,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 import no.uis.fsws.studinfo.util.PropertyInfo;
@@ -22,7 +23,11 @@ public class TestBeanDescriptors {
     
     assertThat(infos, is(notNullValue()));
     
-    PropertyInfo piGrunnstudium = new PropertyInfo("grunnstudium", Studieprogram.class.getMethod("setGrunnstudium", Boolean.class), Studieprogram.class.getMethod("isGrunnstudium"), Studieprogram.class.getMethod("isSetGrunnstudium"));
+    Method get = Studieprogram.class.getMethod("isGrunnstudium");
+    Method set = Studieprogram.class.getMethod("setGrunnstudium", Boolean.class);
+    Method isSet = Studieprogram.class.getMethod("isSetGrunnstudium");
+    PropertyInfo piGrunnstudium = new PropertyInfo("grunnstudium", get, set, isSet);
+    
     assertThat(infos, hasItem(piGrunnstudium));
     
     PropertyInfo piClass = new PropertyInfo("class", Studieprogram.class.getMethod("getClass"), null, null); 

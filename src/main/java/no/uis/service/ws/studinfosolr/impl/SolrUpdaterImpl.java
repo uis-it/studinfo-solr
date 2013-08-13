@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -60,12 +61,16 @@ import no.uis.studinfo.convert.StringConverterUtil;
 import no.usit.fsws.schemas.studinfo.Emne;
 import no.usit.fsws.schemas.studinfo.Emneid;
 import no.usit.fsws.schemas.studinfo.Fagperson;
+import no.usit.fsws.schemas.studinfo.FagpersonListe;
+import no.usit.fsws.schemas.studinfo.InngarIFagListe;
 import no.usit.fsws.schemas.studinfo.InngarIStudieprogram;
 import no.usit.fsws.schemas.studinfo.Kurs;
 import no.usit.fsws.schemas.studinfo.Kursid;
 import no.usit.fsws.schemas.studinfo.Kurskategori;
+import no.usit.fsws.schemas.studinfo.KurskategoriListe;
 import no.usit.fsws.schemas.studinfo.Obligoppgave;
 import no.usit.fsws.schemas.studinfo.Sprak;
+import no.usit.fsws.schemas.studinfo.SprakListe;
 import no.usit.fsws.schemas.studinfo.Sted;
 import no.usit.fsws.schemas.studinfo.Studieprogram;
 import no.usit.fsws.schemas.studinfo.Utdanningsplan;
@@ -508,19 +513,21 @@ public class SolrUpdaterImpl implements SolrUpdater {
       map.put(TIDKODE, kursid.getTidkode());
     
     } else if ("kurskategoriListe".equals(propName)) {
-      @SuppressWarnings("unchecked")
-      List<Kurskategori> kkList = (List<Kurskategori>)value;
-      List<String> kkkList = new ArrayList<String>(kkList.size());
-      for (Kurskategori kk : kkList) {
-        kkkList.add(kk.getKurskategorikode());
+      KurskategoriListe kkList = (KurskategoriListe)value;
+      if (kkList.isSetKurskategori()) {
+        List<String> kkkList = new ArrayList<String>(kkList.getKurskategori().size());
+        for (Kurskategori kk : kkList.getKurskategori()) {
+          kkkList.add(kk.getKurskategorikode());
+        }
+        map.put(propName, kkkList);
       }
-      map.put(propName, kkkList);
-      
     } else if ("fagpersonListe".equals(propName)) {
-      map.put(propName, createJsonArray(value));
-      
-      map.put("fagpersonidListe", Utils.createStringArray(value, new HashSet<String>(), FAGPERSON_TO_STRING));
-      
+      FagpersonListe fpListe = (FagpersonListe)value;
+      if (fpListe.isSetFagperson()) {
+        map.put(propName, createJsonArray(fpListe.getFagperson()));
+        
+        map.put("fagpersonidListe", Utils.createStringArray(fpListe.getFagperson(), new HashSet<String>(), FAGPERSON_TO_STRING));
+      }      
     } else if (value instanceof Sted) { // fagansvarlig, adminansvarlig
       map.put(propName, gson.toJson(value));
       addStedValue(map, propName+'_', (Sted)value);
@@ -531,20 +538,24 @@ public class SolrUpdaterImpl implements SolrUpdater {
       map.put(propName+'_', Utils.createStringArray(value, null, INNGAR_I_STUDIEPROGRAM_TO_STRING));
     
     } else if ("sprakListe".equals(propName)) {
-      map.put("sprakListe", gson.toJson(value));
-      Collection<String> usprak = Utils.createStringArray(value, new HashSet<String>(), SPRAK_TO_STRING);
-
-      if (usprak.isEmpty()) {
-        usprak.add("NO");
+      SprakListe spListe = (SprakListe)value;
+      Collection<String> usprak;
+      if (spListe.isSetSprak()) {
+        map.put("sprakListe", gson.toJson(spListe.getSprak()));
+        usprak = Utils.createStringArray(spListe.getSprak(), new HashSet<String>(), SPRAK_TO_STRING);
+  
+      } else {
+        usprak = Arrays.asList("NO");
       }
       map.put(propName+'_', usprak);
       
     } else if("inngarIFag".equals(propName)) {
-      map.put(propName, Utils.createStringArray(value, null, null));
-    
+      InngarIFagListe ifListe = (InngarIFagListe)value;
+      if (ifListe.isSetInngarIFag()) {
+        map.put(propName, Utils.createStringArray(ifListe.getInngarIFag(), null, null));
+      }
     } else if (path.startsWith("/kurs/dato")) {
       map.put(propName, SolrUtil.xmlCalToSolrDateString((XMLGregorianCalendar)value));
-      
     } else {
       map.put(propName, gson.toJson(value));
     }
