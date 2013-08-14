@@ -16,16 +16,26 @@
 
 package no.uis.service.ws.studinfosolr.mock;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 
+import lombok.Cleanup;
+import lombok.SneakyThrows;
+
 import no.usit.fsws.schemas.studinfo.Emne;
+import no.usit.fsws.schemas.studinfo.FsStudieinfo;
 import no.usit.fsws.schemas.studinfo.Kurs;
 import no.usit.fsws.schemas.studinfo.Sprakkode;
 import no.usit.fsws.schemas.studinfo.Studieprogram;
@@ -38,7 +48,6 @@ public class EmptyStudinfoProxy implements StudinfoProxy {
   public List<Studieprogram> getStudieprogram(XMLGregorianCalendar arstall, Terminkode terminkode, Sprakkode sprak,
       boolean medUPinfo, String studieprogramkode)
   {
-    // TODO Auto-generated method stub
     return null;
   }
 
@@ -46,7 +55,6 @@ public class EmptyStudinfoProxy implements StudinfoProxy {
   public List<Kurs> getKurs(XMLGregorianCalendar arstall, Terminkode terminkode, Sprakkode sprak, int institusjonsnr,
       Integer fakultetsnr, Integer instituttnr, Integer gruppenr)
   {
-    // TODO Auto-generated method stub
     return null;
   }
 
@@ -54,7 +62,6 @@ public class EmptyStudinfoProxy implements StudinfoProxy {
   public List<Studieprogram> getStudieprogrammerForOrgenhet(XMLGregorianCalendar arstall, Terminkode terminkode, Sprakkode sprak,
       int institusjonsnr, Integer fakultetsnr, Integer instituttnr, Integer gruppenr, boolean medUPinfo)
   {
-    // TODO Auto-generated method stub
     return null;
   }
 
@@ -62,7 +69,6 @@ public class EmptyStudinfoProxy implements StudinfoProxy {
   public List<Emne> getEmne(XMLGregorianCalendar arstall, Terminkode terminkode, Sprakkode sprak, int institusjonsnr,
       String emnekode, String versjonskode)
   {
-    // TODO Auto-generated method stub
     return null;
   }
 
@@ -70,8 +76,21 @@ public class EmptyStudinfoProxy implements StudinfoProxy {
   public List<Emne> getEmnerForOrgenhet(XMLGregorianCalendar arstall, Terminkode terminkode, Sprakkode sprak, int institusjonsnr,
       Integer fakultetsnr, Integer instituttnr, Integer gruppenr)
   {
-    // TODO Auto-generated method stub
     return null;
   }
 
+  @SneakyThrows
+  protected FsStudieinfo unmarshal(String xml) {
+    @Cleanup InputStream inputStream = getClass().getResourceAsStream(xml);
+    if (inputStream != null) {
+      Source src = new StreamSource(inputStream);
+    
+      JAXBContext jc = JAXBContext.newInstance(FsStudieinfo.class);
+    
+      FsStudieinfo sinfo = (FsStudieinfo)jc.createUnmarshaller().unmarshal(src);
+      return sinfo;
+    }
+    URL url = getClass().getResource(xml);
+    throw new IllegalArgumentException();
+  }
 }

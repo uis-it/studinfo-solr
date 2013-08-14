@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fs-studieinfo xmlns="http://fsws.usit.no/schemas/studinfo">
+<!-- This is not a real "Emne", just a short version of DAT200_1 --> 
+ <emne sprak="BOKMÅL">
+ <emneid>
+ <institusjonsnr>217</institusjonsnr>
+ <emnekode>DAT200</emnekode>
+ <versjonskode>1</versjonskode>
+ </emneid>
+ <emnenavn>Algoritmer og datastrukturer</emnenavn>
+ <emnenavn_en>Algorithms and Datastructures</emnenavn_en>
+ <studiepoeng>10</studiepoeng>
+ <status-privatist>N</status-privatist>
+ <studieniva>LN</studieniva>
+ <nuskode>654122</nuskode>
+ <enkeltemneopptak>N</enkeltemneopptak>
+ <studierettkrav>J</studierettkrav>
+ <status_oblig>J</status_oblig>
+ <obligund>
+ <obligoppgave nr="OBL1">Innleveringsoppgaver</obligoppgave>
+ </obligund>
+ <undervisningssemester>Høst</undervisningssemester>
+ <antall-undsemester>1</antall-undsemester>
+ <antall-forelesningstimer>4</antall-forelesningstimer>
+ <undsemester>
+ <semester nr="1">Høst</semester>
+ <forstegang>2012H</forstegang>
+ </undsemester>
+ <url>http://student.uis.no/studieinformasjon/soek_i_studier1/?spraak=Bokm%C3%A5l&amp;emneID=DAT200_1&amp;year=2012</url>
+ <periode-eks>
+ <forstegang>2013H</forstegang>
+ </periode-eks>
+ <periode-und>
+ <forstegang>2013H</forstegang>
+ </periode-und>
+ <eksamenssemester>HØst</eksamenssemester>
+ <anbefalte-forkunnskaper>DAT100 Objektorientert programmering</anbefalte-forkunnskaper>
+ <inngar-i-studieprogram-liste>
+ <inngar-i-studieprogram>
+ <studieprogramkode>B-DATA</studieprogramkode>
+ <studieprogramnavn>Data - bachelorstudium i ingeniørfag</studieprogramnavn>
+ </inngar-i-studieprogram>
+ <inngar-i-studieprogram>
+ <studieprogramkode>B-ELEKTRO</studieprogramkode>
+ <studieprogramnavn>Elektro - bachelorstudium i ingeniørfag</studieprogramnavn>
+ </inngar-i-studieprogram>
+ </inngar-i-studieprogram-liste>
+ <inngar-i-fag-liste>
+ <inngar-i-fag>
+ <fagkode>TEKNISK</fagkode>
+ </inngar-i-fag>
+ </inngar-i-fag-liste>
+ <fagansvarlig>
+ <institusjonsnr>217</institusjonsnr>
+ <fakultetsnr>8</fakultetsnr>
+ <instituttnr>4</instituttnr>
+ <gruppenr>0</gruppenr>
+ <navn>Institutt for data- og elektroteknikk</navn>
+ <avdnavn>Det teknisk-naturvitenskapelige fakultet</avdnavn>
+ </fagansvarlig>
+ <adminansvarlig>
+ <institusjonsnr>217</institusjonsnr>
+ <fakultetsnr>8</fakultetsnr>
+ <instituttnr>4</instituttnr>
+ <gruppenr>0</gruppenr>
+ <navn>Institutt for data- og elektroteknikk</navn>
+ <avdnavn>Det teknisk-naturvitenskapelige fakultet</avdnavn>
+ </adminansvarlig>
+ <sprak-liste>
+ <sprak>
+ <sprakkode>NO</sprakkode>
+ <undervisning>J</undervisning>
+ <vurdering>N</vurdering>
+ </sprak>
+ </sprak-liste>
+ <fagperson-liste>
+ <fagperson>
+ <personid>123456</personid>
+ <fnr>23061212345</fnr>
+ <personrolle>Emneansvarlig</personrolle>
+ <personnavn>
+ <etternavn>Turing</etternavn>
+ <fornavn>Alan</fornavn>
+ </personnavn>
+ <dato-fra>2012-08-01</dato-fra>
+ </fagperson>
+ </fagperson-liste>
+ <eksamensordning>
+ <eksamensordningid>S</eksamensordningid>
+ <eksamensordningnavn>Skriftlig(e) eksamen(er)</eksamensordningnavn>
+ <default>J</default>
+ <meld_studentweb>J</meld_studentweb>
+ <lovlig-hjelpemiddel>");
+ <hjelpemiddel>
+ <hjelpemiddelnavn>Ingen hjelpemidler tillatt. </hjelpemiddelnavn>
+ <hjelpemiddelmerknad/>
+ </hjelpemiddel>
+ </lovlig-hjelpemiddel>
+ <karregel>A - F</karregel>
+ <eksamensdel>
+ <eksamensdelnr>0</eksamensdelnr>
+ <eksamensdelnavn>En skriftlig prøve</eksamensdelnavn>
+ <varighet>4 Timer</varighet>
+ <eksamensform>Skriftlig eksamen</eksamensform>
+ <dato-eksamen/>
+ </eksamensdel>
+ </eksamensordning>
+ <vurdordning>
+ <vurdordningid>S</vurdordningid>
+ <vurdordningnavn>Skriftlig(e) eksamen(er)</vurdordningnavn>
+ <default>J</default>
+ <meld_studentweb>J</meld_studentweb>
+ <vurdkombinasjon niva="1">
+ <vurdkombkode>S</vurdkombkode>
+ <vurdkombnavn>En skriftlig prøve</vurdkombnavn>
+ <vurdform>Skriftlig eksamen</vurdform>
+ <vurdkombtype>Eksamen</vurdkombtype>
+ <forstegang>2012H</forstegang>
+ <varighet>4 Timer</varighet>
+ <vurdering>J</vurdering>
+ <alle-kandidater>J</alle-kandidater>
+ <karregelkode>30</karregelkode>
+ <karregel>A - F</karregel>
+ <vurdkombtider>
+ <vurdkombtid>
+ <vurdtidkode>12</vurdtidkode>
+ <vurdtidkode_reell>12</vurdtidkode_reell>
+ <arsinkrement>0</arsinkrement>
+ <vurdstatuskode>ORD</vurdstatuskode>
+ <liketallsaar>J</liketallsaar>
+ <oddetallsaar>J</oddetallsaar>
+ <forstegang/>
+ </vurdkombtid>
+ </vurdkombtider>
+ <lovlig-hjelpemiddel>
+ <hjelpemiddel>
+ <hjelpemiddelnavn>Ingen hjelpemidler tillatt. </hjelpemiddelnavn>
+ <hjelpemiddelmerknad/>
+ </hjelpemiddel>
+ </lovlig-hjelpemiddel>
+ <vurdenheter>
+ <vurdenhet>
+ <tid>201312</tid>
+ <tid-reell>201312</tid-reell>
+ <vurdstatus>Ordinær eksamen</vurdstatus>
+ </vurdenhet>
+ </vurdenheter>
+ <vurdkombinasjon niva="2">
+ <vurdkombkode>OBL1</vurdkombkode>
+ <vurdkombnavn>Innleveringsoppgaver</vurdkombnavn>
+ <vurdkombtype>Obligatorisk øvelse</vurdkombtype>
+ <forstegang>2012H</forstegang>
+ <vurdering>J</vurdering>
+ <karregelkode>5</karregelkode>
+ <karregel>Godkjent - Ikke godkjent</karregel>
+ <vurdkombtider>
+ <vurdkombtid>
+ <vurdtidkode>12</vurdtidkode>
+ <vurdtidkode_reell>12</vurdtidkode_reell>
+ <arsinkrement>0</arsinkrement>
+ <vurdstatuskode>ORD</vurdstatuskode>
+ <liketallsaar>J</liketallsaar>
+ <oddetallsaar>J</oddetallsaar>
+ <forstegang/>
+ </vurdkombtid>
+ </vurdkombtider>
+ <vurdenheter>
+ <vurdenhet>
+ <tid>201312</tid>
+ <tid-reell>201312</tid-reell>
+ <vurdstatus>Ordinær eksamen</vurdstatus>
+ </vurdenhet>
+ </vurdenheter>
+ </vurdkombinasjon>
+ </vurdkombinasjon>
+ </vurdordning>
+ <vektingsreduksjon>
+ <redregel>
+ <studiepoeng-reduksjon>6</studiepoeng-reduksjon>
+ <periode>
+ <fradato>2012-08-01</fradato>
+ <tildato/>
+ </periode>
+ <emne>
+ <emneid>
+ <institusjonsnr>217</institusjonsnr>
+ <emnekode>TE0458</emnekode>
+ <versjonskode>1</versjonskode>
+ </emneid>
+ <emnenavn>Datastrukturer og algoritmer</emnenavn>
+ </emne>
+ </redregel>
+ <redregel>
+ <studiepoeng-reduksjon>6</studiepoeng-reduksjon>
+ <periode>
+ <fradato>2012-08-01</fradato>
+ <tildato/>
+ </periode>
+ <emne>
+ <emneid>
+ <institusjonsnr>217</institusjonsnr>
+ <emnekode>TE0458</emnekode>
+ <versjonskode>A</versjonskode>
+ </emneid>
+ <emnenavn>Datastrukturer og algoritmer</emnenavn>
+ </emne>
+ </redregel>
+ <redregel>
+ <studiepoeng-reduksjon>10</studiepoeng-reduksjon>
+ <periode>
+ <fradato>2012-08-01</fradato>
+ <tildato/>
+ </periode>
+ <emne>
+ <emneid>
+ <institusjonsnr>217</institusjonsnr>
+ <emnekode>BIE270</emnekode>
+ <versjonskode>1</versjonskode>
+ </emneid>
+ <emnenavn>Datastrukturer og algoritmer</emnenavn>
+ </emne>
+ </redregel>
+ </vektingsreduksjon>
+ <arbeidsformer><![CDATA[Forelesinger i klasserom og veiledning på datalab. For å ta eksamen i kurset må følgende oppgaver være godkjente: oppgave 1, oppgave 2 eller oppgave 3, oppgave 4 eller oppgave 5. Siste frist for å få godkjent øvinger er tre uker før eksamen. ]]></arbeidsformer>
+ <innhold><![CDATA[Effektivitetsanalyse. Definisjon, bruk og implementeringer av abstrakte datatyper som: Stabler, køer, lister, trestrukturer, grafer, prioritetskøer, hauger. Hash-teknikker. Bruk og implementering av datastrukturer som kan representere grafer. Sorterings teknikker. Rekursjon som programmeringsteknikk.]]></innhold>
+ <litteratur><![CDATA[Data Structures and Problem Solving Using Java Mark Allen WeissPublished by Addision-Wesley]]></litteratur>
+ <laringsutbytte><![CDATA[<p>Etter å ha tatt dette emnet skal studenten: </p><p>Kunnskap </p><ul><li>Kunne bruke standard datastrukturene til å lage effektive program. </li></ul><p> </p><p>Ferdigheter </p><ul><li>Være i stand til å beregne effektiviteten til algoritmer </li><li>Være i stand til å forstå og lage effektive rekursive algoritmer. </li><li>Være i stand til å implementere effektive algoritmer for sortering og søking. </li></ul><p> </p><p>Generell kompetanse </p><ul><li>Vite hvordan datastrukturer for lister, køer, stabler (stack), hauger (heap), binære tre, og grafer kan implementeres ved hjelp av Java.</li></ul><p> </p>]]></laringsutbytte>
+ <studentevaluering><![CDATA[Skjer vanligvis gjennom skjema og/eller i samtaler etter til gjeldende retningslinjer.]]></studentevaluering>
+ <apent_for_tillegg><![CDATA[<p>Bachelor- nivå på Det teknisk-naturvitenskaplige fakultetet. </p><p>Master nivå på Det teknisk-naturvitenskaplige fakultetet</p>]]></apent_for_tillegg>
+ </emne>
+</fs-studieinfo>

@@ -8,12 +8,23 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import javax.xml.datatype.XMLGregorianCalendar;
+
+import lombok.SneakyThrows;
 
 import no.uis.fsws.proxy.EmptyStudinfoImport;
 import no.uis.fsws.proxy.StudInfoImport;
 import no.uis.fsws.studinfo.data.FsSemester;
+import no.uis.service.ws.studinfosolr.mock.EmptyStudinfoProxy;
 import no.uis.service.ws.studinfosolr.util.SolrUtil;
+import no.usit.fsws.schemas.studinfo.FsStudieinfo;
+import no.usit.fsws.schemas.studinfo.Kurs;
+import no.usit.fsws.schemas.studinfo.Sprakkode;
+import no.usit.fsws.schemas.studinfo.StudinfoProxy;
+import no.usit.fsws.schemas.studinfo.Terminkode;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
@@ -40,7 +51,7 @@ public class KursSolrTest extends AbstractSolrTestCase {
   
   private AbstractApplicationContext appCtx;
   private Map<String, SolrServer> solrServerMap = new HashMap<String, SolrServer>();
-  private StudInfoImport studinfoImport;
+  private StudinfoProxy studinfoImport;
 
   @BeforeClass
   public static void initSolrTestHarness() throws Exception {
@@ -70,56 +81,20 @@ public class KursSolrTest extends AbstractSolrTestCase {
     appCtx.registerShutdownHook();
   }
   
-  private StudInfoImport getKursStudinfoImport() {
+  private StudinfoProxy getKursStudinfoImport() {
     if (studinfoImport == null) {
-      studinfoImport = new EmptyStudinfoImport() {
+      studinfoImport = new EmptyStudinfoProxy() {
+        
 
         @Override
-        protected Reader fsGetKurs(int institution, String language) {
-          StringBuilder sb = new StringBuilder();
-          sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-          sb.append("<fs-studieinfo xmlns=\"http://fsws.usit.no/schemas/studinfo\">");
-          sb.append("  <kurs sprak=\"BOKM\u00c5L\">");
-          sb.append("    <kursid>");
-          sb.append("      <kurskode>DIGIMATTE</kurskode>");
-          sb.append("      <tidkode>2012-2013</tidkode>");
-          sb.append("    </kursid>");
-          sb.append("    <kursnavn>Digitale verkt\u00f8y og unders\u00f8kende arbeidsformer i matematikk</kursnavn>");
-          sb.append("    <fagansvarlig>");
-          sb.append("      <institusjonsnr>217</institusjonsnr>");
-          sb.append("      <fakultetsnr>3</fakultetsnr>");
-          sb.append("      <instituttnr>6</instituttnr>");
-          sb.append("      <gruppenr>0</gruppenr>");
-          sb.append("      <navn>UiS Pluss: Etter- og videreutdanning</navn>");
-          sb.append("      <avdnavn>Ledelse og stab</avdnavn>");
-          sb.append("    </fagansvarlig>");
-          sb.append("    <adminansvarlig>");
-          sb.append("      <institusjonsnr>217</institusjonsnr>");
-          sb.append("      <fakultetsnr>3</fakultetsnr>");
-          sb.append("      <instituttnr>6</instituttnr>");
-          sb.append("      <gruppenr>0</gruppenr>");
-          sb.append("      <navn>UiS Pluss: Etter- og videreutdanning</navn>");
-          sb.append("      <avdnavn>Ledelse og stab</avdnavn>");
-          sb.append("    </adminansvarlig>");
-          sb.append("    <dato-opptak-fra>2012-03-01</dato-opptak-fra>");
-          sb.append("    <dato-opptak-til>2012-06-15</dato-opptak-til>");
-          sb.append("    <dato-frist-soknad>2012-06-15</dato-frist-soknad>");
-          sb.append("    <email>info@uis.no</email>");
-          sb.append("    <fjernundervisning>N</fjernundervisning>");
-          sb.append("    <desentral-undervisning>N</desentral-undervisning>");
-          sb.append("    <nettbasert-undervisning>N</nettbasert-undervisning>");
-          sb.append("    <kan-tilbys>N</kan-tilbys>");
-          sb.append("    <skal-avholdes>N</skal-avholdes>");
-          sb.append("    <dato-publiseres-fra>2012-03-01</dato-publiseres-fra>");
-          sb.append("    <dato-publiseres-til>2012-12-30</dato-publiseres-til>");
-          sb.append("    <kurskategori-liste>");
-          sb.append("    <kurskategorikode>SKOLE</kurskategorikode>");
-          sb.append("    <kurskategorinavn>Skole og barnehage</kurskategorinavn>");
-          sb.append("    </kurskategori-liste>");
-          sb.append("  </kurs>");
-          sb.append("</fs-studieinfo>");
-          
-          return new StringReader(sb.toString());
+        @SneakyThrows
+        public List<Kurs> getKurs(XMLGregorianCalendar arstall, Terminkode terminkode, Sprakkode sprak, int institusjonsnr,
+            Integer fakultetsnr, Integer instituttnr, Integer gruppenr)
+        {
+          String xml = "/test-kurs.xml";
+          FsStudieinfo sinfo = unmarshal(xml);
+
+          return sinfo.getKurs();
         }
       };
     }

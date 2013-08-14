@@ -76,8 +76,10 @@ public class FagpersonPushListener implements SolrUpdateListener<Emne> {
   
   @Override
   public void fireBeforeSolrUpdate(ThreadLocal<StudinfoContext> context, SolrType solrType, Emne emne, Map<String, Object> beanmap) {
-    for (Fagperson fagPerson : emne.getFagpersonListe().getFagperson()) {
-      fagpersons.put(fagPerson.getPersonid().intValue(), fagPerson);
+    if (emne.isSetFagpersonListe() && emne.getFagpersonListe().isSetFagperson()) {
+      for (Fagperson fagPerson : emne.getFagpersonListe().getFagperson()) {
+        fagpersons.put(fagPerson.getPersonid().intValue(), fagPerson);
+      }
     }
   }
 

@@ -9,13 +9,22 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import lombok.SneakyThrows;
 
 import no.uis.fsws.proxy.EmptyStudinfoImport;
 import no.uis.fsws.proxy.StudInfoImport;
 import no.uis.fsws.studinfo.data.FsSemester;
+import no.uis.service.ws.studinfosolr.mock.EmptyStudinfoProxy;
+import no.usit.fsws.schemas.studinfo.FsStudieinfo;
+import no.usit.fsws.schemas.studinfo.Sprakkode;
+import no.usit.fsws.schemas.studinfo.Studieprogram;
+import no.usit.fsws.schemas.studinfo.StudinfoProxy;
+import no.usit.fsws.schemas.studinfo.Terminkode;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.XmlStreamReader;
@@ -39,7 +48,7 @@ public class ProgramsSolrTest extends AbstractSolrTestCase {
   private static final String LANGUAGE = "B";
   private static final FsSemester SEMESTER = FsSemester.HOST;
   private static final int YEAR = 2013;
-  private StudInfoImport studinfoImport;
+  private StudinfoProxy studinfoImport;
   private AbstractApplicationContext appCtx;
   private Map<String, SolrServer> solrServerMap = new HashMap<String, SolrServer>();
 
@@ -92,16 +101,20 @@ public class ProgramsSolrTest extends AbstractSolrTestCase {
     assertThat(response.getResults().getNumFound(), is(1L));
   }
   
-  private StudInfoImport getStudieprogramImport() {
+  private StudinfoProxy getStudieprogramImport() {
     if (this.studinfoImport == null) {
-      studinfoImport = new EmptyStudinfoImport() {
+      studinfoImport = new EmptyStudinfoProxy() {
 
         @Override
-        @SneakyThrows
-        protected Reader fsGetStudieprogram(int institution, int faculty, int year, String semester, boolean includeEP, String language) {
-          URL progUrl = getClass().getResource("/studieprogram.xml");
-          return new XmlStreamReader(progUrl);
+        public List<Studieprogram> getStudieprogrammerForOrgenhet(XMLGregorianCalendar arstall, Terminkode terminkode,
+            Sprakkode sprak, int institusjonsnr, Integer fakultetsnr, Integer instituttnr, Integer gruppenr, boolean medUPinfo)
+        {
+          String xml = "/test-studieprogram.xml";
+          FsStudieinfo sinfo = unmarshal(xml);
+
+          return sinfo.getStudieprogram();
         }
+
       };
     }
     return this.studinfoImport;

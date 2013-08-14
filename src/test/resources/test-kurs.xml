@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fs-studieinfo xmlns="http://fsws.usit.no/schemas/studinfo">
+  <kurs sprak="BOKMÅL">
+    <kursid>
+      <kurskode>DIGIMATTE</kurskode>
+      <tidkode>2012-2013</tidkode>
+    </kursid>
+    <kursnavn>Digitale verktøy og undersøkende arbeidsformer i matematikk</kursnavn>
+    <fagansvarlig>
+      <institusjonsnr>217</institusjonsnr>
+      <fakultetsnr>3</fakultetsnr>
+      <instituttnr>6</instituttnr>
+      <gruppenr>0</gruppenr>
+      <navn>UiS Pluss: Etter- og videreutdanning</navn>
+      <avdnavn>Ledelse og stab</avdnavn>
+    </fagansvarlig>
+    <adminansvarlig>
+      <institusjonsnr>217</institusjonsnr>
+      <fakultetsnr>3</fakultetsnr>
+      <instituttnr>6</instituttnr>
+      <gruppenr>0</gruppenr>
+      <navn>UiS Pluss: Etter- og videreutdanning</navn>
+      <avdnavn>Ledelse og stab</avdnavn>
+    </adminansvarlig>
+    <dato-opptak-fra>2012-03-01</dato-opptak-fra>
+    <dato-opptak-til>2012-06-15</dato-opptak-til>
+    <dato-frist-soknad>2012-06-15</dato-frist-soknad>
+    <email>info@uis.no</email>
+    <fjernundervisning>N</fjernundervisning>
+    <desentral-undervisning>N</desentral-undervisning>
+    <nettbasert-undervisning>N</nettbasert-undervisning>
+    <kan-tilbys>N</kan-tilbys>
+    <skal-avholdes>N</skal-avholdes>
+    <dato-publiseres-fra>2012-03-01</dato-publiseres-fra>
+    <dato-publiseres-til>2012-12-30</dato-publiseres-til>
+    <kurskategori-liste>
+    <kurskategorikode>SKOLE</kurskategorikode>
+    <kurskategorinavn>Skole og barnehage</kurskategorinavn>
+    </kurskategori-liste>
+  </kurs>
+</fs-studieinfo>
